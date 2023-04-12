@@ -1,0 +1,9 @@
+# build image
+docker build --tag spund-system:develop spund-system/
+
+# run image
+docker run --rm --privileged --tty --volume /dev:/dev spund-system
+
+# docker-hub
+docker push hackrsackr/spund-system:develop
+docker pull hackrsackr/spund-system:develop

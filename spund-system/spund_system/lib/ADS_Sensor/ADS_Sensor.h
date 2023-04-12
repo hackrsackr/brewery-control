@@ -1,0 +1,23 @@
+#pragma once
+
+#include "Adafruit_ADS1X15.h"
+
+class ADS_Sensor
+{
+public:
+    // constructor
+    ADS_Sensor();
+    ~ADS_Sensor();
+
+    // initializer
+    void begin();
+    void begin(uint8_t);
+    void begin(uint8_t, adsGain_t);
+
+    // get methods
+    uint16_t getADC(uint8_t);
+    float getVolts(uint8_t);
+
+private:
+    Adafruit_ADS1115 *_ads;
+};

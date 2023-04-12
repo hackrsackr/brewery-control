@@ -1,0 +1,8 @@
+
+services:
+  spund-system:
+    container_name: spund-system
+    image: hackrsackr/spund-system:develop
+    restart: unless-stopped
+    privileged: true
+version: '3.7'
