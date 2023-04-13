@@ -21,17 +21,16 @@ void Spund_System::begin(
     uint8_t relay_pin,
     float vols_setpoint)
 {
-    // this->sda = sda;
-    // this->scl = scl;
-    this->vols_setpoint = vols_setpoint;
-    this->offset_volts = offset_volts;
-    this->relay_pin = relay_pin;
     _ps = new Pressure_Sensor();
     _ps->begin(ads_address, gain, sda, scl, offset_volts, unit_max);
 
     _re = new Relay();
     _re->begin(relay_pin);
     _re->relay_state = 0;
+
+    // this->offset_volts = offset_volts;
+    this->relay_pin = relay_pin;
+    this->vols_setpoint = vols_setpoint;
 }
 
 float Spund_System::getTempF(float tempC)
