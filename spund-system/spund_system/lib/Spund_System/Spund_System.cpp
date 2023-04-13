@@ -3,9 +3,8 @@
 #include "Spund_System.h"
 #include "Pressure_Sensor.h"
 #include "Relay.h"
-#include "config.h"
 
-// #define RELAY_OPEN HIGH // relay logic
+#include "config.h"
 
 Spund_System::Spund_System() {}
 

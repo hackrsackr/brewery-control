@@ -1,7 +1,8 @@
 #pragma once
 
-#include "secrets.h"
 #include <array>
+
+#include "secrets.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////// SPUNDER CONFIG ///////////////////////////////////
@@ -37,9 +38,9 @@ std::array<float, _NUMBER_OF_SPUNDERS>
 
 #define _MQTTHOST "192.168.1.2"
 #define _MQTTPORT 1883
-#define _CLIENTID "spund_system"
+#define _CLIENTID "spund-system"
 #define _SUBTOPIC "brewcast/history/spark-two"
-#define _PUBTOPIC "brewcast/history/spund_system"
+#define _PUBTOPIC "brewcast/history/spund-system"
 
 // Brewblox names of temps to request for each spunder mqtt_temp_field
 String _TEMP1 = "TEMP_blueBeer";
