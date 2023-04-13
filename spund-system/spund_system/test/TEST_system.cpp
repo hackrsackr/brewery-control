@@ -1,7 +1,7 @@
 #include "Arduino.h"
 
-#include <ArduinoJson.h>
-#include <EspMQTTClient.h>
+#include "ArduinoJson.h"
+#include "EspMQTTClient.h"
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <array>
@@ -16,7 +16,7 @@
 std::array<Spund_System, _NUMBER_OF_SPUNDERS> spund_arr;
 EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
 AsyncWebServer server(80);
-StaticJsonDocument<3000> input;
+StaticJsonDocument<4096> input;
 
 void initWiFi();
 void onConnectionEstablished();
@@ -35,8 +35,6 @@ void setup(void)
         spund_arr[i].begin(
             ADS1115_ADDRESS1,
             GAIN_TWOTHIRDS,
-            I2C_SDA,
-            I2C_SCL,
             _OFFSET_VOLTS[i],
             _UNIT_MAXS[i],
             _RELAY_PINS[i],
@@ -91,7 +89,7 @@ void initWiFi()
         delay(500);
         Serial.println("connecting..");
         failed_connections++;
-        if (failed_connections > 10)
+        if (failed_connections > 20)
         {
             Serial.println("restarting..");
             ESP.restart();
@@ -117,6 +115,7 @@ void onConnectionEstablished()
 void publishData()
 {
     StaticJsonDocument<768> message;
+    // message["key"] = _CLIENTID;
 
     if (!client.isConnected())
     {
@@ -132,6 +131,16 @@ void publishData()
         }
         else
         {
+            // message["data"][spund_arr[i].id]["TempC"] = spund_arr[i].tempC;
+            // message["data"][spund_arr[i].id]["TempF"] = spund_arr[i].getTempF(spund_arr[i].tempC);
+            // message["data"][spund_arr[i].id]["Volts"] = spund_arr[i].getVolts(i);
+            // message["data"][spund_arr[i].id]["PSI"] = spund_arr[i].getPSI(i);
+            // message["data"][spund_arr[i].id]["PSI_setpoint"] = spund_arr[i].getPSISetpoint();
+            // message["data"][spund_arr[i].id]["Vols_setpoint"] = spund_arr[i].vols_setpoint;
+            // message["data"][spund_arr[i].id]["Vols"] = spund_arr[i].getVols();
+            // message["data"][spund_arr[i].id]["Minutes_since_vent"] = spund_arr[i].test_carb();
+            // message["data"][spund_arr[i].id]["Relay_state"] = spund_arr[i].relay_state;
+
             message[spund_arr[i].id]["TempC"] = spund_arr[i].tempC;
             message[spund_arr[i].id]["TempF"] = spund_arr[i].getTempF(spund_arr[i].tempC);
             message[spund_arr[i].id]["Volts"] = spund_arr[i].getVolts(i);
@@ -148,5 +157,6 @@ void publishData()
     // message["data"]["memory"]["Output_memory_size"] = message.memoryUsage();
     serializeJson(message, Serial);
     Serial.println("");
+    // client.publish(_PUBTOPIC, message.as<String>());
     delay(5000);
 }

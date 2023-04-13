@@ -18,6 +18,16 @@ void ADS_Sensor::begin(uint8_t address)
     _ads->begin(address);
 }
 
+void ADS_Sensor::begin(uint8_t address, adsGain_t gain, uint8_t sda, uint8_t scl)
+{
+    _ads = new Adafruit_ADS1115();
+    Wire.end();
+    Wire.setPins(sda, scl);
+    Wire.begin();
+    _ads->begin(address);
+    _ads->setGain(gain);
+}
+
 void ADS_Sensor::begin(uint8_t address, adsGain_t gain)
 {
     _ads = new Adafruit_ADS1115();

@@ -11,6 +11,6 @@ public:
     Pressure_Sensor();
     ~Pressure_Sensor();
 
-    void begin(uint8_t, adsGain_t, float, uint8_t);
+    void begin(uint8_t, adsGain_t, uint8_t, uint8_t, float, uint8_t);
     float getPSI(uint8_t);
 };

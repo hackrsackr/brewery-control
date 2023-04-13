@@ -3,15 +3,16 @@
 
 #include "ADS_Sensor.h"
 
+#define I2C_SCL 25
+#define I2C_SDA 26
+
 // ads constructor
 ADS_Sensor ads;
-TwoWire I2CADS = TwoWire(0);
 
 void setup(void)
 {
     Serial.begin(115200);
-
-    ads.begin(ADS1115_ADDRESS2); // address = 0x49, ADDR -> VCC
+    ads.begin(ADS1115_ADDRESS2, GAIN_TWOTHIRDS, I2C_SDA, I2C_SCL);
 }
 
 void loop(void)

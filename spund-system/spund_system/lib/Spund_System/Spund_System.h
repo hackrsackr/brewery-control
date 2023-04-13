@@ -2,12 +2,13 @@
 
 #include "Pressure_Sensor.h"
 #include "Relay.h"
+
 #include "config.h"
 
 class Spund_System
 {
 public:
-    std::string id;
+    String id;
     String mqtt_field;
     uint8_t relay_pin;
     uint8_t relay_state;
@@ -27,7 +28,7 @@ public:
     ~Spund_System();
 
     // Initializers
-    void begin(uint8_t, adsGain_t, float, uint8_t, uint8_t, float);
+    void begin(uint8_t, adsGain_t, uint8_t, uint8_t, float, uint8_t, uint8_t, float);
 
     // Set Methods
     // void setOffsetVolts(float);

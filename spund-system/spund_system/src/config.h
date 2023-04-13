@@ -13,7 +13,7 @@
 #define _NAME3 "spunder-3"
 #define _NAME4 "spunder-4"
 
-std::array<const std::string, _NUMBER_OF_SPUNDERS>
+std::array<const String, _NUMBER_OF_SPUNDERS>
     _SPUNDER_NAMES = {_NAME1, _NAME2, _NAME3, _NAME4};
 
 // Desired vols of CO2 for each spunder
@@ -95,6 +95,9 @@ std::array<const uint8_t, _NUMBER_OF_SPUNDERS>
 #define ADS1115_ADDRESS2 (0x49) // ADDR -> VCC
 #define ADS1115_ADDRESS3 (0x4a) // ADDR -> SDA
 #define ADS1115_ADDRESS4 (0x4b) // ADDR -> SCL
+
+#define I2C_SCL 25
+#define I2C_SDA 26
 
 // ADS1115 Gains reference table
 /*

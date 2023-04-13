@@ -16,11 +16,12 @@ PORT = 1883
 
 # This is the default serial port
 USB_PORT = '/dev/ttyUSB0'
+
 HISTORY_TOPIC = 'brewcast/history'
-TOPIC = HISTORY_TOPIC + '/spund_system'
+
+TOPIC = HISTORY_TOPIC + '/spund-system'
 
 client = mqtt.Client()
-#client.ws_set_options(path='/eventbus')
 
 # You may need to further configure settings
 # See the pyserial documentation for more info
@@ -39,20 +40,16 @@ def main():
             # Read raw data from the stream
             # Convert the binary string to a normal string
             # Remove the trailing newline character
-            d = {} 
             spund_data = ser.readline().decode().rstrip()
-            #print(spund_data)
             
             try:
                 spund_data = json.loads(spund_data)
             except json.JSONDecodeError:
                 continue
-                
-            d = spund_data
 
             message = {
-                'key': 'spund_system',
-                'data': {'spund_arr': spund_data}
+                'key': 'spund-system',
+                'data': spund_data
             }
             
             client.publish(TOPIC, json.dumps(message))
