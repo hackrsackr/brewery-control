@@ -28,7 +28,6 @@ void Spund_System::begin(
     _re->begin(relay_pin);
     _re->relay_state = 0;
 
-    // this->offset_volts = offset_volts;
     this->relay_pin = relay_pin;
     this->vols_setpoint = vols_setpoint;
 }
