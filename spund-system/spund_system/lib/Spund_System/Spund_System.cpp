@@ -66,7 +66,7 @@ float Spund_System::getVols()
 {
     float a = -.0684226;
     float b = ((.173354 * tempF) + 4.24267);
-    float c = (-psi + -16.669 + (-0.0101059 * tempF) + (0.00116512 * tempF * tempF));
+    float c = (-_ps->psi + -16.669 + (-0.0101059 * tempF) + (0.00116512 * tempF * tempF));
     float d = ((b * b) - (4 * a * c));
 
     vols = ((-b + (pow(d, .5))) / (2 * a));

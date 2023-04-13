@@ -144,8 +144,9 @@ void publishData()
         }
     }
 
-    // message["data"]["memory"]["Input_memory_size"] = input.memoryUsage();
-    // message["data"]["memory"]["Output_memory_size"] = message.memoryUsage();
+    message["data"]["memory"]["Input_memory_size"] = input.memoryUsage();
+    message["data"]["memory"]["Output_memory_size"] = message.memoryUsage();
+
     serializeJson(message, Serial);
     Serial.println("");
     delay(5000);

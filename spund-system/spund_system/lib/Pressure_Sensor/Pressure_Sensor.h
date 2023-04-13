@@ -7,6 +7,8 @@ class Pressure_Sensor : public ADS_Sensor
 public:
     float offset_volts;
     uint8_t unit_max;
+    float volts;
+    float psi;
 
     Pressure_Sensor();
     ~Pressure_Sensor();
