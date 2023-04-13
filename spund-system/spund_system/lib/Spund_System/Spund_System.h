@@ -30,10 +30,6 @@ public:
     // Initializers
     void begin(uint8_t, adsGain_t, uint8_t, uint8_t, float, uint8_t, uint8_t, float);
 
-    // Set Methods
-    // void setOffsetVolts(float);
-    // void setRelayPin(uint8_t);
-
     // Get Methods
     float getTempF(float);
     float getVolts(uint8_t);
