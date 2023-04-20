@@ -97,6 +97,7 @@ std::array<const uint8_t, _NUMBER_OF_SPUNDERS>
 #define ADS1115_ADDRESS3 (0x4a) // ADDR -> SDA
 #define ADS1115_ADDRESS4 (0x4b) // ADDR -> SCL
 
+// I2C Pins
 #define I2C_SCL 25
 #define I2C_SDA 26
 
