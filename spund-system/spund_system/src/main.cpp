@@ -136,6 +136,7 @@ void publishData()
             message[spund_arr[i].id]["TempC"] = spund_arr[i].tempC;
             message[spund_arr[i].id]["TempF"] = spund_arr[i].getTempF(spund_arr[i].tempC);
             message[spund_arr[i].id]["Volts"] = spund_arr[i].getVolts(i);
+            message[spund_arr[i].id]["Offset_Volts"] = spund_arr[i].offset_volts;
             message[spund_arr[i].id]["PSI"] = spund_arr[i].getPSI(i);
             message[spund_arr[i].id]["PSI_setpoint"] = spund_arr[i].getPSISetpoint();
             message[spund_arr[i].id]["Vols_setpoint"] = spund_arr[i].vols_setpoint;
