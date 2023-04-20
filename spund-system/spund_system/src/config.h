@@ -74,10 +74,10 @@ std::array<const uint8_t, _NUMBER_OF_SPUNDERS>
 ////////////////////////// PRESSURE_SENSOR CONFIG //////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 // Voltage at 0 PSI
-#define _OFFSET_VOLTS1 .55
-#define _OFFSET_VOLTS2 .55
-#define _OFFSET_VOLTS3 .55
-#define _OFFSET_VOLTS4 .55
+#define _OFFSET_VOLTS1 .48
+#define _OFFSET_VOLTS2 .48
+#define _OFFSET_VOLTS3 .48
+#define _OFFSET_VOLTS4 .48
 
 std::array<const float, _NUMBER_OF_SPUNDERS>
     _OFFSET_VOLTS = {_OFFSET_VOLTS1, _OFFSET_VOLTS2, _OFFSET_VOLTS3, _OFFSET_VOLTS4};

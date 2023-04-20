@@ -47,7 +47,7 @@ float Spund_System::getVolts(uint8_t channel)
 
 float Spund_System::getPSI(uint8_t channel)
 {
-    return ((Spund_System::getVolts(channel) - this->offset_volts) * (_ps->unit_max / 4.0));
+    return (_ps->getPSI(channel));
 }
 
 float Spund_System::getPSISetpoint()

@@ -15,5 +15,5 @@ void Pressure_Sensor::begin(uint8_t address, adsGain_t gain, uint8_t sda, uint8_
 
 float Pressure_Sensor::getPSI(uint8_t channel)
 {
-    return ((this->getVolts(channel) - offset_volts) * (unit_max / 4.0));
+    return ((this->getVolts(channel) - this->offset_volts) * (this->unit_max / 4.0));
 }
