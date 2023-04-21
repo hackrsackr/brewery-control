@@ -13,33 +13,33 @@ public:
     uint8_t relay_pin;
     uint8_t relay_state;
     uint32_t time_of_last_vent;
-    float minutes_since_vent;
-    float volts;
-    float psi;
-    float offset_volts;
-    float tempC;
-    float tempF;
-    float psi_setpoint;
-    float vols_setpoint;
-    float vols;
+    double minutes_since_vent;
+    double offset_volts;
+    double psi;
+    double psi_setpoint;
+    double tempC;
+    double tempF;
+    double vols;
+    double vols_setpoint;
+    double volts;
 
     // Constructors
     Spund_System();
     ~Spund_System();
 
     // Initializers
-    void begin(uint8_t, adsGain_t, uint8_t, uint8_t, float, uint8_t, uint8_t, float);
+    void begin(uint8_t, adsGain_t, uint8_t, uint8_t, double, uint8_t, uint8_t, double);
 
     // Get Methods
-    float getTempF(float);
-    float getVolts(uint8_t);
-    float getPSI(uint8_t);
-    float getPSISetpoint();
-    float getVols();
-    float test_carb();
+    double getTempF(double);
+    double getVolts(uint8_t);
+    double getPSI(uint8_t);
+    double getPSISetpoint();
+    double getVols();
+    double test_carb();
 
     //
-    float convertTempCtoF(float);
+    double convertTempCtoF(double);
     void vent();
 
 private:

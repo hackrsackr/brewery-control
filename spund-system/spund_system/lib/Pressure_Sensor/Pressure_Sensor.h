@@ -5,14 +5,14 @@
 class Pressure_Sensor : public ADS_Sensor
 {
 public:
-    float offset_volts;
+    double offset_volts;
     uint8_t unit_max;
-    float volts;
-    float psi;
+    double volts;
+    double psi;
 
     Pressure_Sensor();
     ~Pressure_Sensor();
 
-    void begin(uint8_t, adsGain_t, uint8_t, uint8_t, float, uint8_t);
-    float getPSI(uint8_t);
+    void begin(uint8_t, adsGain_t, uint8_t, uint8_t, double, uint8_t);
+    double getPSI(uint8_t);
 };

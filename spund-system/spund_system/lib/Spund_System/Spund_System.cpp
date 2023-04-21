@@ -15,10 +15,10 @@ void Spund_System::begin(
     adsGain_t gain,
     uint8_t sda,
     uint8_t scl,
-    float offset_volts,
+    double offset_volts,
     uint8_t unit_max,
     uint8_t relay_pin,
-    float vols_setpoint)
+    double vols_setpoint)
 {
     _ps = new Pressure_Sensor();
     _ps->begin(ads_address, gain, sda, scl, offset_volts, unit_max);
@@ -27,53 +27,54 @@ void Spund_System::begin(
     _re->begin(relay_pin);
     _re->relay_state = 0;
 
+    this->offset_volts = offset_volts;
     this->relay_pin = relay_pin;
     this->vols_setpoint = vols_setpoint;
 }
 
-float Spund_System::getTempF(float tempC)
+double Spund_System::getTempF(double tempC)
 {
     tempF = tempC * 1.8 + 32;
 
     return tempF;
 }
 
-float Spund_System::getVolts(uint8_t channel)
+double Spund_System::getVolts(uint8_t channel)
 {
     volts = _ps->getVolts(channel);
 
     return volts;
 }
 
-float Spund_System::getPSI(uint8_t channel)
+double Spund_System::getPSI(uint8_t channel)
 {
     return (_ps->getPSI(channel));
 }
 
-float Spund_System::getPSISetpoint()
+double Spund_System::getPSISetpoint()
 {
-    float a = -16.669 - (.0101059 * tempF) + (.00116512 * (tempF * tempF));
-    float b = .173354 * tempF * vols_setpoint;
-    float c = (4.24267 * vols_setpoint) - (.0684226 * (vols_setpoint * vols_setpoint));
+    double a = -16.669 - (.0101059 * tempF) + (.00116512 * (tempF * tempF));
+    double b = .173354 * tempF * vols_setpoint;
+    double c = (4.24267 * vols_setpoint) - (.0684226 * (vols_setpoint * vols_setpoint));
 
     psi_setpoint = a + b + c;
 
     return psi_setpoint;
 }
 
-float Spund_System::getVols()
+double Spund_System::getVols()
 {
-    float a = -.0684226;
-    float b = ((.173354 * tempF) + 4.24267);
-    float c = (-_ps->psi + -16.669 + (-0.0101059 * tempF) + (0.00116512 * tempF * tempF));
-    float d = ((b * b) - (4 * a * c));
+    double a = -.0684226;
+    double b = ((.173354 * tempF) + 4.24267);
+    double c = (-_ps->psi + -16.669 + (-0.0101059 * tempF) + (0.00116512 * tempF * tempF));
+    double d = ((b * b) - (4 * a * c));
 
     vols = ((-b + (pow(d, .5))) / (2 * a));
 
     return vols;
 }
 
-float Spund_System::test_carb()
+double Spund_System::test_carb()
 {
     _re->relay_state = 0;
     // if (psi_value > psi_setpoint)

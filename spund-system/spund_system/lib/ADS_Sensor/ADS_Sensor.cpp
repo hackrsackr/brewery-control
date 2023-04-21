@@ -40,7 +40,7 @@ uint16_t ADS_Sensor::getADC(uint8_t channel)
     return _ads->readADC_SingleEnded(channel);
 }
 
-float ADS_Sensor::getVolts(uint8_t channel)
+double ADS_Sensor::getVolts(uint8_t channel)
 {
     return _ads->computeVolts(_ads->readADC_SingleEnded(channel));
 }

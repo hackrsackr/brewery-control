@@ -19,7 +19,7 @@ public:
 
     // get methods
     uint16_t getADC(uint8_t);
-    float getVolts(uint8_t);
+    double getVolts(uint8_t);
 
 private:
     Adafruit_ADS1115 *_ads;

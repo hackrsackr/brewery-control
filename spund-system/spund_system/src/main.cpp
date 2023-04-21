@@ -56,7 +56,7 @@ void setup(void)
     {
         if (request->hasParam(_SETPOINT_INPUTS[i])) {
             _SETPOINT_MESSAGES[i] = request->getParam(_SETPOINT_INPUTS[i])->value();
-            spund_arr[i].vols_setpoint = _SETPOINT_MESSAGES[i].toFloat();
+            spund_arr[i].vols_setpoint = _SETPOINT_MESSAGES[i].toDouble();
             inputMessage = _SETPOINT_MESSAGES[i];
             inputParam = _SETPOINT_INPUTS[i];
         }
@@ -117,7 +117,7 @@ void onConnectionEstablished()
 
 void publishData()
 {
-    StaticJsonDocument<768> message;
+    StaticJsonDocument<2000> message;
 
     if (!client.isConnected())
     {
