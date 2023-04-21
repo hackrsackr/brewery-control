@@ -46,6 +46,8 @@ void setup(void)
         spund_arr[i].id = _SPUNDER_NAMES[i];
         spund_arr[i].mqtt_field = _MQTT_FIELDS[i];
     }
+
+    // Webserver
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
               { request->send_P(200, "text/html", index_html, processor); });
     server.on("/get", HTTP_GET, [](AsyncWebServerRequest *request)
@@ -118,7 +120,7 @@ void onConnectionEstablished()
 
 void publishData()
 {
-    StaticJsonDocument<2000> message;
+    StaticJsonDocument<1000> message;
 
     if (!client.isConnected())
     {
