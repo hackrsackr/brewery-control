@@ -31,6 +31,7 @@ void setup(void)
 
     initWiFi();
 
+    // Initialize each Spunder in spund_arr
     for (uint8_t i = 0; i < _NUMBER_OF_SPUNDERS; ++i)
     {
         spund_arr[i].begin(
