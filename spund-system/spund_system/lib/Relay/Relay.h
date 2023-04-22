@@ -18,5 +18,4 @@ public:
     // Methods
     void openRelay();
     void closeRelay();
-    // void toggleRelay();
 };

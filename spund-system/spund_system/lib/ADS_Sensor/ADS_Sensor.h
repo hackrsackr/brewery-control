@@ -53,3 +53,17 @@ public:
     void begin(uint8_t, adsGain_t, uint8_t, uint8_t, uint8_t, double, uint8_t);
     double computeLiters();
 };
+
+// class ADS_PH_Meter : public ADS_Sensor
+// {
+// public:
+//     double offset_volts;
+//     uint8_t unit_max;
+//     uint8_t ads_channel;
+
+//     ADS_PH_Meter();
+//     ~ADS_PH_Meter();
+
+//     void begin(uint8_t, adsGain_t, uint8_t, uint8_t, uint8_t, double, uint8_t);
+//     double computeMilliAmps();
+// };

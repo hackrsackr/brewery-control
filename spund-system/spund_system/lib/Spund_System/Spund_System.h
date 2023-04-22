@@ -19,7 +19,7 @@ public:
     Spund_System();
     ~Spund_System();
 
-    // Initializers
+    // Initializer
     void begin(
         uint8_t ads_addr,
         adsGain_t ads_gain,
@@ -33,8 +33,12 @@ public:
     // Get Methods
     double getVolts();
     double getPSI();
+
+    // Calculations
     double computePSISetpoint();
     double computeVols();
+
+    // Evaluation
     double test_carb();
 
 private:

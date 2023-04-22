@@ -43,3 +43,20 @@ double ADS_Pressure_Sensor::computePSI()
 {
     return (readVolts(ads_channel) - offset_volts) * (unit_max / 4.0);
 }
+
+ADS_Level_Sensor::ADS_Level_Sensor() {}
+
+ADS_Level_Sensor::~ADS_Level_Sensor() {}
+
+void ADS_Level_Sensor::begin(uint8_t ads_address, adsGain_t ads_gain, uint8_t sda, uint8_t scl, uint8_t ads_chan, double offset_vs, uint8_t max_unit)
+{
+    ADS_Sensor::begin(ads_address, ads_gain, sda, scl);
+    ads_channel = ads_chan;
+    offset_volts = offset_vs;
+    unit_max = max_unit;
+}
+
+double ADS_Level_Sensor::computeLiters()
+{
+    return (readVolts(ads_channel) - offset_volts) * (unit_max / 4.0);
+}
