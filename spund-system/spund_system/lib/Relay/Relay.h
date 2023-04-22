@@ -1,7 +1,5 @@
 #pragma once
 
-// #include "config.h"
-
 #define RELAY_OPEN HIGH
 
 class Relay
@@ -18,7 +16,7 @@ public:
     void begin(uint8_t);
 
     // Methods
-    void toggleRelay();
-    void closeRelay();
     void openRelay();
+    void closeRelay();
+    // void toggleRelay();
 };

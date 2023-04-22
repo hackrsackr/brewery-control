@@ -8,7 +8,6 @@
 
 #include "ADS_Sensor.h"
 #include "Spund_System.h"
-#include "Pressure_Sensor.h"
 #include "Relay.h"
 
 #include "config.h"
@@ -39,12 +38,11 @@ void setup(void)
             GAIN_TWOTHIRDS,
             I2C_SDA,
             I2C_SCL,
+            _ADS_CHANNELS[i],
             _OFFSET_VOLTS[i],
             _UNIT_MAXS[i],
             _RELAY_PINS[i],
             _DESIRED_VOLS[i]);
-        spund_arr[i].id = _SPUNDER_NAMES[i];
-        spund_arr[i].mqtt_field = _MQTT_FIELDS[i];
     }
 
     // Webserver
@@ -65,7 +63,7 @@ void setup(void)
         }
         if (request->hasParam(_MQTT_INPUTS[i])) {
             _MQTT_MESSAGES[i] = request->getParam(_MQTT_INPUTS[i])->value();
-            spund_arr[i].mqtt_field =  _MQTT_MESSAGES[i];
+            _MQTT_FIELDS[i] =  _MQTT_MESSAGES[i];
             inputMessage = _MQTT_MESSAGES[i];
             inputParam = _MQTT_INPUTS[i];
         }
@@ -113,7 +111,8 @@ void onConnectionEstablished()
     deserializeJson(input, payload);
     for (uint8_t i = 0; i < _NUMBER_OF_SPUNDERS; ++i)
     {
-        spund_arr[i].tempC = input["data"][spund_arr[i].mqtt_field]["value[degC]"];
+        spund_arr[i].tempC = input["data"][_MQTT_FIELDS[i]]["value[degC]"];
+        spund_arr[i].tempF = spund_arr[i].tempC * 1.8 + 32;
     }
     publishData(); });
 }
@@ -136,16 +135,13 @@ void publishData()
         }
         else
         {
-            message[spund_arr[i].id]["TempC"] = spund_arr[i].tempC;
-            message[spund_arr[i].id]["TempF"] = spund_arr[i].getTempF(spund_arr[i].tempC);
-            message[spund_arr[i].id]["Volts"] = spund_arr[i].getVolts(i);
-            message[spund_arr[i].id]["Offset_Volts"] = spund_arr[i].offset_volts;
-            message[spund_arr[i].id]["PSI"] = spund_arr[i].getPSI(i);
-            message[spund_arr[i].id]["PSI_setpoint"] = spund_arr[i].getPSISetpoint();
-            message[spund_arr[i].id]["Vols_setpoint"] = spund_arr[i].vols_setpoint;
-            message[spund_arr[i].id]["Vols"] = spund_arr[i].getVols();
-            message[spund_arr[i].id]["Minutes_since_vent"] = spund_arr[i].test_carb();
-            message[spund_arr[i].id]["Relay_state"] = spund_arr[i].relay_state;
+            message[_SPUNDER_NAMES[i]]["TempC"] = spund_arr[i].tempC;
+            message[_SPUNDER_NAMES[i]]["Volts"] = spund_arr[i].getVolts();
+            message[_SPUNDER_NAMES[i]]["PSI"] = spund_arr[i].getPSI();
+            message[_SPUNDER_NAMES[i]]["PSI_setpoint"] = spund_arr[i].getPSISetpoint();
+            message[_SPUNDER_NAMES[i]]["Vols_setpoint"] = spund_arr[i].vols_setpoint;
+            message[_SPUNDER_NAMES[i]]["Vols"] = spund_arr[i].computeVols();
+            message[_SPUNDER_NAMES[i]]["Minutes_since_vent"] = spund_arr[i].test_carb();
         }
     }
 
@@ -153,6 +149,7 @@ void publishData()
     message["memory"]["Output_memory_size"] = message.memoryUsage();
 
     serializeJson(message, Serial);
+    serializeJsonPretty(message, Serial);
     Serial.println("");
     delay(5000);
 }

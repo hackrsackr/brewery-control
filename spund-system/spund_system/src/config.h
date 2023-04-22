@@ -5,25 +5,21 @@
 #include "secrets.h"
 
 #define _NUMBER_OF_SPUNDERS 4
+
 // WiFi
 #define _SSID SECRET_SSID
 #define _PASS SECRET_PASS
 
-// Brewblox
+// I2C Pins
+#define I2C_SCL 25
+#define I2C_SDA 26
+
+// MQTT Setup
 #define _MQTTHOST "192.168.1.2"
 #define _MQTTPORT 1883
 #define _CLIENTID "spund-system"
 #define _SUBTOPIC "brewcast/history/spark-two"
 #define _PUBTOPIC "brewcast/history/spund-system"
-// ADS1115 Addresses
-#define ADS1115_ADDRESS1 (0x48) // ADDR -> GND
-#define ADS1115_ADDRESS2 (0x49) // ADDR -> VCC
-#define ADS1115_ADDRESS3 (0x4a) // ADDR -> SDA
-#define ADS1115_ADDRESS4 (0x4b) // ADDR -> SCL
-
-// I2C Pins
-#define I2C_SCL 25
-#define I2C_SDA 26
 
 ///////////////////////////// SPUNDER CONFIG ///////////////////////////////////
 
@@ -58,9 +54,15 @@ std::array<String, _NUMBER_OF_SPUNDERS> _MQTT_FIELDS = {
 
 ////////////////////////// PRESSURE_SENSOR CONFIG //////////////////////////////
 
+std::array<const uint8_t, _NUMBER_OF_SPUNDERS> _ADS_CHANNELS = {
+    0,
+    1,
+    2,
+    3};
+
 // Voltage at 0 PSI
-std::array<const float, _NUMBER_OF_SPUNDERS> _OFFSET_VOLTS = {
-    .48,
+std::array<const double, _NUMBER_OF_SPUNDERS> _OFFSET_VOLTS = {
+    .50,
     .48,
     .48,
     .48};
@@ -90,14 +92,14 @@ std::array<String, _NUMBER_OF_SPUNDERS> _MQTT_MESSAGES = {
     _MQTT_FIELDS[3]};
 
 // Server setpoint inputs
-std::array<const char *, _NUMBER_OF_SPUNDERS> _SETPOINT_INPUTS = {
+std::array<String, _NUMBER_OF_SPUNDERS> _SETPOINT_INPUTS = {
     "setpoint_input1",
     "setpoint_input2",
     "setpoint_input3",
     "setpoint_input4"};
 
 // Server mqtt temp field inputs
-std::array<const char *, _NUMBER_OF_SPUNDERS> _MQTT_INPUTS = {
+std::array<String, _NUMBER_OF_SPUNDERS> _MQTT_INPUTS = {
     "mqtt_input1",
     "mqtt_input2",
     "mqtt_input3",
