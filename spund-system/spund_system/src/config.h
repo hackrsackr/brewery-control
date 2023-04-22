@@ -11,8 +11,8 @@
 #define _PASS SECRET_PASS
 
 // I2C Pins
-#define I2C_SCL 25
-#define I2C_SDA 26
+#define _I2C_SCL 25
+#define _I2C_SDA 26
 
 // MQTT Setup
 #define _MQTTHOST "192.168.1.2"

@@ -1,6 +1,7 @@
 #include "Arduino.h"
 
 #include "ADS_Sensor.h"
+#include "config.h"
 
 ADS_Sensor::ADS_Sensor() {}
 

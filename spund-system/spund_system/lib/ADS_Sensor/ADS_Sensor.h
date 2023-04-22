@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Adafruit_ADS1X15.h>
+#include "config.h"
 
 #define ADS1115_ADDRESS1 (0x48) // ADDR -> GND
 #define ADS1115_ADDRESS2 (0x49) // ADDR -> VCC
@@ -37,4 +38,18 @@ public:
 
     void begin(uint8_t, adsGain_t, uint8_t, uint8_t, uint8_t, double, uint8_t);
     double computePSI();
+};
+
+class ADS_Level_Sensor : public ADS_Sensor
+{
+public:
+    double offset_volts;
+    uint8_t unit_max;
+    uint8_t ads_channel;
+
+    ADS_Level_Sensor();
+    ~ADS_Level_Sensor();
+
+    void begin(uint8_t, adsGain_t, uint8_t, uint8_t, uint8_t, double, uint8_t);
+    double computeLiters();
 };

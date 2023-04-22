@@ -18,17 +18,13 @@ void Spund_System::begin(
     uint8_t ads_chan,
     double offset_vs,
     uint8_t max_unit,
-    uint8_t vent_pin,
-    double desired_vols)
+    uint8_t vent_pin)
 {
     _ps = new ADS_Pressure_Sensor();
     _ps->begin(ads_addr, ads_gain, i2c_sda, i2c_scl, ads_chan, offset_vs, max_unit);
 
     _re = new Relay();
     _re->begin(vent_pin);
-    _re->relay_state = 0;
-
-    vols_setpoint = desired_vols;
 }
 
 double Spund_System::getVolts()
@@ -41,7 +37,7 @@ double Spund_System::getPSI()
     return _ps->computePSI();
 }
 
-double Spund_System::getPSISetpoint()
+double Spund_System::computePSISetpoint()
 {
     double a = -16.669 - (.0101059 * tempF) + (.00116512 * (tempF * tempF));
     double b = .173354 * tempF * vols_setpoint;

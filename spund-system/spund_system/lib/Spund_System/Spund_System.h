@@ -20,12 +20,20 @@ public:
     ~Spund_System();
 
     // Initializers
-    void begin(uint8_t, adsGain_t, uint8_t, uint8_t, uint8_t, double, uint8_t, uint8_t, double);
+    void begin(
+        uint8_t ads_addr,
+        adsGain_t ads_gain,
+        uint8_t i2c_sda,
+        uint8_t i2c_scl,
+        uint8_t ads_chan,
+        double offset_vs,
+        uint8_t max_unit,
+        uint8_t vent_pin);
 
     // Get Methods
     double getVolts();
     double getPSI();
-    double getPSISetpoint();
+    double computePSISetpoint();
     double computeVols();
     double test_carb();
 

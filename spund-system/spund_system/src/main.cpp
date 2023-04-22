@@ -36,13 +36,12 @@ void setup(void)
         spund_arr[i].begin(
             ADS1115_ADDRESS1,
             GAIN_TWOTHIRDS,
-            I2C_SDA,
-            I2C_SCL,
+            _I2C_SDA,
+            _I2C_SCL,
             _ADS_CHANNELS[i],
             _OFFSET_VOLTS[i],
             _UNIT_MAXS[i],
-            _RELAY_PINS[i],
-            _DESIRED_VOLS[i]);
+            _RELAY_PINS[i]);
     }
 
     // Webserver
@@ -57,7 +56,7 @@ void setup(void)
     {
         if (request->hasParam(_SETPOINT_INPUTS[i])) {
             _SETPOINT_MESSAGES[i] = request->getParam(_SETPOINT_INPUTS[i])->value();
-            spund_arr[i].vols_setpoint = _SETPOINT_MESSAGES[i].toDouble();
+            _DESIRED_VOLS[i] = _SETPOINT_MESSAGES[i].toDouble();
             inputMessage = _SETPOINT_MESSAGES[i];
             inputParam = _SETPOINT_INPUTS[i];
         }
@@ -113,6 +112,7 @@ void onConnectionEstablished()
     {
         spund_arr[i].tempC = input["data"][_MQTT_FIELDS[i]]["value[degC]"];
         spund_arr[i].tempF = spund_arr[i].tempC * 1.8 + 32;
+        spund_arr[i].vols_setpoint = _DESIRED_VOLS[i];
     }
     publishData(); });
 }
@@ -138,7 +138,7 @@ void publishData()
             message[_SPUNDER_NAMES[i]]["TempC"] = spund_arr[i].tempC;
             message[_SPUNDER_NAMES[i]]["Volts"] = spund_arr[i].getVolts();
             message[_SPUNDER_NAMES[i]]["PSI"] = spund_arr[i].getPSI();
-            message[_SPUNDER_NAMES[i]]["PSI_setpoint"] = spund_arr[i].getPSISetpoint();
+            message[_SPUNDER_NAMES[i]]["PSI_setpoint"] = spund_arr[i].computePSISetpoint();
             message[_SPUNDER_NAMES[i]]["Vols_setpoint"] = spund_arr[i].vols_setpoint;
             message[_SPUNDER_NAMES[i]]["Vols"] = spund_arr[i].computeVols();
             message[_SPUNDER_NAMES[i]]["Minutes_since_vent"] = spund_arr[i].test_carb();
