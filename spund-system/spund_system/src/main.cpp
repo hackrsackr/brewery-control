@@ -149,7 +149,7 @@ void publishData()
     message["memory"]["Output_memory_size"] = message.memoryUsage();
 
     serializeJson(message, Serial);
-    serializeJsonPretty(message, Serial);
+    // serializeJsonPretty(message, Serial);
     Serial.println("");
     delay(5000);
 }
