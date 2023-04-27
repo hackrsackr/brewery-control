@@ -1,4 +1,4 @@
-#include "Arduino.h"
+#include <Arduino.h>
 
 #include "ADS_Sensor.h"
 #include "Relay.h"
@@ -74,3 +74,16 @@ double Spund_System::test_carb()
 
     return minutes_since_vent;
 }
+
+// void Spund_System::publishMQTT(StaticJsonDocument message)
+// {
+//     serializeJsonPretty(message, Serial);
+//     client.publish(_PUBTOPIC, message.as<String>());
+//     Serial.println("");
+// }
+
+// void Spund_System::publishSerial(StaticJsonDocument message)
+// {
+//     serializeJson(message, Serial);
+//     Serial.println("");
+// }

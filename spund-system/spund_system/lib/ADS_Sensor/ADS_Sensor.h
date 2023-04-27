@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Adafruit_ADS1X15.h>
+
 #include "config.h"
 
 #define ADS1115_ADDRESS1 (0x48) // ADDR -> GND
