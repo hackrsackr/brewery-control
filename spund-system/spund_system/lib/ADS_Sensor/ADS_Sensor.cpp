@@ -15,6 +15,8 @@ void ADS_Sensor::begin(uint8_t address, adsGain_t gain, uint8_t sda, uint8_t scl
     Wire.begin();
     _ads->begin(address);
     _ads->setGain(gain);
+
+    ads_gain = gain;
 }
 
 uint16_t ADS_Sensor::readADC(uint8_t channel)
@@ -27,14 +29,21 @@ double ADS_Sensor::readVolts(uint8_t channel)
     return _ads->computeVolts(_ads->readADC_SingleEnded(channel));
 }
 
+double ADS_Sensor::readMilliAmps(uint8_t channel)
+{
+    return _ads->computeVolts(_ads->readADC_SingleEnded(channel) * 4.0);
+}
+
+// ########################################
+
 ADS_Pressure_Sensor::ADS_Pressure_Sensor() {}
 
 ADS_Pressure_Sensor::~ADS_Pressure_Sensor() {}
 
-void ADS_Pressure_Sensor::begin(uint8_t ads_address, adsGain_t ads_gain, uint8_t sda, uint8_t scl, uint8_t ads_chan, double offset_vs, uint8_t max_unit)
+void ADS_Pressure_Sensor::begin(uint8_t ads_address, adsGain_t ads_gain, uint8_t sda, uint8_t scl, uint8_t channel, double offset_vs, uint8_t max_unit)
 {
     ADS_Sensor::begin(ads_address, ads_gain, sda, scl);
-    ads_channel = ads_chan;
+    ads_channel = channel;
     offset_volts = offset_vs;
     unit_max = max_unit;
 }
@@ -44,14 +53,16 @@ double ADS_Pressure_Sensor::computePSI()
     return (readVolts(ads_channel) - offset_volts) * (unit_max / 4.0);
 }
 
+// ########################################
+
 ADS_Level_Sensor::ADS_Level_Sensor() {}
 
 ADS_Level_Sensor::~ADS_Level_Sensor() {}
 
-void ADS_Level_Sensor::begin(uint8_t ads_address, adsGain_t ads_gain, uint8_t sda, uint8_t scl, uint8_t ads_chan, double offset_vs, uint8_t max_unit)
+void ADS_Level_Sensor::begin(uint8_t ads_address, adsGain_t ads_gain, uint8_t sda, uint8_t scl, uint8_t channel, double offset_vs, uint8_t max_unit)
 {
     ADS_Sensor::begin(ads_address, ads_gain, sda, scl);
-    ads_channel = ads_chan;
+    ads_channel = channel;
     offset_volts = offset_vs;
     unit_max = max_unit;
 }
@@ -59,4 +70,22 @@ void ADS_Level_Sensor::begin(uint8_t ads_address, adsGain_t ads_gain, uint8_t sd
 double ADS_Level_Sensor::computeLiters()
 {
     return (readVolts(ads_channel) - offset_volts) * (unit_max / 4.0);
+}
+
+// ########################################
+
+ADS_PH_Meter::ADS_PH_Meter() {}
+ADS_PH_Meter::~ADS_PH_Meter() {}
+
+void ADS_PH_Meter::begin(uint8_t ads_address, adsGain_t ads_gain, uint8_t sda, uint8_t scl, uint8_t channel, double offset_vs, uint8_t max_unit)
+{
+    ADS_Sensor::begin(ads_address, ads_gain, sda, scl);
+    ads_channel = channel;
+    offset_volts = offset_vs;
+    unit_max = max_unit;
+}
+
+double ADS_PH_Meter::readPH()
+{
+    return readVolts(ads_channel) * 2.0;
 }
