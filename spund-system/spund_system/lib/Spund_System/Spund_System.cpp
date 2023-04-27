@@ -29,7 +29,7 @@ void Spund_System::begin(
 
 double Spund_System::getVolts()
 {
-    return _ps->readVolts(_ps->ads_channel);
+    return _ps->readVolts();
 }
 
 double Spund_System::getPSI()
