@@ -1,8 +1,14 @@
+//
+// !!! WARNING !!! AUTO-GENERATED FILE!
+// PLEASE DO NOT MODIFY IT AND USE "platformio.ini":
+// https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags
+//
 {
     "configurations": [
         {
             "name": "PlatformIO",
             "includePath": [
+                "/home/rob/brewery-control/spund-system/spund_system/include",
                 "/home/rob/brewery-control/spund-system/spund_system/src",
                 "/home/rob/brewery-control/spund-system/spund_system/lib/Spund_System",
                 "/home/rob/brewery-control/spund-system/spund_system/lib/Relay",
@@ -237,11 +243,13 @@
                 "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/Ticker/src",
                 "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/USB/src",
                 "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/WiFiClientSecure/src",
-                "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/WiFiProv/src"
+                "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/WiFiProv/src",
+                ""
             ],
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
+                    "/home/rob/brewery-control/spund-system/spund_system/include",
                     "/home/rob/brewery-control/spund-system/spund_system/src",
                     "/home/rob/brewery-control/spund-system/spund_system/lib/Spund_System",
                     "/home/rob/brewery-control/spund-system/spund_system/lib/Relay",
@@ -481,7 +489,7 @@
                 ]
             },
             "defines": [
-                "PLATFORMIO=60106",
+                "PLATFORMIO=60107",
                 "ARDUINO_ESP32_DEV",
                 "HAVE_CONFIG_H",
                 "MBEDTLS_CONFIG_FILE=\"mbedtls/esp_config.h\"",
@@ -501,7 +509,7 @@
                 ""
             ],
             "cStandard": "c99",
-            "cppStandard": "c++23",
+            "cppStandard": "c++11",
             "compilerPath": "/home/rob/.platformio/packages/toolchain-xtensa-esp32/bin/xtensa-esp32-elf-gcc",
             "compilerArgs": [
                 "-mlongcalls",
