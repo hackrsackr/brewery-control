@@ -19,9 +19,10 @@ public:
     adsGain_t ads_gain;
     uint8_t ads_channel;
     double offset_volts;
-    uint16_t unit_max;
+    // uint16_t unit_max;
+    double unit_max;
 
-    void begin(uint8_t address, adsGain_t gain, uint8_t sda, uint8_t scl, uint8_t ads_chan, double offset_vs, uint16_t max_unit);
+    void begin(uint8_t address, adsGain_t gain, uint8_t sda, uint8_t scl, uint8_t ads_chan, double offset_vs, double max_unit);
 
     uint16_t readADC();
     double readVolts();
@@ -36,7 +37,7 @@ public:
     ADS_MA_Meter();
     ~ADS_MA_Meter();
 
-    void begin(uint8_t address, adsGain_t gain, uint8_t sda, uint8_t scl, uint8_t ads_chan, double offset_vs, uint8_t max_unit);
+    void begin(uint8_t address, adsGain_t gain, uint8_t sda, uint8_t scl, uint8_t ads_chan, double offset_vs, double max_unit);
     double computeMilliAmps();
 };
 
@@ -46,7 +47,7 @@ public:
     ADS_PH_Meter();
     ~ADS_PH_Meter();
 
-    void begin(uint8_t address, adsGain_t gain, uint8_t sda, uint8_t scl, uint8_t ads_chan, double offset_vs, uint8_t max_unit);
+    void begin(uint8_t address, adsGain_t gain, uint8_t sda, uint8_t scl, uint8_t ads_chan, double offset_vs, double max_unit);
     double computePH();
     double computeORP();
 };
@@ -57,7 +58,7 @@ public:
     ADS_Conductivity_Meter();
     ~ADS_Conductivity_Meter();
 
-    void begin(uint8_t address, adsGain_t gain, uint8_t sda, uint8_t scl, uint8_t ads_chan, double offset_vs, uint8_t max_unit);
+    void begin(uint8_t address, adsGain_t gain, uint8_t sda, uint8_t scl, uint8_t ads_chan, double offset_vs, double max_unit);
     double computeConductivity();
 };
 
@@ -67,7 +68,7 @@ public:
     ADS_Pressure_Sensor();
     ~ADS_Pressure_Sensor();
 
-    void begin(uint8_t address, adsGain_t gain, uint8_t sda, uint8_t scl, uint8_t ads_chan, double offset_vs, uint8_t max_unit);
+    void begin(uint8_t address, adsGain_t gain, uint8_t sda, uint8_t scl, uint8_t ads_chan, double offset_vs, double max_unit);
     double computePSI();
 };
 
@@ -77,6 +78,6 @@ public:
     ADS_Level_Sensor();
     ~ADS_Level_Sensor();
 
-    void begin(uint8_t address, adsGain_t gain, uint8_t sda, uint8_t scl, uint8_t ads_chan, double offset_vs, uint8_t max_unit);
+    void begin(uint8_t address, adsGain_t gain, uint8_t sda, uint8_t scl, uint8_t ads_chan, double offset_vs, double max_unit);
     double computeLiters();
 };

@@ -62,17 +62,24 @@ std::array<const uint8_t, _NUMBER_OF_SPUNDERS> _ADS_CHANNELS = {
 
 // Voltage at 0 PSI
 std::array<const double, _NUMBER_OF_SPUNDERS> _OFFSET_VOLTS = {
-    .38,
-    .38,
-    .38,
-    .38};
-// Max rated pressure in PSI
-std::array<const uint8_t, _NUMBER_OF_SPUNDERS> _UNIT_MAXS = {
-    60,
-    60,
-    60,
-    60};
+    .44,
+    .44,
+    .46,
+    .46};
 
+// Max rated pressure in PSI
+// std::array<const uint8_t, _NUMBER_OF_SPUNDERS> _UNIT_MAXS = {
+//     60,
+//     60,
+//     60,
+//     60};
+
+// Max rated pressure in PSI
+std::array<const double, _NUMBER_OF_SPUNDERS> _UNIT_MAXS = {
+    60.0,
+    60.0,
+    60.0,
+    60.0};
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////// SERVER CONFIG ///////////////////////////////////
