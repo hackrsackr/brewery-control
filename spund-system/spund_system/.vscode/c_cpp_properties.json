@@ -248,7 +248,6 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/esp32doit-espduino/Adafruit_ADS1X15",
                     "/home/rob/brewery-control/spund-system/spund_system/src",
                     "/home/rob/brewery-control/spund-system/spund_system/lib/Spund_System",
                     "/home/rob/brewery-control/spund-system/spund_system/lib/Relay",
