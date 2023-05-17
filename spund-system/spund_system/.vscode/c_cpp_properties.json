@@ -8,11 +8,11 @@
         {
             "name": "PlatformIO",
             "includePath": [
-                "/home/rob/brewery-control/spund-system/spund_system/external_libs",
                 "/home/rob/brewery-control/spund-system/spund_system/src",
                 "/home/rob/brewery-control/spund-system/spund_system/lib/Spund_System",
                 "/home/rob/brewery-control/spund-system/spund_system/lib/Relay",
                 "/home/rob/brewery-control/spund-system/spund_system/lib/ADS_Sensor",
+                "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/esp32doit-espduino/Adafruit_ADS1X15",
                 "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/esp32doit-espduino/Adafruit BusIO",
                 "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src",
                 "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/esp32doit-espduino/ESP Async WebServer/src",
@@ -248,11 +248,11 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/esp32doit-espduino/Adafruit_ADS1X15",
                     "/home/rob/brewery-control/spund-system/spund_system/src",
                     "/home/rob/brewery-control/spund-system/spund_system/lib/Spund_System",
                     "/home/rob/brewery-control/spund-system/spund_system/lib/Relay",
                     "/home/rob/brewery-control/spund-system/spund_system/lib/ADS_Sensor",
+                    "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/esp32doit-espduino/Adafruit_ADS1X15",
                     "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/esp32doit-espduino/Adafruit BusIO",
                     "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src",
                     "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/esp32doit-espduino/ESP Async WebServer/src",
