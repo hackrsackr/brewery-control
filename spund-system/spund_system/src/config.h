@@ -2,6 +2,8 @@
 
 #include <array>
 
+#include <ArduinoJson.h>
+
 #include "secrets.h"
 
 #define _NUMBER_OF_SPUNDERS 4
@@ -11,8 +13,8 @@
 #define _PASS SECRET_PASS
 
 // I2C Pins
-#define _I2C_SCL 25
-#define _I2C_SDA 26
+#define _I2C_SCL 22
+#define _I2C_SDA 21
 
 // MQTT Setup
 #define _MQTTHOST "192.168.1.2"

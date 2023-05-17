@@ -8,7 +8,8 @@ ADS_Sensor::ADS_Sensor() {}
 
 ADS_Sensor::~ADS_Sensor() {}
 
-void ADS_Sensor::begin(uint8_t address, adsGain_t gain, uint8_t sda, uint8_t scl, uint8_t ads_chan, double offset_vs, double max_unit)
+// void ADS_Sensor::begin(uint8_t address, adsGain_t gain, uint8_t sda, uint8_t scl, uint8_t ads_chan, double offset_vs, double max_unit)
+void ADS_Sensor::begin(uint8_t address, adsGain_t gain, uint8_t sda, uint8_t scl, uint8_t ads_chan)
 {
     _ads = new Adafruit_ADS1115();
     Wire.end();
@@ -19,8 +20,8 @@ void ADS_Sensor::begin(uint8_t address, adsGain_t gain, uint8_t sda, uint8_t scl
 
     ads_gain = gain;
     ads_channel = ads_chan;
-    offset_volts = offset_vs;
-    unit_max = max_unit;
+    // offset_volts = offset_vs;
+    // unit_max = max_unit;
 }
 
 uint16_t ADS_Sensor::readADC()
@@ -91,7 +92,7 @@ void ADS_Pressure_Sensor::begin(uint8_t ads_address, adsGain_t ads_gain, uint8_t
 
 double ADS_Pressure_Sensor::computePSI()
 {
-    return (readVolts() - offset_volts) * (unit_max / 4.0);
+    return (readVolts() - min_volts) * (unit_max / (max_volts - min_volts));
 }
 
 // ########################################
