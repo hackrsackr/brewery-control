@@ -68,7 +68,7 @@ public:
     ~ADS_Pressure_Sensor();
     double volt_min;
     double volt_max;
-    double unit_max;
+    double psi_max;
 
     // void begin(uint8_t address, adsGain_t gain, uint8_t sda, uint8_t scl, uint8_t ads_chan, double offset_vs, double max_unit);
     // void begin(uint8_t address, adsGain_t gain, uint8_t sda, uint8_t scl, uint8_t ads_chan);
