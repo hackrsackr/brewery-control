@@ -149,10 +149,10 @@ void publishData()
     message["memory"]["Output_memory_size"] = message.memoryUsage();
 
     // print to serial to be read by pi
-    // serializeJson(message, Serial);
+    serializeJson(message, Serial);
 
     // pretty print for debug
-    serializeJsonPretty(message, Serial);
+    // serializeJsonPretty(message, Serial);
 
     // print to serial and publish to brewblox over MQTT
     // serializeJsonPretty(message, Serial);
