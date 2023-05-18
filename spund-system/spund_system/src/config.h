@@ -13,10 +13,10 @@
 #define _PASS SECRET_PASS
 
 // I2C Pins
-#define _I2C_SCL 22
-#define _I2C_SDA 21
-// #define _I2C_SCL 25
-// #define _I2C_SDA 26
+// #define _I2C_SCL 22 // default
+// #define _I2C_SDA 21 // default
+#define _I2C_SCL 25
+#define _I2C_SDA 26
 
 // MQTT Setup
 #define _MQTTHOST "192.168.1.2"
@@ -57,29 +57,24 @@ std::array<String, _NUMBER_OF_SPUNDERS> _MQTT_FIELDS = {
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////// PRESSURE_SENSOR CONFIG //////////////////////////////
+// #define _MAX_SENSOR_VOLTS 4.5
 
-std::array<const uint8_t, _NUMBER_OF_SPUNDERS> _ADS_CHANNELS = {
-    0,
-    1,
-    2,
-    3};
+// Voltage at ZERO_PSI
+std::array<const double, _NUMBER_OF_SPUNDERS> _MIN_SENSOR_VOLTS = {
+    .5,
+    .5,
+    .5,
+    .5};
 
-// Voltage at 0 PSI
-std::array<const double, _NUMBER_OF_SPUNDERS> _OFFSET_VOLTS = {
-    .44,
-    .44,
-    .46,
-    .46};
-
-// Max rated pressure in PSI
-// std::array<const uint8_t, _NUMBER_OF_SPUNDERS> _UNIT_MAXS = {
-//     60,
-//     60,
-//     60,
-//     60};
+// Voltage at MAX_PSI
+std::array<const double, _NUMBER_OF_SPUNDERS> _MAX_SENSOR_VOLTS = {
+    4.5,
+    4.5,
+    4.5,
+    4.5};
 
 // Max rated pressure in PSI
-std::array<const double, _NUMBER_OF_SPUNDERS> _UNIT_MAXS = {
+std::array<const double, _NUMBER_OF_SPUNDERS> _MAX_PSIS = {
     60.0,
     60.0,
     60.0,

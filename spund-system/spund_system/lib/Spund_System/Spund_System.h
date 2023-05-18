@@ -9,11 +9,14 @@ class Spund_System
 {
 public:
     uint32_t time_of_last_vent;
+
+    // double psi;
     double psi_setpoint;
     double tempC;
     double tempF;
     double vols;
     double vols_setpoint;
+    // double volts;
 
     // Constructors
     Spund_System();
@@ -26,8 +29,9 @@ public:
         uint8_t i2c_sda,
         uint8_t i2c_scl,
         uint8_t ads_chan,
-        double offset_vs,
-        uint8_t max_unit,
+        double min_vs,
+        double max_vs,
+        double max_unit,
         uint8_t vent_pin);
 
     // Get Methods

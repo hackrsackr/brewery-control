@@ -16,7 +16,7 @@
 std::array<Spund_System, _NUMBER_OF_SPUNDERS> spund_arr;
 EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
 AsyncWebServer server(80);
-StaticJsonDocument<3000> input;
+StaticJsonDocument<4000> input;
 
 void initWiFi();
 void onConnectionEstablished();
@@ -34,14 +34,15 @@ void setup(void)
     for (uint8_t i = 0; i < _NUMBER_OF_SPUNDERS; ++i)
     {
         spund_arr[i].begin(
-            ADS1115_ADDRESS1,
-            GAIN_TWOTHIRDS,
-            _I2C_SDA,
-            _I2C_SCL,
-            _ADS_CHANNELS[i],
-            _OFFSET_VOLTS[i],
-            _UNIT_MAXS[i],
-            _RELAY_PINS[i]);
+            ADS1115_ADDRESS1,     // ads_address
+            GAIN_TWOTHIRDS,       // ads_gain
+            _I2C_SDA,             // i2c_sda
+            _I2C_SCL,             // i2c_scl
+            i,                    // ads_channel
+            _MIN_SENSOR_VOLTS[i], // volts at ZERO PSI
+            _MAX_SENSOR_VOLTS[i], // volts at MAX PSI
+            _MAX_PSIS[i],         // MAX PSI sensor can read
+            _RELAY_PINS[i]);      // relay pin
     }
 
     // Webserver
@@ -149,10 +150,10 @@ void publishData()
     message["memory"]["Output_memory_size"] = message.memoryUsage();
 
     // print to serial to be read by pi
-    serializeJson(message, Serial);
+    // serializeJson(message, Serial);
 
     // pretty print for debug
-    // serializeJsonPretty(message, Serial);
+    serializeJsonPretty(message, Serial);
 
     // print to serial and publish to brewblox over MQTT
     // serializeJsonPretty(message, Serial);

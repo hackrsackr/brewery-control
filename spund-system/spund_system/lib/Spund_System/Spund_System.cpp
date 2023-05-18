@@ -16,12 +16,13 @@ void Spund_System::begin(
     uint8_t i2c_sda,
     uint8_t i2c_scl,
     uint8_t ads_chan,
-    double offset_vs,
-    uint8_t max_unit,
+    double min_vs,
+    double max_vs,
+    double max_unit,
     uint8_t vent_pin)
 {
     _ps = new ADS_Pressure_Sensor();
-    _ps->begin(ads_addr, ads_gain, i2c_sda, i2c_scl, ads_chan, offset_vs, max_unit);
+    _ps->begin(ads_addr, ads_gain, i2c_sda, i2c_scl, ads_chan, min_vs, max_vs, max_unit);
 
     _re = new Relay();
     _re->begin(vent_pin);
@@ -62,7 +63,7 @@ double Spund_System::computeVols()
 
 double Spund_System::test_carb()
 {
-    // if (vols > vols_setpoint && _ps->computePSI() > getPSISetpoint())
+    // if (vols > vols_setpoint && psi > psi_setpoint)
     if (vols > vols_setpoint)
     {
         _re->openRelay();
