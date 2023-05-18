@@ -30,7 +30,7 @@ void Spund_System::begin(
 
 double Spund_System::getVolts()
 {
-    return _ps->readVolts();
+    return _ps->getADSVolts();
 }
 
 double Spund_System::getPSI()
