@@ -5,10 +5,10 @@
 #define _PASS SECRET_PASS
 #define _MQTTHOST "192.168.1.2"
 #define _MQTTPORT 1883
-#define _CLIENTID "flow-meters"
-#define _PUBTOPIC "brewcast/history/flow-meters"
-// #define _CLIENTID "flow-meters-edge"
-// #define _PUBTOPIC "brewcast/history/flow-meters-edge"
+// #define _CLIENTID "flow-meters"
+// #define _PUBTOPIC "brewcast/history/flow-meters"
+#define _CLIENTID "flow-meters-TEST"
+#define _PUBTOPIC "brewcast/history/flow-meters-TEST"
 
 // Flowmeter setup
 // Names
@@ -26,9 +26,11 @@
 // f = 23*60-(23*3) = 1311 bits per liter
 // 1311/60 = 21.85
 #define _YF_S302 21.85
+
 // f = Q*32 32*60 = 1920 bits per liter
 // 1920 / 60 = 32.00
 #define _YFS402B 32.00
+
 // 596 bits per liter 596/60 = 9.93.
 // correction_factor = .95 * 9.93 = 9.4335
 // #define _SS_FLOW 9.4335
