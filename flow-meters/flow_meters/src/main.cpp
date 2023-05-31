@@ -49,7 +49,7 @@ void initWifi()
     delay(500);
     Serial.println("connecting..");
     failed_connections++;
-    if (failed_connections > 20)
+    if (failed_connections > 10)
     {
       Serial.println("restarting..");
       ESP.restart();
