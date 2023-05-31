@@ -1,7 +1,7 @@
 #include "ArduinoJson.h"
 #include "EspMQTTClient.h"
 
-#include "FlowMeter.hpp"
+#include "FlowMeter/flowmeter.hpp"
 #include "flow_config.hpp"
 
 EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);

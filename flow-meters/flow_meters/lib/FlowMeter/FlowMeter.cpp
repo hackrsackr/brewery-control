@@ -1,16 +1,15 @@
 #include <Arduino.h>
 
-#include "flow_config.hpp"
-#include "FlowMeter/FlowMeter.hpp"
+#include "FlowMeter.hpp"
 
-FlowMeter::FlowMeter(int sp, std::string nm, float cf)
+FlowMeter::FlowMeter(int sp, std::string nm, double cf)
 {
     sensor_pin = sp;
     name = nm;
     cal_factor = cf;
 }
 
-FlowMeter::FlowMeter(int sp, std::string nm, float cf, float cr)
+FlowMeter::FlowMeter(int sp, std::string nm, double cf, double cr)
 {
     sensor_pin = sp;
     name = nm;
@@ -22,10 +21,10 @@ void FlowMeter::reset_total() { total_mLs = 0; }
 
 void FlowMeter::set_sensor_pin(uint8_t pin) { sensor_pin = pin; }
 
-void FlowMeter::set_calibration_factor(float cal) { cal_factor = cal; }
-// void FlowMeter::set_correction_factor(float cor) { cor_factor = cor; }
+void FlowMeter::set_calibration_factor(double cal) { cal_factor = cal; }
+void FlowMeter::set_correction_factor(double cor) { cor_factor = cor; }
 
-float FlowMeter::get_flow_rate()
+double FlowMeter::get_flow_rate()
 {
     flow_rate = 1000.0 / (millis() - old_time) * pulse_count / cal_factor;
 

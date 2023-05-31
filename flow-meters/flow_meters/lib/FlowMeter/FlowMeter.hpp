@@ -1,7 +1,5 @@
 #pragma once
 
-#include "flow_config.hpp"
-
 class FlowMeter
 {
 public:

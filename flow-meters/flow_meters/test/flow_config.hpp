@@ -1,11 +1,9 @@
-#pragma once
-
 #include "secrets.h"
 
 // Network setup
 #define _SSID SECRET_SSID
 #define _PASS SECRET_PASS
-#define _MQTTHOST "192.168.1.6"
+#define _MQTTHOST "192.168.1.2"
 #define _MQTTPORT 1883
 // #define _CLIENTID "flow-meters"
 // #define _PUBTOPIC "brewcast/history/flow-meters"
@@ -39,5 +37,5 @@
 #define _SS_FLOW 9.93
 
 // Correction Factors
-#define _CORR1 1.00
-#define _CORR2 1.00
+#define _CORR1 .95
+#define _CORR2 .95
