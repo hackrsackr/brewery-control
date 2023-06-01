@@ -16,6 +16,11 @@
 std::array<Spund_System, _NUMBER_OF_SPUNDERS> spund_arr;
 EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
 AsyncWebServer server(80);
+StaticJsonDocument<4000> input;
+
+void initWiFi();
+void onConnectionEstablished();
+void publishData();
 
 void setup(void)
 {
@@ -23,21 +28,7 @@ void setup(void)
     client.setMaxPacketSize(4096);
     client.enableOTA();
 
-    WiFi.begin(_SSID, _PASS);
-    uint8_t failed_connections = 0;
-    while (WiFi.status() != WL_CONNECTED)
-    {
-        delay(500);
-        Serial.println("connecting..");
-        failed_connections++;
-        if (failed_connections > 10)
-        {
-            Serial.println("restarting..");
-            ESP.restart();
-        }
-    }
-    Serial.print("Connected to ");
-    Serial.println(WiFi.localIP());
+    initWiFi();
 
     // Initialize each Spunder in spund_arr
     for (uint8_t i = 0; i < _NUMBER_OF_SPUNDERS; ++i)
@@ -86,46 +77,88 @@ void setup(void)
     server.begin();
 }
 
+void loop(void)
+{
+    client.loop();
+}
+
+void initWiFi()
+{
+    WiFi.disconnect(true);
+    delay(1000);
+    WiFi.begin(_SSID, _PASS);
+    uint8_t failed_connections = 0;
+    while (WiFi.status() != WL_CONNECTED)
+    {
+        delay(500);
+        Serial.println("connecting..");
+        failed_connections++;
+        if (failed_connections > 10)
+        {
+            Serial.println("restarting..");
+            ESP.restart();
+        }
+    }
+    Serial.print("Connected to ");
+    Serial.println(WiFi.localIP());
+}
+
 void onConnectionEstablished()
 {
     client.subscribe(_SUBTOPIC, [](const String &payload)
                      {
-        // Serial.println(payload);
-        StaticJsonDocument<4000> input;
-        deserializeJson(input, payload);
-
-        StaticJsonDocument<1000> message;
-        message["key"] = _CLIENTID;
-
-        for (uint8_t i = 0; i < _NUMBER_OF_SPUNDERS; ++i)
-        {
-            spund_arr[i].tempC = input["data"][_MQTT_FIELDS[i]]["value[degC]"];
-            spund_arr[i].tempF = spund_arr[i].tempC * 1.8 + 32;
-            spund_arr[i].vols_setpoint = _DESIRED_VOLS[i];
-
-            message["data"][_SPUNDER_NAMES[i]]["TempC"] = spund_arr[i].tempC;
-            message["data"][_SPUNDER_NAMES[i]]["Volts"] = spund_arr[i].getVolts();
-            message["data"][_SPUNDER_NAMES[i]]["PSI"] = spund_arr[i].getPSI();
-            message["data"][_SPUNDER_NAMES[i]]["PSI_setpoint"] = spund_arr[i].computePSISetpoint();
-            message["data"][_SPUNDER_NAMES[i]]["Vols_setpoint"] = spund_arr[i].vols_setpoint;
-            message["data"][_SPUNDER_NAMES[i]]["Vols"] = spund_arr[i].computeVols();
-            message["data"][_SPUNDER_NAMES[i]]["Minutes_since_vent"] = spund_arr[i].test_carb();
-        }
-
-        message["data"]["memory"]["Input_memory_size"] = input.memoryUsage();
-        message["data"]["memory"]["Output_memory_size"] = message.memoryUsage();
-
-        serializeJsonPretty(message, Serial);
-        Serial.println("");
-
-        client.executeDelayed(5000, [&message]()
-                              { 
-                                client.publish(_PUBTOPIC, message.as<String>()); 
-                                // serializeJson(message, Serial);
-                              }); });
+    // Serial.println(payload);
+    deserializeJson(input, payload);
+    for (uint8_t i = 0; i < _NUMBER_OF_SPUNDERS; ++i)
+    {
+        spund_arr[i].tempC = input["data"][_MQTT_FIELDS[i]]["value[degC]"];
+        spund_arr[i].tempF = spund_arr[i].tempC * 1.8 + 32;
+        spund_arr[i].vols_setpoint = _DESIRED_VOLS[i];
+    }
+    publishData(); });
 }
 
-void loop(void)
+void publishData()
 {
-    client.loop();
+    StaticJsonDocument<1000> message;
+
+    if (!client.isConnected())
+    {
+        ESP.restart();
+    }
+
+    for (uint8_t i = 0; i < _NUMBER_OF_SPUNDERS; ++i)
+    {
+        if (!spund_arr[i].tempC)
+        {
+            Serial.println(" no temp reading");
+            continue;
+        }
+        else
+        {
+            message[_SPUNDER_NAMES[i]]["TempC"] = spund_arr[i].tempC;
+            message[_SPUNDER_NAMES[i]]["Volts"] = spund_arr[i].getVolts();
+            message[_SPUNDER_NAMES[i]]["PSI"] = spund_arr[i].getPSI();
+            message[_SPUNDER_NAMES[i]]["PSI_setpoint"] = spund_arr[i].computePSISetpoint();
+            message[_SPUNDER_NAMES[i]]["Vols_setpoint"] = spund_arr[i].vols_setpoint;
+            message[_SPUNDER_NAMES[i]]["Vols"] = spund_arr[i].computeVols();
+            message[_SPUNDER_NAMES[i]]["Minutes_since_vent"] = spund_arr[i].test_carb();
+        }
+    }
+
+    message["memory"]["Input_memory_size"] = input.memoryUsage();
+    message["memory"]["Output_memory_size"] = message.memoryUsage();
+
+    // print to serial to be read by pi
+    serializeJson(message, Serial);
+    Serial.println("");
+
+    // pretty print for debug
+    serializeJsonPretty(message, Serial);
+    Serial.println("");
+
+    // publish to brewblox over MQTT
+    // client.publish(_PUBTOPIC, message.as<String>());
+
+    delay(5000);
 }

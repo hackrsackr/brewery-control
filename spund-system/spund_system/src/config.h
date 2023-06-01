@@ -23,11 +23,6 @@
 #define _SUBTOPIC "brewcast/history/spark-two"
 #define _PUBTOPIC "brewcast/history/spund-system"
 
-// #define _MQTTHOST "192.168.1.6"
-// #define _MQTTPORT 1883
-// #define _CLIENTID "spund-system-dev"
-// #define _SUBTOPIC "brewcast/history/spark-dev"
-// #define _PUBTOPIC "brewcast/history/spund-system-dev"
 ///////////////////////////// SPUNDER CONFIG ///////////////////////////////////
 
 // Names
@@ -53,10 +48,10 @@ std::array<const uint8_t, _NUMBER_OF_SPUNDERS> _RELAY_PINS = {
 
 // Brewblox names of temps to request for each spunder mqtt_temp_field
 std::array<String, _NUMBER_OF_SPUNDERS> _MQTT_FIELDS = {
-    "TempSensor-1",
-    "TempSensor-1",
-    "TempSensor-1",
-    "TempSensor-1"};
+    "TEMP_blueBeer",
+    "TEMP_orangeBeer",
+    "TEMP_ambientRoom",
+    "TEMP_ambientRoom"};
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -78,7 +73,7 @@ std::array<const double, _NUMBER_OF_SPUNDERS> _MAX_SENSOR_VOLTS = {
 
 // Max rated pressure in PSI
 std::array<const double, _NUMBER_OF_SPUNDERS> _MAX_PSIS = {
-    60.0,
+    30.0,
     60.0,
     60.0,
     60.0};
