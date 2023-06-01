@@ -2,5 +2,6 @@
 .vscode
 /src/secrets.h*
 src/config.h*
+.vscode/launch.json
 # .vscode/c_cpp_properties.json
 platformio.ini
