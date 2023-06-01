@@ -2,6 +2,8 @@
 
 #include <array>
 
+// #include "ArduinoJson.h"
+
 #include "secrets.h"
 
 #define _NUMBER_OF_SPUNDERS 4
@@ -11,17 +13,17 @@
 #define _PASS SECRET_PASS
 
 // I2C Pins
-#define _I2C_SCL 22 // default
-#define _I2C_SDA 21 // default
-// #define _I2C_SCL 25
-// #define _I2C_SDA 26
+// #define _I2C_SCL 22 // default
+// #define _I2C_SDA 21 // default
+#define _I2C_SCL 25
+#define _I2C_SDA 26
 
 // MQTT Setup
-#define _MQTTHOST "192.168.1.2"
+#define _MQTTHOST "192.168.1.6"
 #define _MQTTPORT 1883
-#define _CLIENTID "spund-system"
-#define _SUBTOPIC "brewcast/history/spark-two"
-#define _PUBTOPIC "brewcast/history/spund-system"
+#define _CLIENTID "spund-dev"
+#define _SUBTOPIC "brewcast/history/spark-dev"
+#define _PUBTOPIC "brewcast/history/spund-dev"
 
 ///////////////////////////// SPUNDER CONFIG ///////////////////////////////////
 
@@ -48,11 +50,10 @@ std::array<const uint8_t, _NUMBER_OF_SPUNDERS> _RELAY_PINS = {
 
 // Brewblox names of temps to request for each spunder mqtt_temp_field
 std::array<String, _NUMBER_OF_SPUNDERS> _MQTT_FIELDS = {
-    "TEMP_blueBeer",
-    "TEMP_orangeBeer",
-    "TEMP_ambientRoom",
-    "TEMP_ambientRoom"};
-
+    "TempSensor-1",
+    "TempSensor-1",
+    "TempSensor-1",
+    "TempSensor-1"};
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////// PRESSURE_SENSOR CONFIG //////////////////////////////
@@ -73,7 +74,7 @@ std::array<const double, _NUMBER_OF_SPUNDERS> _MAX_SENSOR_VOLTS = {
 
 // Max rated pressure in PSI
 std::array<const double, _NUMBER_OF_SPUNDERS> _MAX_PSIS = {
-    30.0,
+    60.0,
     60.0,
     60.0,
     60.0};
