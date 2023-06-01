@@ -5,12 +5,14 @@
 // Network setup
 #define _SSID SECRET_SSID
 #define _PASS SECRET_PASS
-#define _MQTTHOST "192.168.1.6"
+#define _MQTTHOST "192.168.1.2"
 #define _MQTTPORT 1883
-// #define _CLIENTID "flow-meters"
-// #define _PUBTOPIC "brewcast/history/flow-meters"
-#define _CLIENTID "flow-meters-TEST"
-#define _PUBTOPIC "brewcast/history/flow-meters-TEST"
+#define _CLIENTID "flow-meters"
+#define _PUBTOPIC "brewcast/history/flow-meters"
+
+// #define _MQTTHOST "192.168.1.6"
+// #define _CLIENTID "flow-meters-TEST"
+// #define _PUBTOPIC "brewcast/history/flow-meters-TEST"
 
 // Flowmeter setup
 // Names
