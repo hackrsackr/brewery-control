@@ -21,9 +21,9 @@
 // MQTT Setup
 #define _MQTTHOST "192.168.1.6"
 #define _MQTTPORT 1883
-#define _CLIENTID "spund-system-dev"
+#define _CLIENTID "spund-dev"
 #define _SUBTOPIC "brewcast/history/spark-dev"
-#define _PUBTOPIC "brewcast/history/spund-system-dev"
+#define _PUBTOPIC "brewcast/history/spund-dev"
 
 ///////////////////////////// SPUNDER CONFIG ///////////////////////////////////
 
