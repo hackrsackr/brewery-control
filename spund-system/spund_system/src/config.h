@@ -11,10 +11,10 @@
 #define _PASS SECRET_PASS
 
 // I2C Pins
-// #define _I2C_SCL 22 // default
-// #define _I2C_SDA 21 // default
-#define _I2C_SCL 25
-#define _I2C_SDA 26
+#define _I2C_SCL 22 // default
+#define _I2C_SDA 21 // default
+// #define _I2C_SCL 25
+// #define _I2C_SDA 26
 
 // MQTT Setup
 #define _MQTTHOST "192.168.1.2"
@@ -22,6 +22,7 @@
 #define _CLIENTID "spund-system"
 #define _SUBTOPIC "brewcast/history/spark-two"
 #define _PUBTOPIC "brewcast/history/spund-system"
+
 // #define _MQTTHOST "192.168.1.6"
 // #define _MQTTPORT 1883
 // #define _CLIENTID "spund-system-dev"
