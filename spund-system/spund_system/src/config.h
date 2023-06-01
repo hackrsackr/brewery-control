@@ -52,10 +52,11 @@ std::array<const uint8_t, _NUMBER_OF_SPUNDERS> _RELAY_PINS = {
 
 // Brewblox names of temps to request for each spunder mqtt_temp_field
 std::array<String, _NUMBER_OF_SPUNDERS> _MQTT_FIELDS = {
-    "TEMP_blueBeer",
-    "TEMP_orangeBeer",
-    "TEMP_ambientRoom",
-    "TEMP_ambientRoom"};
+    "TempSensor-1",
+    "TempSensor-1",
+    "TempSensor-1",
+    "TempSensor-1"};
+
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////// PRESSURE_SENSOR CONFIG //////////////////////////////

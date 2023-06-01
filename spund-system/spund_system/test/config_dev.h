@@ -2,6 +2,8 @@
 
 #include <array>
 
+#include "ArduinoJson.h"
+
 #include "secrets.h"
 
 #define _NUMBER_OF_SPUNDERS 4
@@ -17,16 +19,12 @@
 #define _I2C_SDA 26
 
 // MQTT Setup
-// #define _MQTTHOST "192.168.1.2"
-// #define _MQTTPORT 1883
-// #define _CLIENTID "spund-system"
-// #define _SUBTOPIC "brewcast/history/spark-two"
-// #define _PUBTOPIC "brewcast/history/spund-system"
 #define _MQTTHOST "192.168.1.6"
 #define _MQTTPORT 1883
 #define _CLIENTID "spund-system-dev"
 #define _SUBTOPIC "brewcast/history/spark-dev"
 #define _PUBTOPIC "brewcast/history/spund-system-dev"
+
 ///////////////////////////// SPUNDER CONFIG ///////////////////////////////////
 
 // Names

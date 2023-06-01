@@ -6,13 +6,9 @@
 
 #include "config.h"
 
-ADS_Sensor::ADS_Sensor()
-{
-}
+ADS_Sensor::ADS_Sensor() {}
 
-ADS_Sensor::~ADS_Sensor()
-{
-}
+ADS_Sensor::~ADS_Sensor() {}
 
 void ADS_Sensor::begin(uint8_t address, adsGain_t gain, uint8_t sda, uint8_t scl, uint8_t ads_chan)
 {
