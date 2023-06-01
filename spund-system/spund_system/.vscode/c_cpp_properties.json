@@ -1,27 +1,32 @@
+//
+// !!! WARNING !!! AUTO-GENERATED FILE!
+// PLEASE DO NOT MODIFY IT AND USE "platformio.ini":
+// https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags
+//
 {
     "configurations": [
         {
             "name": "PlatformIO",
             "includePath": [
-                "/home/rob/brewery-control/spund-system/spund_system/external_libs/**",
+                "/home/rob/brewery-control/spund-system/spund_system/include",
                 "/home/rob/brewery-control/spund-system/spund_system/src",
                 "/home/rob/brewery-control/spund-system/spund_system/lib/Spund_System",
                 "/home/rob/brewery-control/spund-system/spund_system/lib/Relay",
                 "/home/rob/brewery-control/spund-system/spund_system/lib/ADS_Sensor",
-                "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/esp32doit-espduino/Adafruit_ADS1X15",
-                "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/esp32doit-espduino/Adafruit BusIO",
+                "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/espduino/Adafruit ADS1X15",
+                "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/espduino/Adafruit BusIO",
                 "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src",
-                "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/esp32doit-espduino/ESP Async WebServer/src",
-                "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/esp32doit-espduino/AsyncTCP/src",
-                "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/esp32doit-espduino/EspMQTTClient/src",
+                "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/espduino/ESP Async WebServer/src",
+                "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/espduino/AsyncTCP/src",
+                "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/espduino/EspMQTTClient/src",
                 "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/WebServer/src",
                 "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/FS/src",
                 "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/ArduinoOTA/src",
                 "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/Update/src",
                 "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/ESPmDNS/src",
                 "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src",
-                "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/esp32doit-espduino/PubSubClient/src",
-                "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/esp32doit-espduino/ArduinoJson/src",
+                "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/espduino/PubSubClient/src",
+                "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/espduino/ArduinoJson/src",
                 "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/SPI/src",
                 "/home/rob/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/newlib/platform_include",
                 "/home/rob/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/freertos/include",
@@ -238,30 +243,31 @@
                 "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/Ticker/src",
                 "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/USB/src",
                 "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/WiFiClientSecure/src",
-                "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/WiFiProv/src"
+                "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/WiFiProv/src",
+                ""
             ],
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "/home/rob/brewery-control/spund-system/spund_system/external_libs/**",
+                    "/home/rob/brewery-control/spund-system/spund_system/include",
                     "/home/rob/brewery-control/spund-system/spund_system/src",
                     "/home/rob/brewery-control/spund-system/spund_system/lib/Spund_System",
                     "/home/rob/brewery-control/spund-system/spund_system/lib/Relay",
                     "/home/rob/brewery-control/spund-system/spund_system/lib/ADS_Sensor",
-                    "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/esp32doit-espduino/Adafruit_ADS1X15",
-                    "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/esp32doit-espduino/Adafruit BusIO",
+                    "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/espduino/Adafruit ADS1X15",
+                    "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/espduino/Adafruit BusIO",
                     "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src",
-                    "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/esp32doit-espduino/ESP Async WebServer/src",
-                    "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/esp32doit-espduino/AsyncTCP/src",
-                    "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/esp32doit-espduino/EspMQTTClient/src",
+                    "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/espduino/ESP Async WebServer/src",
+                    "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/espduino/AsyncTCP/src",
+                    "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/espduino/EspMQTTClient/src",
                     "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/WebServer/src",
                     "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/FS/src",
                     "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/ArduinoOTA/src",
                     "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/Update/src",
                     "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/ESPmDNS/src",
                     "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src",
-                    "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/esp32doit-espduino/PubSubClient/src",
-                    "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/esp32doit-espduino/ArduinoJson/src",
+                    "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/espduino/PubSubClient/src",
+                    "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/espduino/ArduinoJson/src",
                     "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/SPI/src",
                     "/home/rob/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/newlib/platform_include",
                     "/home/rob/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/freertos/include",
@@ -478,7 +484,8 @@
                     "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/Ticker/src",
                     "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/USB/src",
                     "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/WiFiClientSecure/src",
-                    "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/WiFiProv/src"
+                    "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/WiFiProv/src",
+                    ""
                 ]
             },
             "defines": [
@@ -507,9 +514,7 @@
             "compilerArgs": [
                 "-mlongcalls",
                 ""
-            ],
-            "intelliSenseMode": "${default}",
-            "mergeConfigurations": false
+            ]
         }
     ],
     "version": 4

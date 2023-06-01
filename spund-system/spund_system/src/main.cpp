@@ -1,4 +1,4 @@
-// #include <Arduino.h>
+#include <Arduino.h>
 
 #include <ArduinoJson.h>
 #include <EspMQTTClient.h>
@@ -150,7 +150,8 @@ void publishData()
     message["memory"]["Output_memory_size"] = message.memoryUsage();
 
     // print to serial to be read by pi
-    // serializeJson(message, Serial);
+    serializeJson(message, Serial);
+    Serial.println("");
 
     // pretty print for debug
     serializeJsonPretty(message, Serial);
