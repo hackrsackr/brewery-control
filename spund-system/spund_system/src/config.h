@@ -2,8 +2,6 @@
 
 #include <array>
 
-#include <ArduinoJson.h>
-
 #include "secrets.h"
 
 #define _NUMBER_OF_SPUNDERS 4
@@ -36,10 +34,10 @@ std::array<const String, _NUMBER_OF_SPUNDERS> _SPUNDER_NAMES = {
 
 // Desired volumes of carbonation
 std::array<double, _NUMBER_OF_SPUNDERS> _DESIRED_VOLS = {
-    2.20,
-    2.20,
-    2.20,
-    2.20};
+    3.00,
+    3.00,
+    3.00,
+    3.00};
 
 // ESP32 pins attached to relays for venting
 std::array<const uint8_t, _NUMBER_OF_SPUNDERS> _RELAY_PINS = {
@@ -57,7 +55,6 @@ std::array<String, _NUMBER_OF_SPUNDERS> _MQTT_FIELDS = {
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////// PRESSURE_SENSOR CONFIG //////////////////////////////
-// #define _MAX_SENSOR_VOLTS 4.5
 
 // Voltage at ZERO_PSI
 std::array<const double, _NUMBER_OF_SPUNDERS> _MIN_SENSOR_VOLTS = {

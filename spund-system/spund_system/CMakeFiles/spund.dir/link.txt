@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/spund.dir/main.cpp.o -o spund 

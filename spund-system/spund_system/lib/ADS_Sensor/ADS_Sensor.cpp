@@ -1,30 +1,38 @@
-#include <Arduino.h>
-
+// #include <Arduino.h>
+#include <Wire.h>
+#include <memory>
 #include "ADS_Sensor.h"
+#include <Adafruit_ADS1X15.h>
 
 #include "config.h"
 
-ADS_Sensor::ADS_Sensor() {}
+ADS_Sensor::ADS_Sensor()
+{
+}
+
+ADS_Sensor::~ADS_Sensor()
+{
+}
 
 void ADS_Sensor::begin(uint8_t address, adsGain_t gain, uint8_t sda, uint8_t scl, uint8_t ads_chan)
 {
-    _ads = new Adafruit_ADS1115();
+    s_ads = std::make_shared<Adafruit_ADS1115>();
     Wire.end();
     Wire.setPins(sda, scl);
     Wire.begin();
-    _ads->begin(address);
-    _ads->setGain(gain);
+    s_ads->begin(address);
+    s_ads->setGain(gain);
     ads_channel = ads_chan;
 }
 
 uint16_t ADS_Sensor::readADC()
 {
-    return _ads->readADC_SingleEnded(ads_channel);
+    return s_ads->readADC_SingleEnded(ads_channel);
 }
 
 double ADS_Sensor::readVolts()
 {
-    return _ads->computeVolts(_ads->readADC_SingleEnded(ads_channel));
+    return s_ads->computeVolts(s_ads->readADC_SingleEnded(ads_channel));
 }
 
 // ########################################
@@ -44,6 +52,7 @@ void ADS_Pressure_Sensor::begin(uint8_t ads_address, adsGain_t ads_gain, uint8_t
     volt_max = max_vs;
     psi_max = max_unit;
 }
+
 double ADS_Pressure_Sensor::getADSVolts()
 {
     return readVolts();

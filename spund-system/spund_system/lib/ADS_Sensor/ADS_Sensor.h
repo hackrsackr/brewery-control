@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Adafruit_ADS1X15.h>
+#include <memory>
 
-#include "config.h"
+#include <Adafruit_ADS1X15.h>
 
 #define ADS1115_ADDRESS1 (0x48) // ADDR -> GND
 #define ADS1115_ADDRESS2 (0x49) // ADDR -> VCC
@@ -18,6 +18,7 @@ protected:
 
 public:
     ADS_Sensor();
+    ~ADS_Sensor();
 
     void begin(
         uint8_t address,
@@ -27,9 +28,9 @@ public:
         uint8_t ads_chan);
 
 private:
-    Adafruit_ADS1115 *_ads;
+    std::shared_ptr<Adafruit_ADS1115> s_ads;
+    // Adafruit_ADS1115 *_ads;
     uint8_t ads_channel;
-
     uint16_t readADC();
 };
 

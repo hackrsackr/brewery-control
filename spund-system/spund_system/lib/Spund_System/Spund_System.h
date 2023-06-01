@@ -3,20 +3,16 @@
 #include "ADS_Sensor.h"
 #include "Relay.h"
 
-#include "config.h"
-
 class Spund_System
 {
 public:
     uint32_t time_of_last_vent;
 
-    // double psi;
     double psi_setpoint;
     double tempC;
     double tempF;
     double vols;
     double vols_setpoint;
-    // double volts;
 
     // Constructors
     Spund_System();
@@ -46,6 +42,6 @@ public:
     double test_carb();
 
 private:
-    ADS_Pressure_Sensor *_ps;
-    Relay *_re;
+    std::shared_ptr<ADS_Pressure_Sensor> s_ps;
+    std::shared_ptr<Relay> s_re;
 };

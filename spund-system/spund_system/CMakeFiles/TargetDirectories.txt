@@ -1,0 +1,3 @@
+/home/rob/brewery-control/spund-system/spund_system/CMakeFiles/spund.dir
+/home/rob/brewery-control/spund-system/spund_system/CMakeFiles/edit_cache.dir
+/home/rob/brewery-control/spund-system/spund_system/CMakeFiles/rebuild_cache.dir
