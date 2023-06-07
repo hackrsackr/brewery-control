@@ -60,8 +60,8 @@ public:
 class ADS_Level_Sensor : public ADS_Pressure_Sensor
 {
 public:
-    uint8_t volt_min;
-    uint8_t volt_max;
+    double volt_min;
+    double volt_max;
     double liters_max;
 
     ADS_Level_Sensor();

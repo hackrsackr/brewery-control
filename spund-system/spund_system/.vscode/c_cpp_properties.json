@@ -8,7 +8,7 @@
         {
             "name": "PlatformIO",
             "includePath": [
-                "/home/rob/brewery-control/spund-system/spund_system/external_libs",
+                "/home/rob/brewery-control/spund-system/spund_system/include",
                 "/home/rob/brewery-control/spund-system/spund_system/src",
                 "/home/rob/brewery-control/spund-system/spund_system/lib/Spund_System",
                 "/home/rob/brewery-control/spund-system/spund_system/lib/Relay",
@@ -219,6 +219,8 @@
                 "/home/rob/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/dio_qspi/include",
                 "/home/rob/.platformio/packages/framework-arduinoespressif32/cores/esp32",
                 "/home/rob/.platformio/packages/framework-arduinoespressif32/variants/doitESPduino32",
+                "/home/rob/brewery-control/spund-system/spund_system/lib/Pressure_Sensor",
+                "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/espduino/Unity/src",
                 "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/AsyncUDP/src",
                 "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/BLE/src",
                 "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/BluetoothSerial/src",
@@ -249,7 +251,7 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "/home/rob/brewery-control/spund-system/spund_system/external_libs",
+                    "/home/rob/brewery-control/spund-system/spund_system/include",
                     "/home/rob/brewery-control/spund-system/spund_system/src",
                     "/home/rob/brewery-control/spund-system/spund_system/lib/Spund_System",
                     "/home/rob/brewery-control/spund-system/spund_system/lib/Relay",
@@ -460,6 +462,8 @@
                     "/home/rob/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/dio_qspi/include",
                     "/home/rob/.platformio/packages/framework-arduinoespressif32/cores/esp32",
                     "/home/rob/.platformio/packages/framework-arduinoespressif32/variants/doitESPduino32",
+                    "/home/rob/brewery-control/spund-system/spund_system/lib/Pressure_Sensor",
+                    "/home/rob/brewery-control/spund-system/spund_system/.pio/libdeps/espduino/Unity/src",
                     "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/AsyncUDP/src",
                     "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/BLE/src",
                     "/home/rob/.platformio/packages/framework-arduinoespressif32/libraries/BluetoothSerial/src",
@@ -509,7 +513,7 @@
                 ""
             ],
             "cStandard": "c99",
-            "cppStandard": "c++23",
+            "cppStandard": "c++11",
             "compilerPath": "/home/rob/.platformio/packages/toolchain-xtensa-esp32/bin/xtensa-esp32-elf-gcc",
             "compilerArgs": [
                 "-mlongcalls",

@@ -1,7 +1,7 @@
 #include <Adafruit_ADS1X15.h>
 
-//Adafruit_ADS1115 ads;  /* Use this for the 16-bit version */
-Adafruit_ADS1015 ads;     /* Use this for the 12-bit version */
+Adafruit_ADS1115 ads; /* Use this for the 16-bit version */
+// Adafruit_ADS1015 ads;     /* Use this for the 12-bit version */
 
 void setup(void)
 {
@@ -24,9 +24,11 @@ void setup(void)
   // ads.setGain(GAIN_EIGHT);      // 8x gain   +/- 0.512V  1 bit = 0.25mV   0.015625mV
   // ads.setGain(GAIN_SIXTEEN);    // 16x gain  +/- 0.256V  1 bit = 0.125mV  0.0078125mV
 
-  if (!ads.begin()) {
+  if (!ads.begin())
+  {
     Serial.println("Failed to initialize ADS.");
-    while (1);
+    while (1)
+      ;
   }
 }
 
@@ -46,10 +48,26 @@ void loop(void)
   volts3 = ads.computeVolts(adc3);
 
   Serial.println("-----------------------------------------------------------");
-  Serial.print("AIN0: "); Serial.print(adc0); Serial.print("  "); Serial.print(volts0); Serial.println("V");
-  Serial.print("AIN1: "); Serial.print(adc1); Serial.print("  "); Serial.print(volts1); Serial.println("V");
-  Serial.print("AIN2: "); Serial.print(adc2); Serial.print("  "); Serial.print(volts2); Serial.println("V");
-  Serial.print("AIN3: "); Serial.print(adc3); Serial.print("  "); Serial.print(volts3); Serial.println("V");
+  Serial.print("AIN0: ");
+  Serial.print(adc0);
+  Serial.print("  ");
+  Serial.print(volts0);
+  Serial.println("V");
+  Serial.print("AIN1: ");
+  Serial.print(adc1);
+  Serial.print("  ");
+  Serial.print(volts1);
+  Serial.println("V");
+  Serial.print("AIN2: ");
+  Serial.print(adc2);
+  Serial.print("  ");
+  Serial.print(volts2);
+  Serial.println("V");
+  Serial.print("AIN3: ");
+  Serial.print(adc3);
+  Serial.print("  ");
+  Serial.print(volts3);
+  Serial.println("V");
 
   delay(1000);
 }

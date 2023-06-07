@@ -2,7 +2,7 @@
 
 #include <array>
 
-// #include "ArduinoJson.h"
+#include "ArduinoJson.h"
 
 #include "secrets.h"
 

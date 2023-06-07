@@ -2,11 +2,26 @@
 #include "Relay.h"
 #include "Spund_System.h"
 
-#include "config.h"
-
 Spund_System::Spund_System() {}
 
-Spund_System::~Spund_System() {}
+Spund_System::Spund_System(
+    uint8_t ads_addr,
+    adsGain_t ads_gain,
+    uint8_t i2c_sda,
+    uint8_t i2c_scl,
+    uint8_t ads_chan,
+    double min_vs,
+    double max_vs,
+    double max_unit,
+    uint8_t vent_pin)
+{
+    time_of_last_vent = millis();
+    s_ps = std::make_shared<ADS_Pressure_Sensor>();
+    s_ps->begin(ads_addr, ads_gain, i2c_sda, i2c_scl, ads_chan, min_vs, max_vs, max_unit);
+
+    s_re = std::make_shared<Relay>();
+    s_re->begin(vent_pin);
+}
 
 void Spund_System::begin(
     uint8_t ads_addr,
@@ -19,6 +34,7 @@ void Spund_System::begin(
     double max_unit,
     uint8_t vent_pin)
 {
+    time_of_last_vent = millis();
 
     s_ps = std::make_shared<ADS_Pressure_Sensor>();
     s_ps->begin(ads_addr, ads_gain, i2c_sda, i2c_scl, ads_chan, min_vs, max_vs, max_unit);
