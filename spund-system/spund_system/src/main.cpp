@@ -121,7 +121,9 @@ void onConnectionEstablished()
                 client.publish(_PUBTOPIC, message.as<String>());
                 serializeJsonPretty(message, Serial);
             });
-        } else {
+        } 
+        if (!_PUBLISHMQTT) 
+        {
             serializeJson(message["data"], Serial);
             Serial.println("");
         } });
