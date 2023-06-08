@@ -6,22 +6,22 @@ Spund_System::Spund_System() {}
 
 Spund_System::Spund_System(Spund_Settings config)
 {
-    settings = config;
+    // settings = config;
 
-    spunder_id = settings.spunder_id;
-    ads_addr = settings.ads_addr;
-    ads_gain = settings.ads_gain;
-    desired_vols = settings.desired_vols;
-    relay_pin = settings.relay_pin;
-    temp_sensor_id = settings.temp_sensor_id;
-    ads_channel = settings.ads_channel;
-    min_sensor_volts = settings.min_sensor_volts;
-    max_sensor_volts = settings.max_sensor_volts;
-    max_sensor_psi = settings.max_sensor_psi;
-    server_setpoint_input = settings.server_setpoint_input;
-    server_sensor_input = settings.server_sensor_input;
-    i2c_sda = settings.i2c_sda;
-    i2c_scl = settings.i2c_scl;
+    spunder_id = config.spunder_id;
+    ads_addr = config.ads_addr;
+    ads_gain = config.ads_gain;
+    desired_vols = config.desired_vols;
+    relay_pin = config.relay_pin;
+    temp_sensor_id = config.temp_sensor_id;
+    ads_channel = config.ads_channel;
+    min_sensor_volts = config.min_sensor_volts;
+    max_sensor_volts = config.max_sensor_volts;
+    max_sensor_psi = config.max_sensor_psi;
+    server_setpoint_input = config.server_setpoint_input;
+    server_sensor_input = config.server_sensor_input;
+    i2c_sda = config.i2c_sda;
+    i2c_scl = config.i2c_scl;
 
     server_setpoint = String(desired_vols);
     server_sensor = temp_sensor_id;
@@ -42,24 +42,24 @@ Spund_System::Spund_System(Spund_Settings config)
     s_re->begin(relay_pin);
 }
 
-Spund_System::Spund_System(
-    uint8_t ads_addr,
-    adsGain_t ads_gain,
-    uint8_t i2c_sda,
-    uint8_t i2c_scl,
-    uint8_t ads_chan,
-    double min_vs,
-    double max_vs,
-    double max_unit,
-    uint8_t vent_pin)
-{
-    time_of_last_vent = millis();
-    s_ps = std::make_shared<ADS_Pressure_Sensor>();
-    s_ps->begin(ads_addr, ads_gain, i2c_sda, i2c_scl, ads_chan, min_vs, max_vs, max_unit);
+// Spund_System::Spund_System(
+//     uint8_t ads_addr,
+//     adsGain_t ads_gain,
+//     uint8_t i2c_sda,
+//     uint8_t i2c_scl,
+//     uint8_t ads_chan,
+//     double min_vs,
+//     double max_vs,
+//     double max_unit,
+//     uint8_t vent_pin)
+// {
+//     time_of_last_vent = millis();
+//     s_ps = std::make_shared<ADS_Pressure_Sensor>();
+//     s_ps->begin(ads_addr, ads_gain, i2c_sda, i2c_scl, ads_chan, min_vs, max_vs, max_unit);
 
-    s_re = std::make_shared<Relay>();
-    s_re->begin(vent_pin);
-}
+//     s_re = std::make_shared<Relay>();
+//     s_re->begin(vent_pin);
+// }
 
 void Spund_System::begin(
     uint8_t ads_addr,
@@ -116,7 +116,6 @@ double Spund_System::computeVols()
 
 double Spund_System::test_carb()
 {
-    // if (vols > desired_vols && psi > psi_setpoint)
     if (vols > desired_vols)
     {
         s_re->openRelay();

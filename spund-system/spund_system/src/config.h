@@ -23,6 +23,10 @@ false = print to serial, to be read by docker container
 */
 bool _PUBLISHMQTT = true;
 
+/*
+Config vector:
+Change all parameters here
+*/
 std::vector<Spund_Settings> _SETTINGS{
     {
         "spunder-1",        // spunder_id

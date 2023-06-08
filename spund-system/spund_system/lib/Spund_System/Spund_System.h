@@ -4,7 +4,6 @@
 #include "Relay.h"
 #include "ArduinoJson.h"
 
-// Spunder settings
 struct Spund_Settings
 {
     String spunder_id;
@@ -26,9 +25,9 @@ struct Spund_Settings
 class Spund_System
 {
 public:
-    // Spund_Syatem config
+    // Spund_System config
     String spunder_id;
-    String temp_sensor_id; 
+    String temp_sensor_id;
     double desired_vols;
 
     // ADS1115 config
@@ -47,10 +46,10 @@ public:
     double max_sensor_psi;
 
     // Webserver config
-    String server_setpoint; 
-    String server_sensor;   
+    String server_setpoint;
+    String server_sensor;
     String server_setpoint_input;
-    String server_sensor_input; 
+    String server_sensor_input;
 
     // Program variables
     uint32_t time_of_last_vent;
@@ -58,21 +57,21 @@ public:
     double tempC;
     double tempF;
     double vols;
-    Spund_Settings settings;
+    // Spund_Settings settings;
 
     // Constructors
     Spund_System();
     Spund_System(Spund_Settings config);
-    Spund_System(
-        uint8_t ads_addr,
-        adsGain_t ads_gain,
-        uint8_t i2c_sda,
-        uint8_t i2c_scl,
-        uint8_t ads_chan,
-        double min_vs,
-        double max_vs,
-        double max_unit,
-        uint8_t vent_pin);
+    // Spund_System(
+    //     uint8_t ads_addr,
+    //     adsGain_t ads_gain,
+    //     uint8_t i2c_sda,
+    //     uint8_t i2c_scl,
+    //     uint8_t ads_chan,
+    //     double min_vs,
+    //     double max_vs,
+    //     double max_unit,
+    //     uint8_t vent_pin);
 
     void begin(
         uint8_t ads_addr,
