@@ -94,27 +94,31 @@ void onConnectionEstablished()
         StaticJsonDocument<4000> input;
         deserializeJson(input, payload);
 
-        StaticJsonDocument<1000> message;
-        message["key"] = _CLIENTID;
+        StaticJsonDocument<900> data;
 
         for (auto &spunder : _SPUNDERS)
         {
             spunder->tempC = input["data"][spunder->temp_sensor_id]["value[degC]"];
             spunder->tempF = spunder->tempC * 1.8 + 32;
-            message["data"][spunder->spunder_id]["TempC"] = spunder->tempC;
-            message["data"][spunder->spunder_id]["Temp_Sensor"] = spunder->temp_sensor_id;
-            message["data"][spunder->spunder_id]["PSI"] = spunder->getPSI();
-            message["data"][spunder->spunder_id]["PSI_setpoint"] = spunder->computePSISetpoint();
-            message["data"][spunder->spunder_id]["Desired_vols"] = spunder->desired_vols;
-            message["data"][spunder->spunder_id]["Server_Sensor"] = spunder->server_sensor;
-            message["data"][spunder->spunder_id]["Vols"] = spunder->computeVols();
-            message["data"][spunder->spunder_id]["Minutes_since_vent"] = spunder->test_carb();
+            data[spunder->spunder_id]["TempC"] = spunder->tempC;
+            data[spunder->spunder_id]["Temp_Sensor"] = spunder->temp_sensor_id;
+            data[spunder->spunder_id]["PSI"] = spunder->getPSI();
+            data[spunder->spunder_id]["PSI_setpoint"] = spunder->computePSISetpoint();
+            data[spunder->spunder_id]["Desired_vols"] = spunder->desired_vols;
+            data[spunder->spunder_id]["Server_Sensor"] = spunder->server_sensor;
+            data[spunder->spunder_id]["Vols"] = spunder->computeVols();
+            data[spunder->spunder_id]["Minutes_since_vent"] = spunder->test_carb();
         }
+        serializeJson(data, Serial);
+        Serial.println("");
 
+        StaticJsonDocument<1000> message;
+        message["key"] = _CLIENTID;
+        message["data"] = data;
         message["data"]["memory"]["Input_memory_size"] = input.memoryUsage();
         message["data"]["memory"]["Output_memory_size"] = message.memoryUsage();
 
-        serializeJsonPretty(message, Serial);
+        serializeJsonPretty(message["data"], Serial);
         Serial.println("");
 
         client.executeDelayed(5000, [&message]()
