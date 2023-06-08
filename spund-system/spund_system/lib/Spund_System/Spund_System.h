@@ -4,66 +4,65 @@
 #include "Relay.h"
 #include "ArduinoJson.h"
 
-struct Settings
+// Spunder settings
+struct Spund_Settings
 {
-    // Spunder settings
-    String name;
+    String spunder_id;
+    String temp_sensor_id;
     double desired_vols;
-    uint8_t relay_pin;
-    String temp_sensor_name; // old mqtt field
-
-    // Pressure_Sensor settings
+    uint8_t ads_addr;
+    adsGain_t ads_gain;
+    uint8_t i2c_sda;
+    uint8_t i2c_scl;
     uint8_t ads_channel;
+    uint8_t relay_pin;
     double min_sensor_volts;
     double max_sensor_volts;
-    double max_psi;
-
-    // Server Config
-    String server_setpoint; //= temp_sensor_name; // old mqtt_message = old mqtt_field
-    String server_sensor;   //= temp_sensor_name; // old mqtt_message = old mqtt_field
-
+    double max_sensor_psi;
     String server_setpoint_input;
-    String server_sensor_input; // old mqtt_input
+    String server_sensor_input;
 };
 
 class Spund_System
 {
 public:
-    uint32_t time_of_last_vent;
+    // Spund_Syatem config
+    String spunder_id;
+    String temp_sensor_id; 
+    double desired_vols;
 
+    // ADS1115 config
+    uint8_t ads_addr;
+    adsGain_t ads_gain;
+    uint8_t i2c_sda;
+    uint8_t i2c_scl;
+    uint8_t ads_channel;
+
+    // Relay config
+    uint8_t relay_pin;
+
+    // Pressure_Sensor config
+    double min_sensor_volts;
+    double max_sensor_volts;
+    double max_sensor_psi;
+
+    // Webserver config
+    String server_setpoint; 
+    String server_sensor;   
+    String server_setpoint_input;
+    String server_sensor_input; 
+
+    // Program variables
+    uint32_t time_of_last_vent;
     double psi_setpoint;
     double tempC;
     double tempF;
     double vols;
-    double vols_setpoint;
+    Spund_Settings settings;
 
-    // String server_setpoint = String(vols_setpoint); //= temp_sensor_name; // old mqtt_message = old mqtt_field
-    // String server_sensor = settings.temp_sensor_name;
-
-    // struct Settings
-    // {
-    //     // Spunder settings
-    //     String name;
-    //     double desired_vols;
-    //     uint8_t relay_pin;
-    //     String temp_sensor_name; // old mqtt field
-
-    //     // Pressure_Sensor settings
-    //     uint8_t ads_channel;
-    //     double min_sensor_volts;
-    //     double max_sensor_volts;
-    //     double max_psi;
-
-    //     // Server Config
-    //     String server_setpoint; //= temp_sensor_name; // old mqtt_message = old mqtt_field
-    //     String server_sensor; //= temp_sensor_name; // old mqtt_message = old mqtt_field
-
-    //     String server_setpoint_input;
-    //     String server_sensor_input; // old mqtt_input
-    // };
-
-    // Constructor
+    // Constructors
     Spund_System();
+    Spund_System(Spund_Settings config);
     Spund_System(
         uint8_t ads_addr,
         adsGain_t ads_gain,
@@ -74,8 +73,6 @@ public:
         double max_vs,
         double max_unit,
         uint8_t vent_pin);
-
-    Settings settings;
 
     void begin(
         uint8_t ads_addr,

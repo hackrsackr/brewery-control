@@ -11,11 +11,16 @@
 #include "Relay.h"
 #include "secrets.h"
 #include "server.h"
-#include "new_config.h"
+#include "config.h"
 
 std::vector<Spund_System *> _SPUNDERS;
-EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
+
+EspMQTTClient client(SECRET_SSID, SECRET_PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
+void onConnectionEstablished();
+
 AsyncWebServer server(80);
+void notFound(AsyncWebServerRequest *request);
+String processor(const String &var);
 
 void setup(void)
 {
@@ -23,7 +28,7 @@ void setup(void)
     client.setMaxPacketSize(4096);
     client.enableOTA();
 
-    WiFi.begin(_SSID, _PASS);
+    WiFi.begin(SECRET_SSID, SECRET_PASS);
     uint8_t failed_connections = 0;
     while (WiFi.status() != WL_CONNECTED)
     {
@@ -41,26 +46,7 @@ void setup(void)
 
     for (auto &settings : _SETTINGS)
     {
-        Spund_System *s = new Spund_System(
-            ADS1115_ADDRESS1,          // ads_address
-            GAIN_TWOTHIRDS,            // ads_gain
-            _I2C_SDA,                  // i2c_sda
-            _I2C_SCL,                  // i2c_scl
-            settings.ads_channel,      // ads_channel
-            settings.min_sensor_volts, // volts at ZERO PSI
-            settings.max_sensor_volts, // volts at MAX PSI
-            settings.max_psi,          // MAX PSI sensor can read
-            settings.relay_pin);       // relay pin
-
-        s->settings.name = settings.name;
-        s->vols_setpoint = settings.desired_vols;
-        s->settings.desired_vols = settings.desired_vols;
-        s->settings.temp_sensor_name = settings.temp_sensor_name;
-
-        s->settings.server_setpoint = String(s->vols_setpoint);
-        s->settings.server_setpoint_input = settings.server_setpoint_input;
-        s->settings.server_sensor = settings.server_sensor;
-        s->settings.server_sensor_input = settings.server_sensor_input;
+        Spund_System *s = new Spund_System(settings);
         _SPUNDERS.push_back(s);
     }
 
@@ -72,31 +58,32 @@ void setup(void)
     String inputMessage;
     String inputParam;
 
-    for (auto& s : _SPUNDERS) {
-        if (request->hasParam(s->settings.server_setpoint_input)) {
-            s->settings.server_setpoint = request->getParam(s->settings.server_setpoint_input)->value();
-            s->settings.desired_vols = s->settings.server_setpoint.toDouble();
-            s->vols_setpoint = s->settings.server_setpoint.toDouble();
-            inputMessage = s->settings.server_setpoint;
-            inputParam = s->settings.server_setpoint_input;
+    for (auto& spunder : _SPUNDERS) {
+        if (request->hasParam(spunder->server_setpoint_input)) {
+            spunder->server_setpoint = request->getParam(spunder->server_setpoint_input)->value();
+            spunder->desired_vols = spunder->server_setpoint.toDouble();
+            inputMessage = spunder->server_setpoint;
+            inputParam = spunder->server_setpoint_input;
         }
-        if (request->hasParam(s->settings.server_sensor_input)) {
-            // s->settings.server_sensor = request->getParam(s->settings.server_sensor_input)->value();
-            s->settings.temp_sensor_name = request->getParam(s->settings.server_sensor_input)->value();
-            s->settings.server_sensor = s->settings.temp_sensor_name;
-            // inputMessage = s->settings.server_sensor;
-            inputMessage = s->settings.temp_sensor_name;
-            inputParam = s->settings.server_sensor_input;
+        if (request->hasParam(spunder->server_sensor_input)) {
+            spunder->temp_sensor_id = request->getParam(spunder->server_sensor_input)->value();
+            spunder->server_sensor = spunder->temp_sensor_id;
+            inputMessage = spunder->server_sensor;
+            inputParam = spunder->server_sensor_input;
         }
 
     }
-        // _SPUNDERS.push_back(s);
 
-        request->send(200, "text/html", "HTTP GET request sent to your ESP on input field ("
+    request->send(200, "text/html", "HTTP GET request sent to your ESP on input field ("
                                             + inputParam + ") with value: " + inputMessage +
                                             "<br><a href=\"/\">Return to Home Page</a>"); });
     server.onNotFound(notFound);
     server.begin();
+}
+
+void loop(void)
+{
+    client.loop();
 }
 
 void onConnectionEstablished()
@@ -112,18 +99,16 @@ void onConnectionEstablished()
 
         for (auto &spunder : _SPUNDERS)
         {
-            spunder->tempC = input["data"][spunder->settings.temp_sensor_name]["value[degC]"];
+            spunder->tempC = input["data"][spunder->temp_sensor_id]["value[degC]"];
             spunder->tempF = spunder->tempC * 1.8 + 32;
-            message["data"][spunder->settings.name]["TempC"] = spunder->tempC;
-            message["data"][spunder->settings.name]["Volts"] = spunder->getVolts();
-            message["data"][spunder->settings.name]["PSI"] = spunder->getPSI();
-            message["data"][spunder->settings.name]["PSI_setpoint"] = spunder->computePSISetpoint();
-            message["data"][spunder->settings.name]["Vols_setpoint"] = spunder->vols_setpoint;
-            message["data"][spunder->settings.name]["Desired_vols"] = spunder->settings.desired_vols;
-            message["data"][spunder->settings.name]["Temp_Sensor"] = spunder->settings.temp_sensor_name;
-            message["data"][spunder->settings.name]["Server_Sensor"] = spunder->settings.server_sensor;
-            message["data"][spunder->settings.name]["Vols"] = spunder->computeVols();
-            message["data"][spunder->settings.name]["Minutes_since_vent"] = spunder->test_carb();
+            message["data"][spunder->spunder_id]["TempC"] = spunder->tempC;
+            message["data"][spunder->spunder_id]["Temp_Sensor"] = spunder->temp_sensor_id;
+            message["data"][spunder->spunder_id]["PSI"] = spunder->getPSI();
+            message["data"][spunder->spunder_id]["PSI_setpoint"] = spunder->computePSISetpoint();
+            message["data"][spunder->spunder_id]["Desired_vols"] = spunder->desired_vols;
+            message["data"][spunder->spunder_id]["Server_Sensor"] = spunder->server_sensor;
+            message["data"][spunder->spunder_id]["Vols"] = spunder->computeVols();
+            message["data"][spunder->spunder_id]["Minutes_since_vent"] = spunder->test_carb();
         }
 
         message["data"]["memory"]["Input_memory_size"] = input.memoryUsage();
@@ -139,7 +124,44 @@ void onConnectionEstablished()
         }); });
 }
 
-void loop(void)
+void notFound(AsyncWebServerRequest *request)
 {
-    client.loop();
+    request->send(404, "text/plain", "Not found");
+}
+
+String processor(const String &var)
+{
+    if (var == "SETPOINT1")
+    {
+        return _SPUNDERS[0]->server_setpoint;
+    }
+    if (var == "SETPOINT2")
+    {
+        return _SPUNDERS[1]->server_setpoint;
+    }
+    if (var == "SETPOINT3")
+    {
+        return _SPUNDERS[2]->server_setpoint;
+    }
+    if (var == "SETPOINT4")
+    {
+        return _SPUNDERS[3]->server_setpoint;
+    }
+    if (var == "MQTT1")
+    {
+        return _SPUNDERS[0]->server_sensor;
+    }
+    if (var == "MQTT2")
+    {
+        return _SPUNDERS[1]->server_sensor;
+    }
+    if (var == "MQTT3")
+    {
+        return _SPUNDERS[2]->server_sensor;
+    }
+    if (var == "MQTT4")
+    {
+        return _SPUNDERS[3]->server_sensor;
+    }
+    return String();
 }

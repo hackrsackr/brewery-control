@@ -4,6 +4,44 @@
 
 Spund_System::Spund_System() {}
 
+Spund_System::Spund_System(Spund_Settings config)
+{
+    settings = config;
+
+    spunder_id = settings.spunder_id;
+    ads_addr = settings.ads_addr;
+    ads_gain = settings.ads_gain;
+    desired_vols = settings.desired_vols;
+    relay_pin = settings.relay_pin;
+    temp_sensor_id = settings.temp_sensor_id;
+    ads_channel = settings.ads_channel;
+    min_sensor_volts = settings.min_sensor_volts;
+    max_sensor_volts = settings.max_sensor_volts;
+    max_sensor_psi = settings.max_sensor_psi;
+    server_setpoint_input = settings.server_setpoint_input;
+    server_sensor_input = settings.server_sensor_input;
+    i2c_sda = settings.i2c_sda;
+    i2c_scl = settings.i2c_scl;
+
+    server_setpoint = String(desired_vols);
+    server_sensor = temp_sensor_id;
+    time_of_last_vent = millis();
+
+    s_ps = std::make_shared<ADS_Pressure_Sensor>();
+    s_ps->begin(
+        ads_addr,
+        ads_gain,
+        i2c_sda,
+        i2c_scl,
+        ads_channel,
+        min_sensor_volts,
+        max_sensor_volts,
+        max_sensor_psi);
+
+    s_re = std::make_shared<Relay>();
+    s_re->begin(relay_pin);
+}
+
 Spund_System::Spund_System(
     uint8_t ads_addr,
     adsGain_t ads_gain,
@@ -56,8 +94,8 @@ double Spund_System::getPSI()
 double Spund_System::computePSISetpoint()
 {
     double a = -16.669 - (.0101059 * tempF) + (.00116512 * (tempF * tempF));
-    double b = .173354 * tempF * vols_setpoint;
-    double c = (4.24267 * vols_setpoint) - (.0684226 * (vols_setpoint * vols_setpoint));
+    double b = .173354 * tempF * desired_vols;
+    double c = (4.24267 * desired_vols) - (.0684226 * (desired_vols * desired_vols));
 
     psi_setpoint = a + b + c;
 
@@ -78,8 +116,8 @@ double Spund_System::computeVols()
 
 double Spund_System::test_carb()
 {
-    // if (vols > vols_setpoint && psi > psi_setpoint)
-    if (vols > vols_setpoint)
+    // if (vols > desired_vols && psi > psi_setpoint)
+    if (vols > desired_vols)
     {
         s_re->openRelay();
         delay(500);
