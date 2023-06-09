@@ -1,5 +1,3 @@
-#include <vector>
-
 #include <ArduinoJson.h>
 #include <EspMQTTClient.h>
 #include <AsyncTCP.h>
@@ -12,6 +10,8 @@
 #include "secrets.h"
 #include "server.h"
 #include "config.h"
+
+#include <vector>
 
 std::vector<Spund_System *> _SPUNDERS;
 
@@ -44,9 +44,9 @@ void setup(void)
     Serial.print("Connected to ");
     Serial.println(WiFi.localIP());
 
-    for (auto &settings : _SETTINGS)
+    for (auto &spund_cfg : spund_cfgs)
     {
-        Spund_System *s = new Spund_System(settings);
+        Spund_System *s = new Spund_System(spund_cfg);
         _SPUNDERS.push_back(s);
     }
 
@@ -71,7 +71,6 @@ void setup(void)
             inputMessage = spunder->server_sensor;
             inputParam = spunder->server_sensor_input;
         }
-
     }
 
     request->send(200, "text/html", "HTTP GET request sent to your ESP on input field ("

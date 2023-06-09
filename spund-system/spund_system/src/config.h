@@ -1,94 +1,121 @@
 #pragma once
 
-#include <vector>
-
-#include "Adafruit_ADS1X15.h"
 #include "Spund_System.h"
 
-// I2C Pins default for esp is scl=22, sda=21
+#include <vector>
+
+/* Output message option
+true = publish over mqtt
+false = print to serial, to be read by docker container
+*/
+bool _PUBLISHMQTT = true;
+
+// I2C pins
 const uint8_t _I2C_SCL = 25;
 const uint8_t _I2C_SDA = 26;
 
-// MQTT Setup
+// MQTT parameters
 const auto _MQTTHOST = "192.168.1.6";
 const auto _MQTTPORT = 1883;
 const auto _CLIENTID = "spund-dev";
 const auto _SUBTOPIC = "brewcast/history/spark-dev";
 const auto _PUBTOPIC = "brewcast/history/spund-dev";
 
-/*
-Output message option
-true = publish over mqtt
-false = print to serial, to be read by docker container
-*/
-bool _PUBLISHMQTT = true;
-
-/*
-Config vector:
-Change all parameters here
-*/
-std::vector<Spund_Settings> _SETTINGS{
+std::vector<spund_system_cfg_t> spund_cfgs{
     {
-        "spunder-1",        // spunder_id
-        "TempSensor-1",     // temp_sensor_id
-        3.01,               // desired_vols
-        ADS1115_ADDRESS1,   // ads_addr
-        GAIN_TWOTHIRDS,     // ads_gain
-        _I2C_SDA,           // i2c_sda
-        _I2C_SCL,           // i2c_scl
-        0,                  // ads_channel
-        14,                 // relay_pin
-        .5,                 // min_sensor_volts
-        4.5,                // max_sensor_volts
-        60.0,               // max_psi
-        "setpoint_input-1", // server_setpoint_input
-        "mqtt_input-1",     // server_sensor_input
+        .spunder{
+            .spunder_id = "spunder-1",
+            .desired_vols = 3.01,
+            .relay_pin = 14,
+        },
+        .ads1115{
+            .ads_addr = ADS1115_ADDRESS1,
+            .ads_gain = GAIN_TWOTHIRDS,
+            .i2c_sda = _I2C_SDA,
+            .i2c_scl = _I2C_SCL,
+            .ads_channel = 0,
+        },
+        .sensor{
+            .min_sensor_volts = .5,
+            .max_sensor_volts = 4.5,
+            .max_sensor_psi = 60.0,
+        },
+        .mqtt{
+            .temp_sensor_id = "TempSensor-1",
+            .server_setpoint_input = "setpoint_input-1",
+            .server_sensor_input = "mqtt_input-1",
+        },
     },
     {
-        "spunder-2",        // spunder_id
-        "TempSensor-1",     // temp_sensor_id
-        3.02,               // desired_vols
-        ADS1115_ADDRESS1,   // ads_addr
-        GAIN_TWOTHIRDS,     // ads_gain
-        _I2C_SDA,           // i2c_sda
-        _I2C_SCL,           // i2c_scl
-        1,                  // ads_channel
-        27,                 // relay_pin
-        .5,                 // min_sensor_volts
-        4.5,                // max_sensor_volts
-        60.0,               // max_psi
-        "setpoint_input-2", // server_setpoint_input
-        "mqtt_input-2",     // server_sensor_input
+        .spunder{
+            .spunder_id = "spunder-2",
+            .desired_vols = 3.02,
+            .relay_pin = 27,
+        },
+        .ads1115{
+            .ads_addr = ADS1115_ADDRESS1,
+            .ads_gain = GAIN_TWOTHIRDS,
+            .i2c_sda = _I2C_SDA,
+            .i2c_scl = _I2C_SCL,
+            .ads_channel = 1,
+        },
+        .sensor{
+            .min_sensor_volts = .5,
+            .max_sensor_volts = 4.5,
+            .max_sensor_psi = 60.0,
+        },
+        .mqtt{
+            .temp_sensor_id = "TempSensor-1",
+            .server_setpoint_input = "setpoint_input-2",
+            .server_sensor_input = "mqtt_input-2",
+        },
     },
     {
-        "spunder-3",        // spunder_id
-        "TempSensor-2",     // temp_sensor_id
-        3.03,               // desired_vols
-        ADS1115_ADDRESS1,   // ads_addr
-        GAIN_TWOTHIRDS,     // ads_gain
-        _I2C_SDA,           // i2c_sda
-        _I2C_SCL,           // i2c_scl
-        2,                  // ads_channel
-        16,                 // relay_pin
-        .5,                 // min_sensor_volts
-        4.5,                // max_sensor_volts
-        60.0,               // max_psi
-        "setpoint_input-3", // server_setpoint_input
-        "mqtt_input-3"      // server_sensor_input
+        .spunder{
+            .spunder_id = "spunder-3",
+            .desired_vols = 3.03,
+            .relay_pin = 16,
+        },
+        .ads1115{
+            .ads_addr = ADS1115_ADDRESS1,
+            .ads_gain = GAIN_TWOTHIRDS,
+            .i2c_sda = _I2C_SDA,
+            .i2c_scl = _I2C_SCL,
+            .ads_channel = 2,
+        },
+        .sensor{
+            .min_sensor_volts = .5,
+            .max_sensor_volts = 4.5,
+            .max_sensor_psi = 60.0,
+        },
+        .mqtt{
+            .temp_sensor_id = "TempSensor-2",
+            .server_setpoint_input = "setpoint_input-3",
+            .server_sensor_input = "mqtt_input-3",
+        },
     },
     {
-        "spunder-4",        // spunder_id
-        "TempSensor-2",     // temp_sensor_id
-        3.04,               // desired_vols
-        ADS1115_ADDRESS1,   // ads_addr
-        GAIN_TWOTHIRDS,     // ads_gain
-        _I2C_SDA,           // i2c_sda
-        _I2C_SCL,           // i2c_scl
-        3,                  // ads_channel
-        17,                 // relay_pin
-        .5,                 // min_sensor_volts
-        4.5,                // max_sensor_volts
-        60.0,               // max_psi
-        "setpoint_input-4", // server_setpoint_input
-        "mqtt_input-4"      // server_sensor_input
-    }};
+        .spunder{
+            .spunder_id = "spunder-4",
+            .desired_vols = 3.04,
+            .relay_pin = 17,
+        },
+        .ads1115{
+            .ads_addr = ADS1115_ADDRESS1,
+            .ads_gain = GAIN_TWOTHIRDS,
+            .i2c_sda = _I2C_SDA,
+            .i2c_scl = _I2C_SCL,
+            .ads_channel = 3,
+        },
+        .sensor{
+            .min_sensor_volts = .5,
+            .max_sensor_volts = 4.5,
+            .max_sensor_psi = 60.0,
+        },
+        .mqtt{
+            .temp_sensor_id = "TempSensor-1",
+            .server_setpoint_input = "setpoint_input-4",
+            .server_sensor_input = "mqtt_input-4",
+        },
+    },
+};

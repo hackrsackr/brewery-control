@@ -1,15 +1,15 @@
 #pragma once
 
-#include <memory>
-
 #include <Adafruit_ADS1X15.h>
 
-#define ADS1115_ADDRESS1 (0x48) // ADDR -> GND
-#define ADS1115_ADDRESS2 (0x49) // ADDR -> VCC
-#define ADS1115_ADDRESS3 (0x4a) // ADDR -> SDA
-#define ADS1115_ADDRESS4 (0x4b) // ADDR -> SCL
+#include <memory>
 
-#define ADS_FULLSCALE 32767
+const uint8_t ADS1115_ADDRESS1 = 0x48; // ADDR -> GND
+const uint8_t ADS1115_ADDRESS2 = 0x49; // ADDR -> VCC
+const uint8_t ADS1115_ADDRESS3 = 0x4a; // ADDR -> SDA
+const uint8_t ADS1115_ADDRESS4 = 0x4b; // ADDR -> SCL
+
+const uint16_t ADS_FULLSCALE = 32767;
 
 class ADS_Sensor
 {
@@ -29,7 +29,6 @@ public:
 
 private:
     std::shared_ptr<Adafruit_ADS1115> s_ads;
-    // Adafruit_ADS1115 *_ads;
     uint8_t ads_channel;
     uint16_t readADC();
 };
