@@ -102,6 +102,7 @@ void onConnectionEstablished()
             spunder->tempF = spunder->tempC * 1.8 + 32;
             message["data"][spunder->spunder_id]["TempC"] = spunder->tempC;
             message["data"][spunder->spunder_id]["Temp_Sensor"] = spunder->temp_sensor_id;
+            message["data"][spunder->spunder_id]["Volts"] = spunder->getVolts();
             message["data"][spunder->spunder_id]["PSI"] = spunder->getPSI();
             message["data"][spunder->spunder_id]["PSI_setpoint"] = spunder->computePSISetpoint();
             message["data"][spunder->spunder_id]["Desired_vols"] = spunder->desired_vols;

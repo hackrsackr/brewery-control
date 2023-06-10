@@ -17,6 +17,7 @@ Spund_System::Spund_System(spund_system_cfg_t cfg)
     min_sensor_volts = cfg.sensor.min_sensor_volts;
     max_sensor_volts = cfg.sensor.max_sensor_volts;
     max_sensor_psi = cfg.sensor.max_sensor_psi;
+    sensor_offset_volts = cfg.sensor.sensor_offset_volts;
 
     temp_sensor_id = cfg.mqtt.temp_sensor_id;
     server_setpoint_input = cfg.mqtt.server_setpoint_input;
@@ -35,7 +36,8 @@ Spund_System::Spund_System(spund_system_cfg_t cfg)
         ads_channel,
         min_sensor_volts,
         max_sensor_volts,
-        max_sensor_psi);
+        max_sensor_psi,
+        sensor_offset_volts);
 
     s_re = std::make_shared<Relay>();
     s_re->begin(relay_pin);

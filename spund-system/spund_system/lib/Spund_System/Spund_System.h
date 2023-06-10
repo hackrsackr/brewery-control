@@ -26,6 +26,7 @@ typedef struct spund_system_cfg_t
         double min_sensor_volts;
         double max_sensor_volts;
         double max_sensor_psi;
+        double sensor_offset_volts;
     } sensor;
 
     struct mqtt_cfg
@@ -51,6 +52,7 @@ public:
     double min_sensor_volts;
     double max_sensor_volts;
     double max_sensor_psi;
+    double sensor_offset_volts;
     String server_setpoint;
     String server_sensor;
     String server_setpoint_input;

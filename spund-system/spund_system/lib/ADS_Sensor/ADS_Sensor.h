@@ -39,6 +39,7 @@ public:
     double volt_min;
     double volt_max;
     double psi_max;
+    double sensor_offset_volts;
 
     ADS_Pressure_Sensor();
 
@@ -50,7 +51,8 @@ public:
         uint8_t ads_chan,
         double min_vs,
         double max_vs,
-        double max_unit);
+        double max_unit,
+        double sensor_offset_volts);
 
     double getADSVolts();
     double computePSI();
