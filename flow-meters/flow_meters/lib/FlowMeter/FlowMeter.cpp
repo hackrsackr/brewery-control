@@ -2,46 +2,50 @@
 
 #include "FlowMeter.hpp"
 
-FlowMeter::FlowMeter(int sp, std::string nm, double cf)
+FlowMeter::FlowMeter(flowmeter_cfg_t cfg)
 {
-    sensor_pin = sp;
-    name = nm;
-    cal_factor = cf;
+    flowmeter_id = cfg.flow.flowmeter_id;
+    sensor_pin = cfg.flow.sensor_pin;
+    calibration_factor = cfg.flow.calibration_factor;
+    percent_correction_factor = cfg.flow.percent_correction_factor;
 }
 
-FlowMeter::FlowMeter(int sp, std::string nm, double cf, double cr)
+FlowMeter::FlowMeter(std::string id, uint8_t sp, double cf, double cr = 1)
 {
+    flowmeter_id = id;
     sensor_pin = sp;
-    name = nm;
-    cal_factor = cf;
-    cor_factor = cr;
+    calibration_factor = cf;
+    percent_correction_factor = cr;
 }
 
-void FlowMeter::reset_total() { total_mLs = 0; }
+// void FlowMeter::set_sensor_pin(uint8_t pin) { sensor_pin = pin; }
+// void FlowMeter::set_calibration_factor(double cf) { calibration_factor = cf; }
+// void FlowMeter::set_percent_correction_factor(double cr) { percent_correction_factor = cr; }
 
-void FlowMeter::set_sensor_pin(uint8_t pin) { sensor_pin = pin; }
+double FlowMeter::get_frequency()
+{
+    frequency = (1000.0 / (millis() - old_time)) * pulse_count;
 
-void FlowMeter::set_calibration_factor(double cal) { cal_factor = cal; }
-void FlowMeter::set_correction_factor(double cor) { cor_factor = cor; }
+    return frequency;
+}
 
 double FlowMeter::get_flow_rate()
 {
-    flow_rate = 1000.0 / (millis() - old_time) * pulse_count / cal_factor;
+    // flow_rate = (1000.0 / (millis() - old_time)) * (pulse_count / calibration_factor) * percent_corection_factor;
+    flow_rate = (get_frequency() / calibration_factor) * percent_correction_factor;
 
     return flow_rate;
 }
 
-void FlowMeter::flowmeter_run()
+void FlowMeter::run()
 {
-    if ((millis() - old_time) > 1000) // Only process counters once per second
+    if ((millis() - old_time) > 1000)
     {
         detachInterrupt(sensor_pin);
-        // frequency = 1000.0 / (millis() - old_time) * pulse_count;
-        flow_rate = 1000.0 / (millis() - old_time) * pulse_count / (cal_factor * cor_factor);
-        // flow_rate = 1000.0 / (millis() - old_time) * pulse_count / cal_factor;
+        get_flow_rate();
         old_time = millis();
         total_pulse_count += pulse_count;
-        total_liters = total_pulse_count / (cal_factor * 60);
+        total_liters = total_pulse_count / (calibration_factor * 60);
         total_mLs = total_liters * 1000;
         pulse_count = 0;
     }
