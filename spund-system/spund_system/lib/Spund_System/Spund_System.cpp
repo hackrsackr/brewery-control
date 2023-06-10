@@ -2,29 +2,45 @@
 #include "Relay.h"
 #include "Spund_System.h"
 
-#include "config.h"
-
-Spund_System::Spund_System() {}
-
-Spund_System::~Spund_System() {}
-
-void Spund_System::begin(
-    uint8_t ads_addr,
-    adsGain_t ads_gain,
-    uint8_t i2c_sda,
-    uint8_t i2c_scl,
-    uint8_t ads_chan,
-    double min_vs,
-    double max_vs,
-    double max_unit,
-    uint8_t vent_pin)
+Spund_System::Spund_System(spund_system_cfg_t cfg)
 {
+    spunder_id = cfg.spunder.spunder_id;
+    desired_vols = cfg.spunder.desired_vols;
+    relay_pin = cfg.spunder.relay_pin;
+
+    ads_addr = cfg.ads1115.ads_addr;
+    ads_gain = cfg.ads1115.ads_gain;
+    i2c_sda = cfg.ads1115.i2c_sda;
+    i2c_scl = cfg.ads1115.i2c_scl;
+    ads_channel = cfg.ads1115.ads_channel;
+
+    min_sensor_volts = cfg.sensor.min_sensor_volts;
+    max_sensor_volts = cfg.sensor.max_sensor_volts;
+    max_sensor_psi = cfg.sensor.max_sensor_psi;
+    sensor_offset_volts = cfg.sensor.sensor_offset_volts;
+
+    temp_sensor_id = cfg.mqtt.temp_sensor_id;
+    server_setpoint_input = cfg.mqtt.server_setpoint_input;
+    server_sensor_input = cfg.mqtt.server_sensor_input;
+
+    server_setpoint = String(desired_vols);
+    server_sensor = temp_sensor_id;
+    time_of_last_vent = millis();
 
     s_ps = std::make_shared<ADS_Pressure_Sensor>();
-    s_ps->begin(ads_addr, ads_gain, i2c_sda, i2c_scl, ads_chan, min_vs, max_vs, max_unit);
+    s_ps->begin(
+        ads_addr,
+        ads_gain,
+        i2c_sda,
+        i2c_scl,
+        ads_channel,
+        min_sensor_volts,
+        max_sensor_volts,
+        max_sensor_psi,
+        sensor_offset_volts);
 
     s_re = std::make_shared<Relay>();
-    s_re->begin(vent_pin);
+    s_re->begin(relay_pin);
 }
 
 double Spund_System::getVolts()
@@ -40,8 +56,8 @@ double Spund_System::getPSI()
 double Spund_System::computePSISetpoint()
 {
     double a = -16.669 - (.0101059 * tempF) + (.00116512 * (tempF * tempF));
-    double b = .173354 * tempF * vols_setpoint;
-    double c = (4.24267 * vols_setpoint) - (.0684226 * (vols_setpoint * vols_setpoint));
+    double b = .173354 * tempF * desired_vols;
+    double c = (4.24267 * desired_vols) - (.0684226 * (desired_vols * desired_vols));
 
     psi_setpoint = a + b + c;
 
@@ -62,8 +78,7 @@ double Spund_System::computeVols()
 
 double Spund_System::test_carb()
 {
-    // if (vols > vols_setpoint && psi > psi_setpoint)
-    if (vols > vols_setpoint)
+    if (vols > desired_vols)
     {
         s_re->openRelay();
         delay(500);

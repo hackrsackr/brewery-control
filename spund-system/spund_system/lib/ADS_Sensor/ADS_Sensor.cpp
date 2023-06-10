@@ -1,9 +1,4 @@
-// #include <Arduino.h>
-#include <Wire.h>
-#include <memory>
 #include "ADS_Sensor.h"
-#include <Adafruit_ADS1X15.h>
-
 #include "config.h"
 
 ADS_Sensor::ADS_Sensor() {}
@@ -35,7 +30,16 @@ double ADS_Sensor::readVolts()
 
 ADS_Pressure_Sensor::ADS_Pressure_Sensor() {}
 
-void ADS_Pressure_Sensor::begin(uint8_t ads_address, adsGain_t ads_gain, uint8_t sda, uint8_t scl, uint8_t ads_chan, double min_vs, double max_vs, double max_unit)
+void ADS_Pressure_Sensor::begin(
+    uint8_t ads_address,
+    adsGain_t ads_gain,
+    uint8_t sda,
+    uint8_t scl,
+    uint8_t ads_chan,
+    double min_vs,
+    double max_vs,
+    double max_unit,
+    double offset)
 {
     ADS_Sensor::begin(
         ads_address,
@@ -47,6 +51,7 @@ void ADS_Pressure_Sensor::begin(uint8_t ads_address, adsGain_t ads_gain, uint8_t
     volt_min = min_vs;
     volt_max = max_vs;
     psi_max = max_unit;
+    sensor_offset_volts = offset;
 }
 
 double ADS_Pressure_Sensor::getADSVolts()
@@ -56,7 +61,7 @@ double ADS_Pressure_Sensor::getADSVolts()
 
 double ADS_Pressure_Sensor::computePSI()
 {
-    return (readVolts() - volt_min) * (psi_max / (volt_max - volt_min));
+    return (readVolts() - volt_min + sensor_offset_volts) * (psi_max / (volt_max - volt_min));
 }
 
 // ########################################

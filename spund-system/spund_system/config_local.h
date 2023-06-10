@@ -8,18 +8,18 @@
 true = publish over mqtt
 false = print to serial, to be read by docker container
 */
-constexpr bool _PUBLISHMQTT = true;
+bool _PUBLISHMQTT = true;
 
 // I2C pins
-constexpr uint8_t _I2C_SCL = 25;
-constexpr uint8_t _I2C_SDA = 26;
+const uint8_t _I2C_SCL = 25;
+const uint8_t _I2C_SDA = 26;
 
 // MQTT parameters
-constexpr auto _MQTTHOST = "192.168.1.6";
-constexpr auto _MQTTPORT = 1883;
-constexpr auto _CLIENTID = "spund-dev";
-constexpr auto _SUBTOPIC = "brewcast/history/spark-dev";
-constexpr auto _PUBTOPIC = "brewcast/history/spund-dev";
+const auto _MQTTHOST = "192.168.1.6";
+const auto _MQTTPORT = 1883;
+const auto _CLIENTID = "spund-dev";
+const auto _SUBTOPIC = "brewcast/history/spark-dev";
+const auto _PUBTOPIC = "brewcast/history/spund-dev";
 
 std::vector<spund_system_cfg_t> spund_cfgs{
     {
@@ -39,7 +39,6 @@ std::vector<spund_system_cfg_t> spund_cfgs{
             .min_sensor_volts = .5,
             .max_sensor_volts = 4.5,
             .max_sensor_psi = 60.0,
-            .sensor_offset_volts = 0.0,
         },
         .mqtt{
             .temp_sensor_id = "TempSensor-1",
@@ -64,7 +63,6 @@ std::vector<spund_system_cfg_t> spund_cfgs{
             .min_sensor_volts = .5,
             .max_sensor_volts = 4.5,
             .max_sensor_psi = 60.0,
-            .sensor_offset_volts = 0.04,
         },
         .mqtt{
             .temp_sensor_id = "TempSensor-1",
@@ -89,7 +87,6 @@ std::vector<spund_system_cfg_t> spund_cfgs{
             .min_sensor_volts = .5,
             .max_sensor_volts = 4.5,
             .max_sensor_psi = 60.0,
-            .sensor_offset_volts = 0.0,
         },
         .mqtt{
             .temp_sensor_id = "TempSensor-2",
@@ -114,7 +111,6 @@ std::vector<spund_system_cfg_t> spund_cfgs{
             .min_sensor_volts = .5,
             .max_sensor_volts = 4.5,
             .max_sensor_psi = 60.0,
-            .sensor_offset_volts = 0.0,
         },
         .mqtt{
             .temp_sensor_id = "TempSensor-1",
@@ -123,4 +119,3 @@ std::vector<spund_system_cfg_t> spund_cfgs{
         },
     },
 };
-

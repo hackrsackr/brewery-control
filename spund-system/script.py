@@ -10,7 +10,7 @@ import json
 from time import sleep
 from paho.mqtt import client as mqtt
 
-HOST = '192.168.1.2'
+HOST = '192.168.1.6'
 
 PORT = 1883
 
@@ -19,7 +19,7 @@ USB_PORT = '/dev/ttyUSB0'
 
 HISTORY_TOPIC = 'brewcast/history'
 
-TOPIC = HISTORY_TOPIC + '/spund-system'
+TOPIC = HISTORY_TOPIC + '/spund-dev'
 
 client = mqtt.Client()
 
@@ -48,7 +48,7 @@ def main():
                 continue
 
             message = {
-                'key': 'spund-system',
+                'key': 'spund-dev',
                 'data': spund_data
             }
             

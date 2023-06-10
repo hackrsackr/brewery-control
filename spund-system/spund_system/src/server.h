@@ -1,3 +1,5 @@
+#pragma once
+
 // HTML web page to handle 4 input fields (Setpoint 1, Setpoint 2, Setpoint 3, Setpoint 4)
 const char index_html[] PROGMEM = R"rawliteral(
 <!DOCTYPE html>
@@ -17,11 +19,11 @@ const char index_html[] PROGMEM = R"rawliteral(
     <body>
         <p>Setpoints Vols[CO2]</p>
         <form action="/get">
-            sepoint-1:
+            setpoint-1:
             <input
                 type="number"
                 step="0.01"
-                name="setpoint_input1"
+                name="setpoint_input-1"
                 value="%SETPOINT1%"
                 required
             />
@@ -29,11 +31,11 @@ const char index_html[] PROGMEM = R"rawliteral(
         </form>
         <br />
         <form action="/get">
-            sepoint-2:
+            setpoint-2:
             <input
                 type="number"
                 step="0.01"
-                name="setpoint_input2"
+                name="setpoint_input-2"
                 value="%SETPOINT2%"
                 required
             />
@@ -41,11 +43,11 @@ const char index_html[] PROGMEM = R"rawliteral(
         </form>
         <br />
         <form action="/get">
-            sepoint-3:
+            setpoint-3:
             <input
                 type="number"
                 step="0.01"
-                name="setpoint_input3"
+                name="setpoint_input-3"
                 value="%SETPOINT3%"
                 required
             />
@@ -53,11 +55,11 @@ const char index_html[] PROGMEM = R"rawliteral(
         </form>
         <br />
         <form action="/get">
-            sepoint-4:
+            setpoint-4:
             <input
                 type="number"
                 step="0.01"
-                name="setpoint_input4"
+                name="setpoint_input-4"
                 value="%SETPOINT4%"
                 required
             />
@@ -66,68 +68,34 @@ const char index_html[] PROGMEM = R"rawliteral(
         <p>MQTT Temp Fields</p>
         <form action="/get">
             mqtt_temp_field-1:
-            <input type="text" name="mqtt_input1" value="%MQTT1%" required />
+            <input type="text" name="mqtt_input-1" 
+            value="%MQTT1%" 
+            required />
             <input type="submit" value="Submit" />
         </form>
         <br />
         <form action="/get">
             mqtt_temp_field-2:
-            <input type="text" name="mqtt_input2" value="%MQTT2%" required />
+            <input type="text" name="mqtt_input-2" 
+            value="%MQTT2%" 
+            required />
             <input type="submit" value="Submit" />
         </form>
         <br />
         <form action="/get">
             mqtt_temp_field-3:
-            <input type="text" name="mqtt_input3" value="%MQTT3%" required />
+            <input type="text" name="mqtt_input-3" 
+            value="%MQTT3%" 
+            required />
             <input type="submit" value="Submit" />
         </form>
         <br />
         <form action="/get">
             mqtt_temp_field-4:
-            <input type="text" name="mqtt_input4" value="%MQTT4%" required />
+            <input type="text" name="mqtt_input-4" 
+            value="%MQTT4%" 
+            required />
             <input type="submit" value="Submit" />
         </form>
     </body>
 </html>)rawliteral";
-
-void notFound(AsyncWebServerRequest *request)
-{
-    request->send(404, "text/plain", "Not found");
-}
-
-String processor(const String &var)
-{
-    if (var == "SETPOINT1")
-    {
-        return _SETPOINT_MESSAGES[0];
-    }
-    if (var == "SETPOINT2")
-    {
-        return _SETPOINT_MESSAGES[1];
-    }
-    if (var == "SETPOINT3")
-    {
-        return _SETPOINT_MESSAGES[2];
-    }
-    if (var == "SETPOINT4")
-    {
-        return _SETPOINT_MESSAGES[3];
-    }
-    if (var == "MQTT1")
-    {
-        return _MQTT_MESSAGES[0];
-    }
-    if (var == "MQTT2")
-    {
-        return _MQTT_MESSAGES[1];
-    }
-    if (var == "MQTT3")
-    {
-        return _MQTT_MESSAGES[2];
-    }
-    if (var == "MQTT4")
-    {
-        return _MQTT_MESSAGES[3];
-    }
-    return String();
-}

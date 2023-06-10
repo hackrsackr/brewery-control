@@ -1,21 +1,26 @@
-#include <Arduino.h>
-
 #include <ArduinoJson.h>
 #include <EspMQTTClient.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
-#include <array>
 
 #include "ADS_Sensor.h"
 #include "Spund_System.h"
 #include "Relay.h"
 
-#include "config.h"
+#include "secrets.h"
 #include "server.h"
+#include "config.h"
 
-std::array<Spund_System, _NUMBER_OF_SPUNDERS> spund_arr;
-EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
+#include <vector>
+
+std::vector<Spund_System *> _SPUNDERS;
+
+EspMQTTClient client(SECRET_SSID, SECRET_PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
+void onConnectionEstablished();
+
 AsyncWebServer server(80);
+void notFound(AsyncWebServerRequest *request);
+String processor(const String &var);
 
 void setup(void)
 {
@@ -23,7 +28,7 @@ void setup(void)
     client.setMaxPacketSize(4096);
     client.enableOTA();
 
-    WiFi.begin(_SSID, _PASS);
+    WiFi.begin(SECRET_SSID, SECRET_PASS);
     uint8_t failed_connections = 0;
     while (WiFi.status() != WL_CONNECTED)
     {
@@ -39,22 +44,13 @@ void setup(void)
     Serial.print("Connected to ");
     Serial.println(WiFi.localIP());
 
-    // Initialize each Spunder in spund_arr
-    for (uint8_t i = 0; i < _NUMBER_OF_SPUNDERS; ++i)
+    for (auto &spund_cfg : spund_cfgs)
     {
-        spund_arr[i].begin(
-            ADS1115_ADDRESS1,     // ads_address
-            GAIN_TWOTHIRDS,       // ads_gain
-            _I2C_SDA,             // i2c_sda
-            _I2C_SCL,             // i2c_scl
-            i,                    // ads_channel
-            _MIN_SENSOR_VOLTS[i], // volts at ZERO PSI
-            _MAX_SENSOR_VOLTS[i], // volts at MAX PSI
-            _MAX_PSIS[i],         // MAX PSI sensor can read
-            _RELAY_PINS[i]);      // relay pin
+        Spund_System *s = new Spund_System(spund_cfg);
+        _SPUNDERS.push_back(s);
     }
 
-    // Webserver
+    // // Webserver
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
               { request->send_P(200, "text/html", index_html, processor); });
     server.on("/get", HTTP_GET, [](AsyncWebServerRequest *request)
@@ -62,70 +58,115 @@ void setup(void)
     String inputMessage;
     String inputParam;
 
-    for (uint8_t i = 0; i < _NUMBER_OF_SPUNDERS; ++i)
-    {
-        if (request->hasParam(_SETPOINT_INPUTS[i])) {
-            _SETPOINT_MESSAGES[i] = request->getParam(_SETPOINT_INPUTS[i])->value();
-            _DESIRED_VOLS[i] = _SETPOINT_MESSAGES[i].toDouble();
-            inputMessage = _SETPOINT_MESSAGES[i];
-            inputParam = _SETPOINT_INPUTS[i];
+    for (auto& spunder : _SPUNDERS) {
+        if (request->hasParam(spunder->server_setpoint_input)) {
+            spunder->server_setpoint = request->getParam(spunder->server_setpoint_input)->value();
+            spunder->desired_vols = spunder->server_setpoint.toDouble();
+            inputMessage = spunder->server_setpoint;
+            inputParam = spunder->server_setpoint_input;
         }
-        if (request->hasParam(_MQTT_INPUTS[i])) {
-            _MQTT_MESSAGES[i] = request->getParam(_MQTT_INPUTS[i])->value();
-            _MQTT_FIELDS[i] =  _MQTT_MESSAGES[i];
-            inputMessage = _MQTT_MESSAGES[i];
-            inputParam = _MQTT_INPUTS[i];
+        if (request->hasParam(spunder->server_sensor_input)) {
+            spunder->temp_sensor_id = request->getParam(spunder->server_sensor_input)->value();
+            spunder->server_sensor = spunder->temp_sensor_id;
+            inputMessage = spunder->server_sensor;
+            inputParam = spunder->server_sensor_input;
         }
-
     }
 
     request->send(200, "text/html", "HTTP GET request sent to your ESP on input field ("
-                                     + inputParam + ") with value: " + inputMessage +
-                                     "<br><a href=\"/\">Return to Home Page</a>"); });
+                                            + inputParam + ") with value: " + inputMessage +
+                                            "<br><a href=\"/\">Return to Home Page</a>"); });
     server.onNotFound(notFound);
     server.begin();
+}
+
+void loop(void)
+{
+    client.loop();
 }
 
 void onConnectionEstablished()
 {
     client.subscribe(_SUBTOPIC, [](const String &payload)
                      {
-        // Serial.println(payload);
+        //  Serial.println(payload);
         StaticJsonDocument<4000> input;
         deserializeJson(input, payload);
 
         StaticJsonDocument<1000> message;
         message["key"] = _CLIENTID;
 
-        for (uint8_t i = 0; i < _NUMBER_OF_SPUNDERS; ++i)
+        for (auto &spunder : _SPUNDERS)
         {
-            spund_arr[i].tempC = input["data"][_MQTT_FIELDS[i]]["value[degC]"];
-            spund_arr[i].tempF = spund_arr[i].tempC * 1.8 + 32;
-            spund_arr[i].vols_setpoint = _DESIRED_VOLS[i];
-
-            message["data"][_SPUNDER_NAMES[i]]["TempC"] = spund_arr[i].tempC;
-            message["data"][_SPUNDER_NAMES[i]]["Volts"] = spund_arr[i].getVolts();
-            message["data"][_SPUNDER_NAMES[i]]["PSI"] = spund_arr[i].getPSI();
-            message["data"][_SPUNDER_NAMES[i]]["PSI_setpoint"] = spund_arr[i].computePSISetpoint();
-            message["data"][_SPUNDER_NAMES[i]]["Vols_setpoint"] = spund_arr[i].vols_setpoint;
-            message["data"][_SPUNDER_NAMES[i]]["Vols"] = spund_arr[i].computeVols();
-            message["data"][_SPUNDER_NAMES[i]]["Minutes_since_vent"] = spund_arr[i].test_carb();
+            spunder->tempC = input["data"][spunder->temp_sensor_id]["value[degC]"];
+            spunder->tempF = spunder->tempC * 1.8 + 32;
+            message["data"][spunder->spunder_id]["TempC"] = spunder->tempC;
+            message["data"][spunder->spunder_id]["Temp_Sensor"] = spunder->temp_sensor_id;
+            message["data"][spunder->spunder_id]["Volts"] = spunder->getVolts();
+            message["data"][spunder->spunder_id]["PSI"] = spunder->getPSI();
+            message["data"][spunder->spunder_id]["PSI_setpoint"] = spunder->computePSISetpoint();
+            message["data"][spunder->spunder_id]["Desired_vols"] = spunder->desired_vols;
+            message["data"][spunder->spunder_id]["Server_Sensor"] = spunder->server_sensor;
+            message["data"][spunder->spunder_id]["Vols"] = spunder->computeVols();
+            message["data"][spunder->spunder_id]["Minutes_since_vent"] = spunder->test_carb();
         }
 
         message["data"]["memory"]["Input_memory_size"] = input.memoryUsage();
         message["data"]["memory"]["Output_memory_size"] = message.memoryUsage();
 
-        serializeJsonPretty(message, Serial);
-        Serial.println("");
-
-        client.executeDelayed(5000, [&message]()
-                              { 
-                                client.publish(_PUBTOPIC, message.as<String>()); 
-                                // serializeJson(message, Serial);
-                              }); });
+        if (_PUBLISHMQTT)
+        {
+            client.executeDelayed(5000, [&message]()
+            {
+                client.publish(_PUBTOPIC, message.as<String>());
+                serializeJsonPretty(message, Serial);
+            });
+        } 
+        if (!_PUBLISHMQTT) 
+        {
+            serializeJson(message["data"], Serial);
+            Serial.println("");
+        } });
 }
 
-void loop(void)
+void notFound(AsyncWebServerRequest *request)
 {
-    client.loop();
+    request->send(404, "text/plain", "Not found");
+}
+
+String processor(const String &var)
+{
+    if (var == "SETPOINT1")
+    {
+        return _SPUNDERS[0]->server_setpoint;
+    }
+    if (var == "SETPOINT2")
+    {
+        return _SPUNDERS[1]->server_setpoint;
+    }
+    if (var == "SETPOINT3")
+    {
+        return _SPUNDERS[2]->server_setpoint;
+    }
+    if (var == "SETPOINT4")
+    {
+        return _SPUNDERS[3]->server_setpoint;
+    }
+    if (var == "MQTT1")
+    {
+        return _SPUNDERS[0]->server_sensor;
+    }
+    if (var == "MQTT2")
+    {
+        return _SPUNDERS[1]->server_sensor;
+    }
+    if (var == "MQTT3")
+    {
+        return _SPUNDERS[2]->server_sensor;
+    }
+    if (var == "MQTT4")
+    {
+        return _SPUNDERS[3]->server_sensor;
+    }
+    return String();
 }

@@ -1,15 +1,15 @@
 #pragma once
 
-#include <memory>
-
 #include <Adafruit_ADS1X15.h>
 
-#define ADS1115_ADDRESS1 (0x48) // ADDR -> GND
-#define ADS1115_ADDRESS2 (0x49) // ADDR -> VCC
-#define ADS1115_ADDRESS3 (0x4a) // ADDR -> SDA
-#define ADS1115_ADDRESS4 (0x4b) // ADDR -> SCL
+#include <memory>
 
-#define ADS_FULLSCALE 32767
+const uint8_t ADS1115_ADDRESS1 = 0x48; // ADDR -> GND
+const uint8_t ADS1115_ADDRESS2 = 0x49; // ADDR -> VCC
+const uint8_t ADS1115_ADDRESS3 = 0x4a; // ADDR -> SDA
+const uint8_t ADS1115_ADDRESS4 = 0x4b; // ADDR -> SCL
+
+const uint16_t ADS_FULLSCALE = 32767;
 
 class ADS_Sensor
 {
@@ -29,7 +29,6 @@ public:
 
 private:
     std::shared_ptr<Adafruit_ADS1115> s_ads;
-    // Adafruit_ADS1115 *_ads;
     uint8_t ads_channel;
     uint16_t readADC();
 };
@@ -40,6 +39,7 @@ public:
     double volt_min;
     double volt_max;
     double psi_max;
+    double sensor_offset_volts;
 
     ADS_Pressure_Sensor();
 
@@ -51,7 +51,8 @@ public:
         uint8_t ads_chan,
         double min_vs,
         double max_vs,
-        double max_unit);
+        double max_unit,
+        double sensor_offset_volts);
 
     double getADSVolts();
     double computePSI();
@@ -60,8 +61,8 @@ public:
 class ADS_Level_Sensor : public ADS_Pressure_Sensor
 {
 public:
-    uint8_t volt_min;
-    uint8_t volt_max;
+    double volt_min;
+    double volt_max;
     double liters_max;
 
     ADS_Level_Sensor();
