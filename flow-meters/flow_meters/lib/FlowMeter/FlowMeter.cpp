@@ -18,10 +18,6 @@ FlowMeter::FlowMeter(std::string id, uint8_t sp, double cf, double cr = 1)
     percent_correction_factor = cr;
 }
 
-// void FlowMeter::set_sensor_pin(uint8_t pin) { sensor_pin = pin; }
-// void FlowMeter::set_calibration_factor(double cf) { calibration_factor = cf; }
-// void FlowMeter::set_percent_correction_factor(double cr) { percent_correction_factor = cr; }
-
 double FlowMeter::get_frequency()
 {
     frequency = (1000.0 / (millis() - old_time)) * pulse_count;

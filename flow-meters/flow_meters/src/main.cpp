@@ -86,11 +86,6 @@ void publishData()
   message["data"][f3.flowmeter_id]["Total[L]"] = f3.total_liters;
   attachInterrupt(f3.sensor_pin, pulseCounter3, FALLING);
 
-  // client.executeDelayed(5000, [&message]()
-  //                       {
-  //   client.publish(_PUBTOPIC, message.as<String>());
-  //   serializeJsonPretty(message, Serial); });
-
   client.publish(_PUBTOPIC, message.as<String>());
   serializeJsonPretty(message, Serial);
   delay(5000);

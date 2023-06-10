@@ -1,6 +1,6 @@
-#pragma once
+pragma once
 
-typedef struct flowmeter_cfg_t
+    typedef struct flowmeter_cfg_t
 {
   struct flow_cfg
   {
@@ -31,10 +31,6 @@ public:
   FlowMeter(flowmeter_cfg_t);
   FlowMeter(std::string, uint8_t, double, double);
 
-  // void set_sensor_pin(uint8_t);
-  // void set_calibration_factor(double);
-  // void set_percent_correction_factor(double);
-  // void reset_total();
   double get_frequency();
   double get_flow_rate();
   void run();
