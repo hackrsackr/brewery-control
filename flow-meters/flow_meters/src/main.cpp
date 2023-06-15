@@ -43,13 +43,13 @@ void setup()
   Serial.println(WiFi.localIP());
 
   pinMode(f1.sensor_pin, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(f1.sensor_pin), pulseCounter1, FALLING);
+  attachInterrupt(digitalPinToInterrupt(f1.sensor_pin), pulseCounter1, RISING);
 
   pinMode(f2.sensor_pin, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(f2.sensor_pin), pulseCounter2, FALLING);
+  attachInterrupt(digitalPinToInterrupt(f2.sensor_pin), pulseCounter2, RISING);
 
   pinMode(f3.sensor_pin, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(f3.sensor_pin), pulseCounter3, FALLING);
+  attachInterrupt(digitalPinToInterrupt(f3.sensor_pin), pulseCounter3, RISING);
 }
 
 void loop()
@@ -72,19 +72,19 @@ void publishData()
   message["data"][f1.flowmeter_id]["Flow_rate[LPM]"] = f1.flow_rate;
   message["data"][f1.flowmeter_id]["Total[mL]"] = f1.total_mLs;
   message["data"][f1.flowmeter_id]["Total[L]"] = f1.total_liters;
-  attachInterrupt(f1.sensor_pin, pulseCounter1, FALLING);
+  attachInterrupt(f1.sensor_pin, pulseCounter1, RISING);
 
   f2.run();
   message["data"][f2.flowmeter_id]["Flow_rate[LPM]"] = f2.flow_rate;
   message["data"][f2.flowmeter_id]["Total[mL]"] = f2.total_mLs;
   message["data"][f2.flowmeter_id]["Total[L]"] = f2.total_liters;
-  attachInterrupt(f2.sensor_pin, pulseCounter2, FALLING);
+  attachInterrupt(digitalPinToInterrupt(f2.sensor_pin), pulseCounter2, RISING);
 
   f3.run();
   message["data"][f3.flowmeter_id]["Flow_rate[LPM]"] = f3.flow_rate;
   message["data"][f3.flowmeter_id]["Total[mL]"] = f3.total_mLs;
   message["data"][f3.flowmeter_id]["Total[L]"] = f3.total_liters;
-  attachInterrupt(f3.sensor_pin, pulseCounter3, FALLING);
+  attachInterrupt(digitalPinToInterrupt(f3.sensor_pin), pulseCounter3, RISING);
 
   client.publish(_PUBTOPIC, message.as<String>());
   serializeJsonPretty(message, Serial);
