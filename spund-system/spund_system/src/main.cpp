@@ -108,7 +108,7 @@ void onConnectionEstablished()
             message["data"][spunder->spunder_id]["Desired_vols"] = spunder->desired_vols;
             // message["data"][spunder->spunder_id]["Server_Sensor"] = spunder->server_sensor;
             message["data"][spunder->spunder_id]["Vols"] = spunder->computeVols();
-            message["data"][spunder->spunder_id]["Relay_State"] = spunder->testCarb();
+            message["data"][spunder->spunder_id]["Relay_Toggled"] = spunder->testCarb();
             message["data"][spunder->spunder_id]["Minutes_since_vent"] = spunder->getLastVent();
         }
 

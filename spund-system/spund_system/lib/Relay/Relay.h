@@ -7,6 +7,7 @@ class Relay
 public:
     uint8_t relay_pin;
     uint8_t relay_state;
+    uint8_t relay_toggled;
 
     // Constructors
     Relay();

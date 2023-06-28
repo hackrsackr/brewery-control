@@ -78,7 +78,7 @@ double Spund_System::computeVols()
 
 uint8_t Spund_System::testCarb()
 {
-    relay_state = 0;
+    s_re->relay_toggled = false;
 
     if (vols > desired_vols)
     {
@@ -86,10 +86,9 @@ uint8_t Spund_System::testCarb()
         delay(500);
         time_of_last_vent = millis();
         s_re->closeRelay();
-        relay_state = 1;
     }
 
-    return relay_state;
+    return s_re->relay_toggled;
 }
 
 double Spund_System::getLastVent()

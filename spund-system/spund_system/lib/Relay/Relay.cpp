@@ -9,6 +9,8 @@ Relay::~Relay() {}
 void Relay::begin(uint8_t vent_pin)
 {
     relay_pin = vent_pin;
+    relay_state = !RELAY_OPEN;
+    relay_toggled = false;
     pinMode(relay_pin, OUTPUT);
     closeRelay();
 }
@@ -16,11 +18,12 @@ void Relay::begin(uint8_t vent_pin)
 void Relay::openRelay()
 {
     digitalWrite(relay_pin, RELAY_OPEN);
-    relay_state = 1;
+    relay_state = RELAY_OPEN;
+    relay_toggled = true;
 }
 
 void Relay::closeRelay()
 {
     digitalWrite(relay_pin, !RELAY_OPEN);
-    relay_state = 0;
+    relay_state = !RELAY_OPEN;
 }

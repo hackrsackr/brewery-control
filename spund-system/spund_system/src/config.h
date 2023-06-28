@@ -25,7 +25,7 @@ std::vector<spund_system_cfg_t> spund_cfgs{
     {
         .spunder{
             .spunder_id = "spunder-1",
-            .desired_vols = 3.01,
+            .desired_vols = 2.41,
             .relay_pin = 14,
         },
         .ads1115{
@@ -50,7 +50,7 @@ std::vector<spund_system_cfg_t> spund_cfgs{
     {
         .spunder{
             .spunder_id = "spunder-2",
-            .desired_vols = 3.02,
+            .desired_vols = 2.42,
             .relay_pin = 27,
         },
         .ads1115{
@@ -75,7 +75,7 @@ std::vector<spund_system_cfg_t> spund_cfgs{
     {
         .spunder{
             .spunder_id = "spunder-3",
-            .desired_vols = 3.03,
+            .desired_vols = 2.43,
             .relay_pin = 16,
         },
         .ads1115{
@@ -100,7 +100,7 @@ std::vector<spund_system_cfg_t> spund_cfgs{
     {
         .spunder{
             .spunder_id = "spunder-4",
-            .desired_vols = 3.04,
+            .desired_vols = 2.44,
             .relay_pin = 17,
         },
         .ads1115{
