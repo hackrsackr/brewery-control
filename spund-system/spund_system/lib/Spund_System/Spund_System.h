@@ -49,6 +49,7 @@ public:
     uint8_t i2c_scl;
     uint8_t ads_channel;
     uint8_t relay_pin;
+    uint8_t relay_state;
     double min_sensor_volts;
     double max_sensor_volts;
     double max_sensor_psi;
@@ -69,7 +70,8 @@ public:
     double getPSI();
     double computePSISetpoint();
     double computeVols();
-    double test_carb();
+    uint8_t testCarb();
+    double getLastVent();
 
 private:
     std::shared_ptr<ADS_Pressure_Sensor> s_ps;

@@ -76,15 +76,25 @@ double Spund_System::computeVols()
     return vols;
 }
 
-double Spund_System::test_carb()
+uint8_t Spund_System::testCarb()
 {
+    relay_state = 0;
+
     if (vols > desired_vols)
     {
         s_re->openRelay();
         delay(500);
         time_of_last_vent = millis();
         s_re->closeRelay();
+        relay_state = 1;
     }
+
+    return relay_state;
+}
+
+double Spund_System::getLastVent()
+{
+
     double minutes_since_vent = (millis() - time_of_last_vent) / 60000.0;
 
     return minutes_since_vent;
