@@ -39,7 +39,7 @@ std::vector<spund_system_cfg_t> spund_cfgs{
             .min_sensor_volts = .5,
             .max_sensor_volts = 4.5,
             .max_sensor_psi = 60.0,
-            .sensor_offset_volts = 0.0,
+            .sensor_offset_volts = 0.02,
         },
         .mqtt{
             .temp_sensor_id = "TempSensor-1",
@@ -123,4 +123,3 @@ std::vector<spund_system_cfg_t> spund_cfgs{
         },
     },
 };
-
