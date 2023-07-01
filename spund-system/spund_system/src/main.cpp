@@ -100,16 +100,25 @@ void onConnectionEstablished()
         {
             spunder->tempC = input["data"][spunder->temp_sensor_id]["value[degC]"];
             spunder->tempF = spunder->tempC * 1.8 + 32;
-            message["data"][spunder->spunder_id]["TempC"] = spunder->tempC;
-            message["data"][spunder->spunder_id]["Temp_Sensor"] = spunder->temp_sensor_id;
-            message["data"][spunder->spunder_id]["Volts"] = spunder->getVolts();
-            message["data"][spunder->spunder_id]["PSI"] = spunder->getPSI();
-            message["data"][spunder->spunder_id]["PSI_setpoint"] = spunder->computePSISetpoint();
-            message["data"][spunder->spunder_id]["Desired_vols"] = spunder->desired_vols;
-            // message["data"][spunder->spunder_id]["Server_Sensor"] = spunder->server_sensor;
-            message["data"][spunder->spunder_id]["Vols"] = spunder->computeVols();
-            message["data"][spunder->spunder_id]["Relay_Toggled"] = spunder->testCarb();
-            message["data"][spunder->spunder_id]["Minutes_since_vent"] = spunder->getLastVent();
+
+	    if (!spunder->tempC) 
+	    { 
+	    	Serial.print(spunder->spunder_id);
+	    	Serial.println(": no temp reading!");
+	    	continue;
+	    } 
+	    else 
+	    {
+            	message["data"][spunder->spunder_id]["TempC"] = spunder->tempC;
+            	message["data"][spunder->spunder_id]["Temp_Sensor"] = spunder->temp_sensor_id;
+            	message["data"][spunder->spunder_id]["Volts"] = spunder->getVolts();
+            	message["data"][spunder->spunder_id]["PSI"] = spunder->getPSI();
+            	message["data"][spunder->spunder_id]["PSI_setpoint"] = spunder->computePSISetpoint();
+            	message["data"][spunder->spunder_id]["Desired_vols"] = spunder->desired_vols;
+            	message["data"][spunder->spunder_id]["Vols"] = spunder->computeVols();
+            	message["data"][spunder->spunder_id]["Relay_Toggled"] = spunder->testCarb();
+            	message["data"][spunder->spunder_id]["Minutes_since_vent"] = spunder->getLastVent();
+	    }
         }
 
         message["data"]["memory"]["Input_memory_size"] = input.memoryUsage();
