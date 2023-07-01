@@ -73,6 +73,6 @@ public:
     double getLastVent();
 
 private:
-    std::shared_ptr<ADS_Pressure_Sensor> s_ps;
-    std::shared_ptr<Relay> s_re;
+    std::shared_ptr<ADS_Pressure_Sensor> s_ps_;
+    std::shared_ptr<Relay> s_re_;
 };

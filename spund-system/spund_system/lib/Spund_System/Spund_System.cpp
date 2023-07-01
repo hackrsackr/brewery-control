@@ -27,8 +27,8 @@ Spund_System::Spund_System(spund_system_cfg_t cfg)
     server_sensor = temp_sensor_id;
     time_of_last_vent = millis();
 
-    s_ps = std::make_shared<ADS_Pressure_Sensor>();
-    s_ps->begin(
+    s_ps_ = std::make_shared<ADS_Pressure_Sensor>();
+    s_ps_->begin(
         ads_addr,
         ads_gain,
         i2c_sda,
@@ -39,18 +39,18 @@ Spund_System::Spund_System(spund_system_cfg_t cfg)
         max_sensor_psi,
         sensor_offset_volts);
 
-    s_re = std::make_shared<Relay>();
-    s_re->begin(relay_pin);
+    s_re_ = std::make_shared<Relay>();
+    s_re_->begin(relay_pin);
 }
 
 double Spund_System::getVolts()
 {
-    return s_ps->getADSVolts();
+    return s_ps_->getADSVolts();
 }
 
 double Spund_System::getPSI()
 {
-    return s_ps->computePSI();
+    return s_ps_->computePSI();
 }
 
 double Spund_System::computePSISetpoint()
@@ -68,7 +68,7 @@ double Spund_System::computeVols()
 {
     double a = -.0684226;
     double b = ((.173354 * tempF) + 4.24267);
-    double c = (-s_ps->computePSI() + -16.669 + (-0.0101059 * tempF) + (0.00116512 * tempF * tempF));
+    double c = (-s_ps_->computePSI() + -16.669 + (-0.0101059 * tempF) + (0.00116512 * tempF * tempF));
     double d = ((b * b) - (4 * a * c));
 
     vols = ((-b + (pow(d, .5))) / (2 * a));
@@ -78,22 +78,21 @@ double Spund_System::computeVols()
 
 uint8_t Spund_System::testCarb()
 {
-    s_re->relay_toggled = false;
+    s_re_->relay_toggled = false;
 
     if (vols > desired_vols)
     {
-        s_re->openRelay();
+        s_re_->openRelay();
         delay(500);
         time_of_last_vent = millis();
-        s_re->closeRelay();
+        s_re_->closeRelay();
     }
 
-    return s_re->relay_toggled;
+    return s_re_->relay_toggled;
 }
 
 double Spund_System::getLastVent()
 {
-
     double minutes_since_vent = (millis() - time_of_last_vent) / 60000.0;
 
     return minutes_since_vent;
