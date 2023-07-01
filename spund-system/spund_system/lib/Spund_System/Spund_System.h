@@ -49,7 +49,6 @@ public:
     uint8_t i2c_scl;
     uint8_t ads_channel;
     uint8_t relay_pin;
-    uint8_t relay_state;
     double min_sensor_volts;
     double max_sensor_volts;
     double max_sensor_psi;
