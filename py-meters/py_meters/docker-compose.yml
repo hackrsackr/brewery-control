@@ -1,7 +1,7 @@
 services:
-  meters:
-    container_name: meters
-    image: hackrsackr/brewblox-meters:patch
+  volume-sensors:
+    container_name: volume-sensors
+    image: hackrsackr/volume-sensors:patch
     restart: unless-stopped
     privileged: true
 version: '3.7'
