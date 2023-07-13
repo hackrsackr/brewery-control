@@ -16,7 +16,6 @@ void pulseCounter2() { f2.pulse_count++; }
 void pulseCounter3() { f3.pulse_count++; }
 
 void onConnectionEstablished(void);
-void publishData(void);
 
 void setup()
 {
@@ -55,38 +54,35 @@ void setup()
 void loop()
 {
   client.loop();
-  publishData();
 }
 
 void onConnectionEstablished()
 {
-  publishData();
-}
+  while (client.isConnected())
+  {
+    StaticJsonDocument<400> message;
+    message["key"] = _CLIENTID;
 
-void publishData()
-{
-  StaticJsonDocument<400> message;
-  message["key"] = _CLIENTID;
+    f1.run();
+    message["data"][f1.flowmeter_id]["Flow_rate[LPM]"] = f1.flow_rate;
+    message["data"][f1.flowmeter_id]["Total[mL]"] = f1.total_mLs;
+    message["data"][f1.flowmeter_id]["Total[L]"] = f1.total_liters;
+    attachInterrupt(f1.sensor_pin, pulseCounter1, RISING);
 
-  f1.run();
-  message["data"][f1.flowmeter_id]["Flow_rate[LPM]"] = f1.flow_rate;
-  message["data"][f1.flowmeter_id]["Total[mL]"] = f1.total_mLs;
-  message["data"][f1.flowmeter_id]["Total[L]"] = f1.total_liters;
-  attachInterrupt(f1.sensor_pin, pulseCounter1, RISING);
+    f2.run();
+    message["data"][f2.flowmeter_id]["Flow_rate[LPM]"] = f2.flow_rate;
+    message["data"][f2.flowmeter_id]["Total[mL]"] = f2.total_mLs;
+    message["data"][f2.flowmeter_id]["Total[L]"] = f2.total_liters;
+    attachInterrupt(digitalPinToInterrupt(f2.sensor_pin), pulseCounter2, RISING);
 
-  f2.run();
-  message["data"][f2.flowmeter_id]["Flow_rate[LPM]"] = f2.flow_rate;
-  message["data"][f2.flowmeter_id]["Total[mL]"] = f2.total_mLs;
-  message["data"][f2.flowmeter_id]["Total[L]"] = f2.total_liters;
-  attachInterrupt(digitalPinToInterrupt(f2.sensor_pin), pulseCounter2, RISING);
+    f3.run();
+    message["data"][f3.flowmeter_id]["Flow_rate[LPM]"] = f3.flow_rate;
+    message["data"][f3.flowmeter_id]["Total[mL]"] = f3.total_mLs;
+    message["data"][f3.flowmeter_id]["Total[L]"] = f3.total_liters;
+    attachInterrupt(digitalPinToInterrupt(f3.sensor_pin), pulseCounter3, RISING);
 
-  f3.run();
-  message["data"][f3.flowmeter_id]["Flow_rate[LPM]"] = f3.flow_rate;
-  message["data"][f3.flowmeter_id]["Total[mL]"] = f3.total_mLs;
-  message["data"][f3.flowmeter_id]["Total[L]"] = f3.total_liters;
-  attachInterrupt(digitalPinToInterrupt(f3.sensor_pin), pulseCounter3, RISING);
-
-  client.publish(_PUBTOPIC, message.as<String>());
-  serializeJsonPretty(message, Serial);
-  delay(5000);
+    client.publish(_PUBTOPIC, message.as<String>());
+    serializeJsonPretty(message, Serial);
+    delay(5000);
+  }
 }
