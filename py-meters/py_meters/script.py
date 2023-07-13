@@ -42,7 +42,7 @@ client.ws_set_options(path='/eventbus')
 ads3 = ADS1115(address=0x4a)  # ADDRESS -> SDA
 
 # Names of each input
-ads3_keys = ['liqr_liters', 'mash_liters', 'boil_liters', 'liters']
+ads3_keys = ['liqr', 'mash', 'boil', 'unused']
 
 
 def main():
@@ -72,8 +72,8 @@ def main():
                 patch_list[index] = d3[v.name]['liters']
 
             message = {
-                'key': 'meters',
-                'data': {'volume-sensors': d3}
+                'key': 'volume-sensors',
+                'data': d3
             }
 
             client.publish(TOPIC, json.dumps(message))
