@@ -41,7 +41,6 @@ void setup()
   {
     FlowMeter *f = new FlowMeter(cfg);
     _FLOWMETERS.push_back(f);
-    // f->begin();
   }
 }
 
@@ -64,8 +63,6 @@ void onConnectionEstablished()
       message["data"][flowmeter->id]["Flow_rate[LPM]"] = flowmeter->flow_rate;
       message["data"][flowmeter->id]["Total[mL]"] = flowmeter->total_mLs;
       message["data"][flowmeter->id]["Total[L]"] = flowmeter->total_liters;
-
-      flowmeter->attachISR();
     }
 
     client.publish(_PUBTOPIC, message.as<String>());

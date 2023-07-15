@@ -15,18 +15,16 @@ typedef struct flowmeter_cfg_t
 
 class FlowMeter
 {
-
 public:
   FlowMeter(flowmeter_cfg_t _cfg);
   ~FlowMeter();
+
   std::string id;
   double flow_rate;
   double total_liters;
   unsigned long total_mLs;
   unsigned long old_time;
 
-  void begin();
-  void attachISR();
   void run();
 
 private:
@@ -37,7 +35,8 @@ private:
   double frequency;
   volatile int pulse_count;
 
-  void pulseCounter();
+  void ISR_ATTR();
+  void attachPinInt();
   double get_frequency();
   double get_flow_rate();
 };

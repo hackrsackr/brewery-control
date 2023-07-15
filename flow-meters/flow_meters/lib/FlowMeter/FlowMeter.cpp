@@ -3,7 +3,7 @@
 
 #include "FlowMeter.hpp"
 
-const unsigned long MIN_INTERVAL = 1000; // Minimum interval between flow events (in microseconds)
+const unsigned long MIN_INTERVAL = 1000000; // Minimum interval between flow events (in microseconds)
 
 FlowMeter::FlowMeter(flowmeter_cfg_t cfg)
 {
@@ -15,7 +15,7 @@ FlowMeter::FlowMeter(flowmeter_cfg_t cfg)
     pulse_count = 0;
 
     pinMode(sensor_pin, INPUT_PULLUP);
-    attachInterrupt(digitalPinToInterrupt(sensor_pin), std::bind(&FlowMeter::pulseCounter, this), RISING);
+    attachInterrupt(digitalPinToInterrupt(sensor_pin), std::bind(&FlowMeter::ISR_ATTR, this), RISING);
 }
 
 FlowMeter::~FlowMeter()
@@ -23,40 +23,34 @@ FlowMeter::~FlowMeter()
     detachInterrupt(sensor_pin);
 }
 
-void FlowMeter::begin()
+void FlowMeter::attachPinInt()
 {
-    total_pulse_count = 0;
-    pulse_count = 0;
-    pinMode(sensor_pin, INPUT_PULLUP);
-    attachInterrupt(digitalPinToInterrupt(sensor_pin), std::bind(&FlowMeter::pulseCounter, this), RISING);
+    attachInterrupt(digitalPinToInterrupt(sensor_pin), std::bind(&FlowMeter::ISR_ATTR, this), RISING);
 }
 
-void FlowMeter::attachISR()
-{
-    attachInterrupt(digitalPinToInterrupt(sensor_pin), std::bind(&FlowMeter::pulseCounter, this), RISING);
-}
 void FlowMeter::run()
 {
-    if ((millis() - old_time) > MIN_INTERVAL)
+    if ((micros() - old_time) > MIN_INTERVAL)
     {
         detachInterrupt(sensor_pin);
         get_flow_rate();
-        old_time = millis();
+        old_time = micros();
         total_pulse_count += pulse_count;
         total_liters = total_pulse_count / (calibration_factor * 60);
         total_mLs = total_liters * 1000;
         pulse_count = 0;
+        attachPinInt();
     }
 }
 
-void FlowMeter::pulseCounter()
+void FlowMeter::ISR_ATTR()
 {
     pulse_count++;
 }
 
 double FlowMeter::get_frequency()
 {
-    return frequency = (float(MIN_INTERVAL) / (millis() - old_time)) * pulse_count;
+    return frequency = (float(MIN_INTERVAL) / (micros() - old_time)) * pulse_count;
 }
 
 double FlowMeter::get_flow_rate()
