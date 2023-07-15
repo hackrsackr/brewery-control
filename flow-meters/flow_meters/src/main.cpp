@@ -2,18 +2,14 @@
 #include "ArduinoJson.h"
 #include "EspMQTTClient.h"
 
+#include <vector>
+
 #include "FlowMeter.hpp"
 #include "flow_config.hpp"
 
 EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
 
-FlowMeter f1(FLOW_CFGS[0]);
-FlowMeter f2(FLOW_CFGS[1]);
-FlowMeter f3(FLOW_CFGS[2]);
-
-void pulseCounter1() { f1.pulse_count++; }
-void pulseCounter2() { f2.pulse_count++; }
-void pulseCounter3() { f3.pulse_count++; }
+std::vector<FlowMeter *> _FLOWMETERS;
 
 void onConnectionEstablished(void);
 
@@ -41,14 +37,12 @@ void setup()
   Serial.print("Connected to ");
   Serial.println(WiFi.localIP());
 
-  pinMode(f1.sensor_pin, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(f1.sensor_pin), pulseCounter1, RISING);
-
-  pinMode(f2.sensor_pin, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(f2.sensor_pin), pulseCounter2, RISING);
-
-  pinMode(f3.sensor_pin, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(f3.sensor_pin), pulseCounter3, RISING);
+  for (auto &cfg : FLOW_CFGS)
+  {
+    FlowMeter *f = new FlowMeter(cfg);
+    _FLOWMETERS.push_back(f);
+    // f->begin();
+  }
 }
 
 void loop()
@@ -63,23 +57,16 @@ void onConnectionEstablished()
     StaticJsonDocument<400> message;
     message["key"] = _CLIENTID;
 
-    f1.run();
-    message["data"][f1.flowmeter_id]["Flow_rate[LPM]"] = f1.flow_rate;
-    message["data"][f1.flowmeter_id]["Total[mL]"] = f1.total_mLs;
-    message["data"][f1.flowmeter_id]["Total[L]"] = f1.total_liters;
-    attachInterrupt(f1.sensor_pin, pulseCounter1, RISING);
+    for (auto &flowmeter : _FLOWMETERS)
+    {
+      flowmeter->run();
 
-    f2.run();
-    message["data"][f2.flowmeter_id]["Flow_rate[LPM]"] = f2.flow_rate;
-    message["data"][f2.flowmeter_id]["Total[mL]"] = f2.total_mLs;
-    message["data"][f2.flowmeter_id]["Total[L]"] = f2.total_liters;
-    attachInterrupt(digitalPinToInterrupt(f2.sensor_pin), pulseCounter2, RISING);
+      message["data"][flowmeter->id]["Flow_rate[LPM]"] = flowmeter->flow_rate;
+      message["data"][flowmeter->id]["Total[mL]"] = flowmeter->total_mLs;
+      message["data"][flowmeter->id]["Total[L]"] = flowmeter->total_liters;
 
-    f3.run();
-    message["data"][f3.flowmeter_id]["Flow_rate[LPM]"] = f3.flow_rate;
-    message["data"][f3.flowmeter_id]["Total[mL]"] = f3.total_mLs;
-    message["data"][f3.flowmeter_id]["Total[L]"] = f3.total_liters;
-    attachInterrupt(digitalPinToInterrupt(f3.sensor_pin), pulseCounter3, RISING);
+      flowmeter->attachISR();
+    }
 
     client.publish(_PUBTOPIC, message.as<String>());
     serializeJsonPretty(message, Serial);

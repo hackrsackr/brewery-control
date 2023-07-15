@@ -34,15 +34,7 @@ constexpr auto _SS_FLOW = 9.93;
 std::vector<flowmeter_cfg_t> FLOW_CFGS{
     {
         .flow{
-            .flowmeter_id = "flow-meter-1",
-            .sensor_pin = 34,
-            .calibration_factor = _YFS402B,
-            .percent_correction_factor = 1.00,
-        },
-    },
-    {
-        .flow{
-            .flowmeter_id = "flow-meter-2",
+            .id = "flow-meter-1",
             .sensor_pin = 35,
             .calibration_factor = _YFS402B,
             .percent_correction_factor = 1.00,
@@ -50,7 +42,15 @@ std::vector<flowmeter_cfg_t> FLOW_CFGS{
     },
     {
         .flow{
-            .flowmeter_id = "flow-meter-3",
+            .id = "flow-meter-2",
+            .sensor_pin = 37,
+            .calibration_factor = _YFS402B,
+            .percent_correction_factor = 1.00,
+        },
+    },
+    {
+        .flow{
+            .id = "flow-meter-3",
             .sensor_pin = 36,
             .calibration_factor = _YFS402B,
             .percent_correction_factor = 1.00,
