@@ -23,7 +23,6 @@ public:
   double flow_rate;
   double total_liters;
   unsigned long total_mLs;
-  unsigned long old_time;
 
   void run();
 
@@ -34,9 +33,10 @@ private:
   uint16_t total_pulse_count;
   double frequency;
   volatile int pulse_count;
+  unsigned long old_time;
 
-  void ISR_ATTR();
+  void pulseCounter();
   void attachPinInt();
-  double get_frequency();
-  double get_flow_rate();
+  double getFrequency();
+  double getFlowRate();
 };

@@ -9,9 +9,9 @@ constexpr auto _SSID = SECRET_SSID;
 constexpr auto _PASS = SECRET_PASS;
 constexpr auto _MQTTHOST = "192.168.1.2";
 constexpr auto _MQTTPORT = 1883;
-constexpr auto _CLIENTID = "DEV-FlowMeters";
+constexpr auto _CLIENTID = "DEV-FlowMeters2";
 // constexpr auto _SUBTOPIC = "brewcast/history/spark-dev";
-constexpr auto _PUBTOPIC = "brewcast/history/DEV-FlowMeters";
+constexpr auto _PUBTOPIC = "brewcast/history/DEV-FlowMeters2";
 /*
     [Q * 23 - 3]
     (60*23)-(23*3) = 1311   bits/liter/min
