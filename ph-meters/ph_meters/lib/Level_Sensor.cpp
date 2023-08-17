@@ -17,9 +17,14 @@ auto Level_Sensor::getADC() -> uint16_t
     return adc = s_ads_->readADC_SingleEnded(ads_channel);
 }
 
+auto Level_Sensor::getTrimmedADC() -> uint16_t
+{
+    return adc_trimmed = s_ads_->readADC_SingleEnded(ads_channel) - adc_offset;
+}
+
 auto Level_Sensor::getVolts() -> float
 {
-    return volts = s_ads_->computeVolts(getADC());
+    return volts = s_ads_->computeVolts(getTrimmedADC());
 }
 
 auto Level_Sensor::voltsToLiters() -> float

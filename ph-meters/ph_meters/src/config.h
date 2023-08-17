@@ -20,8 +20,8 @@ constexpr bool _PUBLISHMQTT{true};
 // MQTT constants
 constexpr auto _MQTTHOST{"192.168.1.2"};
 constexpr auto _MQTTPORT{1883};
-constexpr auto _CLIENTID{"ph-dev2"};
-constexpr auto _PUBTOPIC{"brewcast/history/ph-dev2"};
+constexpr auto _CLIENTID{"mA-meters"};
+constexpr auto _PUBTOPIC{"brewcast/history/mA-meters"};
 
 // I2C pins
 constexpr uint8_t _I2C_SCL{22};
@@ -59,29 +59,29 @@ std::vector<ma_meter_cfg_t> meter_cfgs{
     },
 };
 
-std::vector<level_sensor_cfg_t> level_sensor_cfgs{
-    {
-        .id = "Level_Sensor-1",
-        .i2c_address = _I2C_ADDRESS2,
-        .ads_channel = 0,
-        .adc_offset = 8000,
-    },
-    {
-        .id = "Level_Sensor-2",
-        .i2c_address = _I2C_ADDRESS2,
-        .ads_channel = 1,
-        .adc_offset = 5824,
-    },
-    {
-        .id = "Level_Sensor-3",
-        .i2c_address = _I2C_ADDRESS2,
-        .ads_channel = 2,
-        .adc_offset = 6960,
-    },
-    {
-        .id = "Level_Sensor-4",
-        .i2c_address = _I2C_ADDRESS2,
-        .ads_channel = 3,
-        .adc_offset = 6960,
-    },
-};
+// std::vector<level_sensor_cfg_t> level_sensor_cfgs{
+//     {
+//         .id = "Level_Sensor-1",
+//         .i2c_address = _I2C_ADDRESS2,
+//         .ads_channel = 0,
+//         .adc_offset = 8000,
+//     },
+//     {
+//         .id = "Level_Sensor-2",
+//         .i2c_address = _I2C_ADDRESS2,
+//         .ads_channel = 1,
+//         .adc_offset = 5824,
+//     },
+//     {
+//         .id = "Level_Sensor-3",
+//         .i2c_address = _I2C_ADDRESS2,
+//         .ads_channel = 2,
+//         .adc_offset = 6960,
+//     },
+//     {
+//         .id = "Level_Sensor-4",
+//         .i2c_address = _I2C_ADDRESS2,
+//         .ads_channel = 3,
+//         .adc_offset = 6960,
+//     },
+// };
