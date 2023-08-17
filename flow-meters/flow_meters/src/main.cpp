@@ -11,8 +11,6 @@ EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
 
 std::vector<FlowMeter *> _FLOWMETERS;
 
-void onConnectionEstablished(void);
-
 void setup()
 {
   Serial.begin(115200);
@@ -44,11 +42,6 @@ void setup()
   }
 }
 
-void loop()
-{
-  client.loop();
-}
-
 void onConnectionEstablished()
 {
   while (client.isConnected())
@@ -64,9 +57,15 @@ void onConnectionEstablished()
       message["data"][flowmeter->id]["Total[mL]"] = flowmeter->total_mLs;
       message["data"][flowmeter->id]["Total[L]"] = flowmeter->total_liters;
     }
+    message["data"]["memory"]["Output_memory_size"] = message.memoryUsage();
 
     client.publish(_PUBTOPIC, message.as<String>());
     serializeJsonPretty(message, Serial);
     delay(5000);
   }
+}
+
+void loop()
+{
+  client.loop();
 }
