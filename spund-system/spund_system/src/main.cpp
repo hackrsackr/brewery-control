@@ -28,6 +28,8 @@ void setup(void)
     client.setMaxPacketSize(4096);
     client.enableOTA();
 
+    WiFi.disconnect(true);
+    delay(1000);
     WiFi.begin(SECRET_SSID, SECRET_PASS);
     uint8_t failed_connections = 0;
     while (WiFi.status() != WL_CONNECTED)
