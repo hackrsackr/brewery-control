@@ -9,51 +9,50 @@ constexpr auto _SSID = SECRET_SSID;
 constexpr auto _PASS = SECRET_PASS;
 constexpr auto _MQTTHOST = "192.168.1.2";
 constexpr auto _MQTTPORT = 1883;
-constexpr auto _CLIENTID = "DEV-FlowMeters2";
-// constexpr auto _SUBTOPIC = "brewcast/history/spark-dev";
-constexpr auto _PUBTOPIC = "brewcast/history/DEV-FlowMeters2";
+constexpr auto _CLIENTID = "flow-meters";
+constexpr auto _PUBTOPIC = "brewcast/history/flow-meters";
+
+// Calibration factors
 /*
-    [Q * 23 - 3]
-    (60*23)-(23*3) = 1311   bits/liter/min
-    1311 / 60 = 21.85       bits/liter/sec
+    (hz) = [Q * 21.85]
+    60 * 21.85 = 1311       pulses/minute/liter
+    1311 / 60 = 21.85       pulses/second/liter
 */
 constexpr auto _YF_S302 = 21.85;
 /*
-    [Q * 32]
-    60 * 32 = 1920 bits/liter/min
-    1920 / 60 = 32 bits/liter/sec
+    (hz) = [Q * 32]
+    60 * 32 = 1920 	    pulses/minute/liter
+    1920 / 60 = 32          pulses/second/liter
 */
 constexpr auto _YFS402B = 32;
 /*
-    [Q * 9.93]
-    60 * 9.93 = 596 bits/liter/min
-    596 / 60 = 9.93 bits/liter/sec
+    (hz) = [Q * 9.93]
+    60 * 9.93 = 596         pulses/minute/liter
+    596 / 60 = 9.93         pulses/second/liter
 */
-constexpr auto _SS_FLOW = 9.93;
+constexpr auto _SS_FLOW1 = 9.93;
+/*
+    (hz) = [Q * 17.95] 
+    60 * 17.95 = 1077	    pulses/minute/liter
+    1077 / 60 = 17.95       pulses/second/liter
+*/
+constexpr auto _SS_FLOW2 = 17.95;
 
 std::vector<flowmeter_cfg_t> FLOW_CFGS{
     {
+//        .flow{
+//            .id = "main",
+//            .sensor_pin = 34,
+//            .calibration_factor = _SS_FLOW2,
+//            .percent_correction_factor = 1.05,
+//        },
+//    },
+//    {
         .flow{
-            .id = "flow-meter-1",
+            .id = "liqr",
             .sensor_pin = 35,
-            .calibration_factor = _YFS402B,
-            .percent_correction_factor = 1.00,
-        },
-    },
-    {
-        .flow{
-            .id = "flow-meter-2",
-            .sensor_pin = 37,
-            .calibration_factor = _YFS402B,
-            .percent_correction_factor = 1.00,
-        },
-    },
-    {
-        .flow{
-            .id = "flow-meter-3",
-            .sensor_pin = 36,
-            .calibration_factor = _YFS402B,
-            .percent_correction_factor = 1.00,
+            .calibration_factor = _SS_FLOW1,
+            .percent_correction_factor = 1.05,
         },
     },
 };
