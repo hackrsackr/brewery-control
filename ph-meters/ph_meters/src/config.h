@@ -35,53 +35,96 @@ constexpr byte _I2C_ADDRESS2{0x49}; // VIN
 constexpr byte _I2C_ADDRESS3{0x4a}; // SDA
 constexpr byte _I2C_ADDRESS4{0x4b}; // SCL
 
-// MA_Meter configs
 std::vector<ma_meter_cfg_t> meter_cfgs{
     {
-        .id = "meter-1",
-        .i2c_address = _I2C_ADDRESS1,
-        .ads_channel = 0,
+        .id {"meter-1.1"},
+        .description {"mash_pH"},
+        .meter_type {pH},
+        .i2c_address {_I2C_ADDRESS1},
+        .ads_channel {0},
+        .ads_gain {GAIN_TWOTHIRDS},
     },
     {
-        .id = "meter-2",
-        .i2c_address = _I2C_ADDRESS1,
-        .ads_channel = 1,
+        .id {"meter-1.2"},
+        .description {"mash_mV"},
+        .meter_type {pH},
+        .i2c_address {_I2C_ADDRESS1},
+        .ads_channel {1},
+        .ads_gain {GAIN_TWOTHIRDS},
     },
     {
-        .id = "meter-3",
-        .i2c_address = _I2C_ADDRESS1,
-        .ads_channel = 2,
+        .id {"meter-1.3"},
+        .description {"boil_pH"},
+        .meter_type {pH},
+        .i2c_address {_I2C_ADDRESS1},
+        .ads_channel {2},
+        .ads_gain {GAIN_TWOTHIRDS},
     },
     {
-        .id = "meter-4",
-        .i2c_address = _I2C_ADDRESS1,
-        .ads_channel = 3,
+        .id {"meter-1.4"},
+        .description {"boil_mV"},
+        .meter_type {pH},
+        .i2c_address {_I2C_ADDRESS1},
+        .ads_channel {3},
+        .ads_gain {GAIN_TWOTHIRDS},
     },
+    // {
+    //     .id {"meter-2.1"},
+    //     .description {"liqr_o2"},
+    //     .meter_type {o2},
+    //     .i2c_address {_I2C_ADDRESS2},
+    //     .ads_channel {0},
+    //     .ads_gain {GAIN_TWOTHIRDS},
+    // },
+    // {
+    //     .id {"meter-2.2"},
+    //     .description {"wort_o2"},
+    //     .meter_type {o2},
+    //     .i2c_address {_I2C_ADDRESS2},
+    //     .ads_channel {1},
+    //     .ads_gain {GAIN_TWOTHIRDS},
+    // },
+    // {
+    //     .id {"meter-2.3"},
+    //     .description {"liqr_nA"},
+    //     .meter_type {o2},
+    //     .i2c_address {_I2C_ADDRESS2},
+    //     .ads_channel {2},
+    //     .ads_gain {GAIN_TWOTHIRDS},
+    // },
+    // {
+    //     .id {"meter-2.4"},
+    //     .description {"wort_nA"},
+    //     .meter_type {o2},
+    //     .i2c_address {_I2C_ADDRESS2},
+    //     .ads_channel {3},
+    //     .ads_gain {GAIN_TWOTHIRDS},
+    // },
 };
 
-std::vector<level_sensor_cfg_t> level_sensor_cfgs{
-    {
-        .id = "Level_Sensor-1",
-        .i2c_address = _I2C_ADDRESS2,
-        .ads_channel = 0,
-        .adc_offset = 8000,
-    },
-    {
-        .id = "Level_Sensor-2",
-        .i2c_address = _I2C_ADDRESS2,
-        .ads_channel = 1,
-        .adc_offset = 5824,
-    },
-    {
-        .id = "Level_Sensor-3",
-        .i2c_address = _I2C_ADDRESS2,
-        .ads_channel = 2,
-        .adc_offset = 6960,
-    },
-    {
-        .id = "Level_Sensor-4",
-        .i2c_address = _I2C_ADDRESS2,
-        .ads_channel = 3,
-        .adc_offset = 6960,
-    },
-};
+// std::vector<level_sensor_cfg_t> level_sensor_cfgs{
+//     {
+//         .id = "Level_Sensor-1",
+//         .i2c_address = _I2C_ADDRESS2,
+//         .ads_channel = 0,
+//         .adc_offset = 8000,
+//     },
+//     {
+//         .id = "Level_Sensor-2",
+//         .i2c_address = _I2C_ADDRESS2,
+//         .ads_channel = 1,
+//         .adc_offset = 5824,
+//     },
+//     {
+//         .id = "Level_Sensor-3",
+//         .i2c_address = _I2C_ADDRESS2,
+//         .ads_channel = 2,
+//         .adc_offset = 6960,
+//     },
+//     {
+//         .id = "Level_Sensor-4",
+//         .i2c_address = _I2C_ADDRESS2,
+//         .ads_channel = 3,
+//         .adc_offset = 6960,
+//     },
+// };
