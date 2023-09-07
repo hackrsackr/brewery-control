@@ -138,6 +138,7 @@ void onConnectionEstablished()
         {
             serializeJson(message["data"], Serial);
             Serial.println("");
+            // serializeJsonPretty(message["data"], Serial);
         } });
 }
 

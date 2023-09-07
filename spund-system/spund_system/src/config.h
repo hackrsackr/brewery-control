@@ -15,17 +15,17 @@ constexpr uint8_t _I2C_SCL = 25;
 constexpr uint8_t _I2C_SDA = 26;
 
 // MQTT parameters
-constexpr auto _MQTTHOST = "192.168.1.6";
+constexpr auto _MQTTHOST = "192.168.1.2";
 constexpr auto _MQTTPORT = 1883;
-constexpr auto _CLIENTID = "spund-dev";
-constexpr auto _SUBTOPIC = "brewcast/history/spark-dev";
-constexpr auto _PUBTOPIC = "brewcast/history/spund-dev";
+constexpr auto _CLIENTID = "spund-system";
+constexpr auto _SUBTOPIC = "brewcast/history/spark-one";
+constexpr auto _PUBTOPIC = "brewcast/history/spund-system";
 
 std::vector<spund_system_cfg_t> spund_cfgs{
     {
         .spunder{
             .spunder_id = "spunder-1",
-            .desired_vols = 2.41,
+            .desired_vols = 3.41,
             .relay_pin = 14,
         },
         .ads1115{
@@ -42,7 +42,7 @@ std::vector<spund_system_cfg_t> spund_cfgs{
             .sensor_offset_volts = 0.00,
         },
         .mqtt{
-            .temp_sensor_id = "TempSensor-1",
+            .temp_sensor_id = "TEMP_conicalBeer",
             .server_setpoint_input = "setpoint_input-1",
             .server_sensor_input = "mqtt_input-1",
         },
@@ -50,7 +50,7 @@ std::vector<spund_system_cfg_t> spund_cfgs{
     {
         .spunder{
             .spunder_id = "spunder-2",
-            .desired_vols = 2.42,
+            .desired_vols = 3.42,
             .relay_pin = 27,
         },
         .ads1115{
@@ -67,7 +67,7 @@ std::vector<spund_system_cfg_t> spund_cfgs{
             .sensor_offset_volts = 0.02,
         },
         .mqtt{
-            .temp_sensor_id = "TempSensor-1",
+            .temp_sensor_id = "TEMP_glycolReservoir",
             .server_setpoint_input = "setpoint_input-2",
             .server_sensor_input = "mqtt_input-2",
         },
@@ -75,7 +75,7 @@ std::vector<spund_system_cfg_t> spund_cfgs{
     {
         .spunder{
             .spunder_id = "spunder-3",
-            .desired_vols = 2.43,
+            .desired_vols = 3.43,
             .relay_pin = 16,
         },
         .ads1115{
@@ -92,7 +92,7 @@ std::vector<spund_system_cfg_t> spund_cfgs{
             .sensor_offset_volts = 0.0,
         },
         .mqtt{
-            .temp_sensor_id = "TempSensor-2",
+            .temp_sensor_id = "TEMP_mock1",
             .server_setpoint_input = "setpoint_input-3",
             .server_sensor_input = "mqtt_input-3",
         },
@@ -100,7 +100,7 @@ std::vector<spund_system_cfg_t> spund_cfgs{
     {
         .spunder{
             .spunder_id = "spunder-4",
-            .desired_vols = 2.44,
+            .desired_vols = 3.44,
             .relay_pin = 17,
         },
         .ads1115{
@@ -117,7 +117,7 @@ std::vector<spund_system_cfg_t> spund_cfgs{
             .sensor_offset_volts = 0.0,
         },
         .mqtt{
-            .temp_sensor_id = "TempSensor-1",
+            .temp_sensor_id = "TEMP_mock2",
             .server_setpoint_input = "setpoint_input-4",
             .server_sensor_input = "mqtt_input-4",
         },
