@@ -17,7 +17,7 @@ class Level_Sensor
 public:
     const char *id;
     uint8_t i2c_address, ads_channel;
-    uint16_t adc, adc_offset;
+    uint16_t adc, adc_offset, adc_trimmed;
     float volts, liters, gallons;
 
     Level_Sensor(level_sensor_cfg_t);
@@ -27,6 +27,7 @@ public:
 private:
     std::shared_ptr<Adafruit_ADS1115> s_ads_;
     auto getADC() -> uint16_t;
+    auto getTrimmedADC() -> uint16_t;
     auto getVolts() -> float;
     auto voltsToLiters() -> float;
     auto voltsToGallons() -> float;

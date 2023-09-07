@@ -20,8 +20,8 @@ constexpr bool _PUBLISHMQTT{true};
 // MQTT constants
 constexpr auto _MQTTHOST{"192.168.1.2"};
 constexpr auto _MQTTPORT{1883};
-constexpr auto _CLIENTID{"ph-dev2"};
-constexpr auto _PUBTOPIC{"brewcast/history/ph-dev2"};
+constexpr auto _CLIENTID{"mA-meters"};
+constexpr auto _PUBTOPIC{"brewcast/history/mA-meters"};
 
 // I2C pins
 constexpr uint8_t _I2C_SCL{22};
