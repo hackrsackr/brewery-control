@@ -5,6 +5,8 @@
 
 #include <vector>
 
+constexpr bool _PUBLISHMQTT = false;
+
 constexpr auto _SSID = SECRET_SSID;
 constexpr auto _PASS = SECRET_PASS;
 constexpr auto _MQTTHOST = "192.168.1.2";

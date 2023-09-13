@@ -1,45 +1,22 @@
+#include "Arduino.h"
 #include "ArduinoJson.h"
 #include "EspMQTTClient.h"
 
-#include "FlowMeter/flowmeter.hpp"
+#include <vector>
+
+#include "FlowMeter.hpp"
 #include "flow_config.hpp"
 
 EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
 
-FlowMeter f1(_SPIN1, _FLOW1, _SS_FLOW, _CORR1);
-FlowMeter f2(_SPIN2, _FLOW2, _SS_FLOW, _CORR2);
-
-void pulseCounter1() { f1.pulse_count++; }
-void pulseCounter2() { f2.pulse_count++; }
-
-void initWifi(void);
-void onConnectionEstablished(void);
-void publishData(void);
+std::vector<FlowMeter *> _FLOWMETERS;
 
 void setup()
 {
   Serial.begin(115200);
-
   client.setMaxPacketSize(4096);
   client.enableOTA();
 
-  initWifi();
-
-  pinMode(f1.sensor_pin, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(f1.sensor_pin), pulseCounter1, FALLING);
-
-  pinMode(f2.sensor_pin, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(f2.sensor_pin), pulseCounter2, FALLING);
-}
-
-void loop()
-{
-  client.loop();
-  publishData();
-}
-
-void initWifi()
-{
   WiFi.disconnect(true);
   delay(1000);
   WiFi.begin(_SSID, _PASS);
@@ -49,7 +26,7 @@ void initWifi()
     delay(500);
     Serial.println("connecting..");
     failed_connections++;
-    if (failed_connections > 20)
+    if (failed_connections > 10)
     {
       Serial.println("restarting..");
       ESP.restart();
@@ -57,42 +34,46 @@ void initWifi()
   }
   Serial.print("Connected to ");
   Serial.println(WiFi.localIP());
+
+  for (auto &cfg : FLOW_CFGS)
+  {
+    FlowMeter *f = new FlowMeter(cfg);
+    _FLOWMETERS.push_back(f);
+  }
 }
 
 void onConnectionEstablished()
 {
-  publishData();
-}
-
-void publishData()
-{
-  if (!client.isConnected())
-  {
-    Serial.println("client not connected");
-    Serial.print("MQTT is connected: ");
-    Serial.println(client.isMqttConnected());
-    Serial.print("WiFi is connected: ");
-    Serial.println(client.isWifiConnected());
-  }
-  else
+  while (client.isConnected())
   {
     StaticJsonDocument<400> message;
     message["key"] = _CLIENTID;
 
-    f1.flowmeter_run();
-    message["data"][f1.name]["Flow_rate[LPM]"] = f1.flow_rate;
-    message["data"][f1.name]["Total[mL]"] = f1.total_mLs;
-    message["data"][f1.name]["Total[L]"] = f1.total_liters;
-    attachInterrupt(f1.sensor_pin, pulseCounter1, FALLING);
+    for (auto &flowmeter : _FLOWMETERS)
+    {
+      flowmeter->run();
 
-    f2.flowmeter_run();
-    message["data"][f2.name]["Flow_rate[LPM]"] = f2.flow_rate;
-    message["data"][f2.name]["Total[mL]"] = f2.total_mLs;
-    message["data"][f2.name]["Total[L]"] = f2.total_liters;
-    attachInterrupt(f2.sensor_pin, pulseCounter2, FALLING);
+      message["data"][flowmeter->id]["Flow_rate[LPM]"] = flowmeter->flow_rate;
+      message["data"][flowmeter->id]["Total[mL]"] = flowmeter->total_mLs;
+      message["data"][flowmeter->id]["Total[L]"] = flowmeter->total_liters;
+    }
+    message["data"]["memory"]["Output_memory_size"] = message.memoryUsage();
 
-    client.publish(_PUBTOPIC, message.as<String>());
-    serializeJsonPretty(message, Serial);
+    if (_PUBLISHMQTT) {
+      client.publish(_PUBTOPIC, message.as<String>());
+      serializeJsonPretty(message, Serial);
+    }
+    
+    if (!_PUBLISHMQTT) {
+      serializeJson(message["data"], Serial);
+      Serial.println("");
+      // serializeJsonPretty(message["data"], Serial);
+    }
+    delay(5000);
   }
-  delay(5000);
+}
+
+void loop()
+{
+  client.loop();
 }
