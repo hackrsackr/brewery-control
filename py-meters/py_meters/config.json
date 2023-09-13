@@ -5,7 +5,7 @@
     "_SERVICE_TOPIC": "meters",
     "_ADS_FULLSCALE": 32767,
     "_GAIN": "2/3",
-    "_ADS_MAX_V": "meters",
+    "_ADS_MAX_V": 6.144,
     "_ADC3_OFFSETS": [
         8000,
         5824,

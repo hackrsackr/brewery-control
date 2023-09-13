@@ -1,12 +1,12 @@
 // docker build --tag <repo:tag> <path>
-docker build --tag hackrsackr/brewblox-meters:develop brewblox_meters/
+docker build --tag hackrsackr/py-meters:main py_meters/
 
 // run in docker container
-docker run --privileged -d --rm --tty hackrsackr/brewblox-meters:develop
+docker run --privileged -d --rm --tty hackrsackr/py-meters:main
 
 // docker hub commands
-docker push hackrsackr/brewblox-meters:develop
-docker pull hackrsackr/brewblox-meters:develop
+docker push hackrsackr/py-meters:main
+docker pull hackrsackr/py-meters:main
 
 
 

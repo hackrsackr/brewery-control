@@ -1,17 +1,17 @@
 """
 main script
-reads up to 4 ads1115 ADC boards outputs into one dictionary
-publishes output to brewblox over mqtt
+
+reads 3 level sensors and publishes output to brewblox over mqtt
+patches 3 external temp sensors with level sensor data in liters
+
 """
 import json
-import serial
 
 from time import sleep
 
 from paho.mqtt import client as mqtt
 
 from ads1115 import ADS1115
-from Meter import Meter
 from VolumeSensor import VolumeSensor
 
 # Brewblox Host ip address
@@ -38,29 +38,11 @@ PATCH_TOPIC = API_TOPIC + '/patch'
 client = mqtt.Client(transport='websockets')
 client.ws_set_options(path='/eventbus')
 
-# ADS1115 names and addresses
-ads1 = ADS1115(address=0x48)  # ADDRESS -> GND
-ads2 = ADS1115(address=0x49)  # ADDRESS -> VDD
+# Create an ADS1115 instance
 ads3 = ADS1115(address=0x4a)  # ADDRESS -> SDA
-ads4 = ADS1115(address=0x4b)  # ADDRESS -> SDL
-
-# Max positive bits of ADS1115's 16 bit signed integer
-ADS_FULLSCALE = 32767
-GAIN = 2/3
-ADS_MAX_V = 4.096 / GAIN
 
 # Names of each input
-ads1_keys = ['mash_mV', 'boil_mV', 'mash', 'boil']
-ads2_keys = ['liqr_nA', 'inline_nA', 'liqr', 'inline']
-ads3_keys = ['liqr', 'mash', 'boil']
-ads4_keys = ['output4-1', 'output4-2', 'output4-3', 'output4-4']
-
-# USB port of esp32 thats reading flowmeters
-FLOWMETER_SERIAL_PORT = '/dev/ttyUSB0'
-
-ser = serial.Serial(port=FLOWMETER_SERIAL_PORT,
-                    baudrate=115200,
-                    timeout=1)
+ads3_keys = ['liqr', 'mash', 'boil', 'unused']
 
 
 def main():
@@ -70,36 +52,10 @@ def main():
         client.loop_start()
 
         while True:
-            # Iterate through ads1 channels, populate dict d1
-            d1 = {}
-            for index, ads1_key in enumerate(ads1_keys):
-                m1 = Meter()
-                m1.name = ads1_key
-                m1.ads = ads1
-
-                d1[m1.name] = {
-                    'mA': round(m1.read_mA(index), 2),
-                    'mV': round(m1.mA_to_mV(m1.mA), 2),
-                    'pH': round(m1.mA_to_pH(m1.mA), 2)
-                }
-
-            # Iterate through ads2 channels, populate dict d2
-            d2 = {}
-            for index, ads2_key in enumerate(ads2_keys):
-                m2 = Meter()
-                m2.name = ads2_key
-                m2.ads = ads2
-
-                d2[m2.name] = {
-                    'mA': round(m2.read_mA(index), 2),
-                    'nA': round(m2.mA_to_nA(m2.mA), 2),
-                    'DO': round(m2.mA_to_DO(m2.mA), 2)
-                }
-
             # Iterate through ads3 channels, populate dict d3
             d3 = {}
             adc3_offsets = [8000, 5824, 6960, 6960]
-            patch_list = [0]*3
+            patch_list = [0, 0, 0, 0]
             for index, ads3_key in enumerate(ads3_keys):
                 v = VolumeSensor()
                 v.name = ads3_key
@@ -115,21 +71,9 @@ def main():
 
                 patch_list[index] = d3[v.name]['liters']
 
-            d4 = {}
-            flow_data = ser.readline().decode().rstrip()
-            try:
-                flow_data = json.loads(flow_data)
-            except json.JSONDecodeError:
-                continue
-            d4 = flow_data
-
-            # Output
             message = {
-                'key': 'meters',
-                'data': {'pH': d1,
-                         'DO': d2,
-                         'volume': d3,
-                         'flow': d4}
+                'key': 'volume-sensors',
+                'data': d3
             }
 
             client.publish(TOPIC, json.dumps(message))

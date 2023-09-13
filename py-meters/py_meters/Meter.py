@@ -47,18 +47,24 @@ class Meter:
         self.adc = self.ads.read_adc(channel, gain=GAIN) + offset
         return self.adc
 
-    def read_ma(self, channel) -> float:
-        self.ma = self.read_ads(channel) * ADS_MAX_V / ADS_FULLSCALE * 4
-        return self.ma
+    def read_mA(self, channel) -> float:
+        self.mA = self.read_ads(channel) * ADS_MAX_V / ADS_FULLSCALE * 4
+        return self.mA
 
-    def ma_to_ph(self, ma) -> float:
-        return ma / 2
+    def mA_to_Volts(self, mA) -> float:
+        return mA / 4
 
-    def ma_to_volts(self, ma) -> float:
-        return ma / 4
+    def mA_to_pH(self, mA) -> float:
+        return mA / 2
 
-    def ma_to_orp(self, ma) -> float:
-        return 400 - (ma * 28.57)
+    def mA_to_mV(self, mA) -> float:
+        return mA * 50 - 500
+
+    def mA_to_DO(self, mA) -> float:
+        return mA / 2
+
+    def mA_to_nA(self, mA) -> float:
+        return mA * 10
 
     def run(self):
         try:
@@ -74,9 +80,11 @@ class Meter:
 
                     d1[self.name] = {
                         'adc': self.read_ads(index),
-                        'mA': round(self.read_ma(index), 2),
-                        'pH': round(self.ma_to_ph(self.ma), 2),
-                        'ORP': round(self.ma_to_orp(self.ma), 2)
+                        'mA': round(self.read_mA(index), 2),
+                        'pH': round(self.mA_to_pH(self.mA), 2),
+                        'ORP': round(self.mA_to_mV(self.mA), 2),
+                        'DO': round(self.mA_to_DO(self.mA), 2),
+                        'nA': round(self.mA_to_nA(self.mA), 2)
                     }
 
                 """ Iterate through ads1 channels and compile data """
@@ -87,9 +95,11 @@ class Meter:
 
                     d2[self.name] = {
                         'adc': self.read_ads(index),
-                        'mA': round(self.read_ma(index), 2),
-                        'pH': round(self.ma_to_ph(self.ma), 2),
-                        'ORP': round(self.ma_to_orp(self.ma), 2)
+                        'mA': round(self.read_mA(index), 2),
+                        'pH': round(self.mA_to_pH(self.mA), 2),
+                        'ORP': round(self.mA_to_mV(self.mA), 2),
+                        'DO': round(self.mA_to_DO(self.mA), 2),
+                        'nA': round(self.mA_to_nA(self.mA), 2)
                     }
 
                 """ Output """
