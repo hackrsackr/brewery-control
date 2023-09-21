@@ -11,6 +11,8 @@ MA_Meter::MA_Meter(ma_meter_cfg_t cfg)
     ads_gain {cfg.ads_gain};
 
     s_ads_ {std::make_shared<Adafruit_ADS1115>()};
+    u_ads_ {std::make_unique<Adafruit_ADS1115>()};
+
     s_ads_->begin(i2c_address);
     s_ads_->setGain(ads_gain);
 }

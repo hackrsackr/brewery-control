@@ -37,7 +37,7 @@ void outputSerial()
   serializeJson(message["data"], Serial);
   Serial.println("");
 
-  delay(5000); 
+  delay(1000); 
 }
 void loop()
 {
