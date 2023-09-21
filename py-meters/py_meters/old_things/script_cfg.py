@@ -20,8 +20,7 @@ with open('config.json', 'r') as f:
 
 
 # Create a websocket MQTT client
-client = mqtt.Client(transport='websockets')
-client.ws_set_options(path='/eventbus')
+client = mqtt.Client()
 
 ser = serial.Serial(port=cfg['_FLOWMETER_SERIAL_PORT'],
                     baudrate=115200,
@@ -39,7 +38,8 @@ def main():
             d1 = {}
             for index, ads1_key in enumerate(cfg['_ADS_KEYS']['_ads1_keys']):
                 m1 = Meter()
-                m1.ads = ADS1115(address=0x48)
+                # m1.ads = ADS1115(address=0x48)
+                m1.ads = ADS1115(address=cfg['_ADS_ADDRESSES'[index]])
                 m1.name = ads1_key
 
                 d1[m1.name] = {

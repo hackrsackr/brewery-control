@@ -9,7 +9,7 @@ from ads1115 import ADS1115
 HOST = '192.168.1.2'
 
 # Brewblox Port
-PORT = 80
+PORT = 1883
 
 # The history service is subscribed to all topic starting with this
 HISTORY_TOPIC = 'brewcast/history'
@@ -22,26 +22,24 @@ ads2 = ADS1115(address=0x49)  # ADDRESS -> VDD
 ads3 = ADS1115(address=0x4a)  # ADDRESS -> SDA
 ads4 = ADS1115(address=0x4b)  # ADDRESS -> SDL
 """
-ads1 = ADS1115(address=0x48)
-ads2 = ADS1115(address=0x49)
 
 # Max positive bits of ADS1115's 16 bit signed integer
 ADS_FULLSCALE = 32767
 GAIN = 2/3
 ADS_MAX_V = 4.096 / GAIN
 
-ads1_keys = ['m-1_output-1', 'm-1_output-2', 'm-1_output-3', 'm-1_output-4']
-ads2_keys = ['m-2_output-1', 'm-2_output-2', 'm-2_output-3', 'm-2_output-4']
+ads1_keys = ['mash_mV', 'boil_mV', 'mash', 'boil']
+ads2_keys = ['liqr_nA', 'wort_nA', 'liqr', 'wort']
 
 
 class Meter:
     def __init__(self) -> None:
-        # Create a websocket MQTT client
-        self.client = mqtt.Client(transport='websockets')
-        self.client.ws_set_options(path='/eventbus')
 
         self.bit_max = ADS_FULLSCALE
         self.adsMaxV = ADS_MAX_V
+
+        # Create a websocket MQTT client
+        self.client = mqtt.Client()
 
     def read_ads(self, channel, offset=0) -> int:
         self.adc = self.ads.read_adc(channel, gain=GAIN) + offset
@@ -74,9 +72,10 @@ class Meter:
             while True:
                 """ Iterate through ads1 channels and compile data """
                 d1 = {}
-                for index, ads1_key in enumerate(ads1_keys):
-                    self.name = ads1_key
-                    self.ads = ads1
+                for index, key in enumerate(ads1_keys):
+                    self.__init__()
+                    self.name = key
+                    self.ads = ADS1115(address=0x48)
 
                     d1[self.name] = {
                         'adc': self.read_ads(index),
@@ -89,9 +88,10 @@ class Meter:
 
                 """ Iterate through ads1 channels and compile data """
                 d2 = {}
-                for index, ads2_key in enumerate(ads2_keys):
-                    self.name = ads2_key
-                    self.ads = ads2
+                for index, key in enumerate(ads2_keys):
+                    self.__init__()
+                    self.name = key
+                    self.ads = ADS1115(address=0x49)
 
                     d2[self.name] = {
                         'adc': self.read_ads(index),
@@ -105,10 +105,10 @@ class Meter:
                 """ Output """
                 message = {
                     'key': 'meters',
-                    'data': {'meter-1': d1, 'meter-2': d2}
+                    'data': {'pH': d1, 'DO': d2}
                 }
 
-                self.client.publish(TOPIC, json.dumps(message))
+                # self.client.publish(TOPIC, json.dumps(message))
                 print(json.dumps(message, sort_keys=False, indent=4))
                 sleep(5)
 

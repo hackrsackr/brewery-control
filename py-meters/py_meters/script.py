@@ -18,7 +18,7 @@ from VolumeSensor import VolumeSensor
 HOST = '192.168.1.2'
 
 # Brewblox Port
-PORT = 80
+PORT = 1883
 
 # The history service is subscribed to all topic starting with this
 HISTORY_TOPIC = 'brewcast/history'
@@ -35,14 +35,12 @@ API_TOPIC = 'brewcast/spark/blocks'
 PATCH_TOPIC = API_TOPIC + '/patch'
 
 # Create a websocket MQTT client
-client = mqtt.Client(transport='websockets')
-client.ws_set_options(path='/eventbus')
+client = mqtt.Client()
 
 # ADS1115 names and addresses
 ads1 = ADS1115(address=0x48)  # ADDRESS -> GND
 ads2 = ADS1115(address=0x49)  # ADDRESS -> VDD
 ads3 = ADS1115(address=0x4a)  # ADDRESS -> SDA
-ads4 = ADS1115(address=0x4b)  # ADDRESS -> SDL
 
 # Max positive bits of ADS1115's 16 bit signed integer
 ADS_FULLSCALE = 32767
@@ -51,9 +49,8 @@ ADS_MAX_V = 4.096 / GAIN
 
 # Names of each input
 ads1_keys = ['mash_mV', 'boil_mV', 'mash', 'boil']
-ads2_keys = ['liqr_nA', 'inline_nA', 'liqr', 'inline']
+ads2_keys = ['liqr_nA', 'wort_nA', 'liqr', 'wort']
 ads3_keys = ['liqr', 'mash', 'boil']
-ads4_keys = ['output4-1', 'output4-2', 'output4-3', 'output4-4']
 
 # USB port of esp32 thats reading flowmeters
 FLOWMETER_SERIAL_PORT = '/dev/ttyUSB0'
@@ -72,10 +69,10 @@ def main():
         while True:
             # Iterate through ads1 channels, populate dict d1
             d1 = {}
-            for index, ads1_key in enumerate(ads1_keys):
+            for index, key in enumerate(ads1_keys):
                 m1 = Meter()
-                m1.name = ads1_key
-                m1.ads = ads1
+                m1.name = key
+                m1.ads = ADS1115(address=0x48)  # ADDRESS -> GND
 
                 d1[m1.name] = {
                     'mA': round(m1.read_mA(index), 2),
@@ -85,10 +82,10 @@ def main():
 
             # Iterate through ads2 channels, populate dict d2
             d2 = {}
-            for index, ads2_key in enumerate(ads2_keys):
+            for index, key in enumerate(ads2_keys):
                 m2 = Meter()
-                m2.name = ads2_key
-                m2.ads = ads2
+                m2.name = key
+                m2.ads = ADS1115(address=0x49)  # ADDRESS -> VCC
 
                 d2[m2.name] = {
                     'mA': round(m2.read_mA(index), 2),
@@ -98,17 +95,22 @@ def main():
 
             # Iterate through ads3 channels, populate dict d3
             d3 = {}
-            adc3_offsets = [8000, 5824, 6960, 6960]
+
+            volume_sensor_offsets = [8000, 5824, 6960]
             patch_list = [0]*3
-            for index, ads3_key in enumerate(ads3_keys):
+
+            for index, key in enumerate(ads3_keys):
                 v = VolumeSensor()
-                v.name = ads3_key
-                v.ads = ads3
+                v.name = key
+                v.ads = ADS1115(address=0x4a)  # ADDRESS -> SDA
+                v.offset = volume_sensor_offsets[index]
 
                 d3[v.name] = {
-                    'adc': v.read_ads(index),
-                    'trimmed-adc': v.trim_adc(v.adc, adc3_offsets[index]),
-                    'volts': round(v.read_volts(index), 2),
+                    'calibration': {
+                        'adc': v.read_ads(index),
+                        'trimmed-adc': v.trim_adc(v.adc, v.offset),
+                        'volts': round(v.read_volts(index), 2)
+                    },
                     'liters': round(v.adc_to_liters(), 2),
                     'gallons': round(v.adc_to_gallons(), 2)
                 }

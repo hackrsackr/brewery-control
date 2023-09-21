@@ -1,6 +1,6 @@
 {
     "_HOST": "192.168.1.2",
-    "_PORT": 80,
+    "_PORT": 1883,
     "_HISTORY_TOPIC": "brewcast/history/",
     "_SERVICE_TOPIC": "meters",
     "_ADS_FULLSCALE": 32767,
@@ -20,22 +20,22 @@
     },
     "_ADS_KEYS": {
         "_ads1_keys": [
-            "output1-1",
-            "output1-2",
-            "output1-3",
-            "output1-4"
+            "mash_mV",
+            "boil_mV",
+            "mash",
+            "boil"
         ],
         "_ads2_keys": [
-            "output2-1",
-            "output2-2",
-            "output2-3",
-            "output2-4"
+            "liqr_nA",
+            "wort_nA",
+            "liqr_",
+            "wort_"
         ],
         "_ads3_keys": [
-            "output3-1",
-            "output3-2",
-            "output3-3",
-            "output3-4"
+            "liqr",
+            "mash",
+            "boil",
+            "unused"
         ],
         "_ads4_keys": [
             "output4-1",
