@@ -15,7 +15,7 @@ from Meter import Meter
 from VolumeSensor import VolumeSensor
 
 # Brewblox Host ip address
-HOST = '192.168.1.2'
+HOST = '10.0.0.101'
 
 # Brewblox Port
 PORT = 1883
