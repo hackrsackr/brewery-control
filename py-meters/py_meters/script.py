@@ -52,14 +52,6 @@ ads1_keys = ['mash_mV', 'boil_mV', 'mash', 'boil']
 ads2_keys = ['liqr_nA', 'wort_nA', 'liqr', 'wort']
 ads3_keys = ['liqr', 'mash', 'boil']
 
-# USB port of esp32 thats reading flowmeters
-FLOWMETER_SERIAL_PORT = '/dev/ttyUSB0'
-
-ser = serial.Serial(port=FLOWMETER_SERIAL_PORT,
-                    baudrate=115200,
-                    timeout=1)
-
-
 def main():
     try:
         # Create a websocket MQTT client
@@ -117,21 +109,12 @@ def main():
 
                 patch_list[index] = d3[v.name]['liters']
 
-            d4 = {}
-            flow_data = ser.readline().decode().rstrip()
-            try:
-                flow_data = json.loads(flow_data)
-            except json.JSONDecodeError:
-                continue
-            d4 = flow_data
-
             # Output
             message = {
                 'key': 'meters',
                 'data': {'pH': d1,
                          'DO': d2,
-                         'volume': d3,
-                         'flow': d4}
+                         'volume': d3}
             }
 
             client.publish(TOPIC, json.dumps(message))
