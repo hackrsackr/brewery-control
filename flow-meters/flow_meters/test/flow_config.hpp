@@ -1,41 +1,63 @@
+#pragma once
+
+#include "FlowMeter.hpp"
 #include "secrets.h"
 
-// Network setup
-#define _SSID SECRET_SSID
-#define _PASS SECRET_PASS
-#define _MQTTHOST "192.168.1.2"
-#define _MQTTPORT 1883
-// #define _CLIENTID "flow-meters"
-// #define _PUBTOPIC "brewcast/history/flow-meters"
-#define _CLIENTID "flow-meters-TEST"
-#define _PUBTOPIC "brewcast/history/flow-meters-TEST"
+#include <vector>
 
-// Flowmeter setup
-// Names
-#define _FLOW1 "flow-meter-1"
-#define _FLOW2 "flow-meter-2"
+constexpr bool _PUBLISHMQTT = true;
 
-// Sensor pins
-#define _SPIN1 34
-#define _SPIN2 35
-// #define _SPIN1 7
-// #define _SPIN2 8
+constexpr auto _SSID = SECRET_SSID;
+constexpr auto _PASS = SECRET_PASS;
+constexpr auto _MQTTHOST = "10.0.0.101";
+constexpr auto _MQTTPORT = 1883;
+constexpr auto _CLIENTID = "flow-meters";
+constexpr auto _PUBTOPIC = "brewcast/history/flow-meters";
 
-// Calibration Factors
-// [23*Q-3]
-// f = 23*60-(23*3) = 1311 bits per liter
-// 1311/60 = 21.85
-#define _YF_S302 21.85
+// Calibration factors
+/*
+    (hz) = [Q * 21.85]
+    60 * 21.85 = 1311       pulses/minute/liter
+    1311 / 60 = 21.85       pulses/second/liter
+*/
+constexpr auto _YF_S302 = 21.85;
 
-// f = Q*32 32*60 = 1920 bits per liter
-// 1920 / 60 = 32.00
-#define _YFS402B 32.00
+/*
+    (hz) = [Q * 32]
+    60 * 32 = 1920 	    pulses/minute/liter
+    1920 / 60 = 32          pulses/second/liter
+*/
+constexpr auto _YFS402B = 32;
 
-// 596 bits per liter 596/60 = 9.93.
-// correction_factor = .95 * 9.93 = 9.4335
-// #define _SS_FLOW 9.4335
-#define _SS_FLOW 9.93
+/*
+    (hz) = [Q * 9.93]
+    60 * 9.93 = 596         pulses/minute/liter
+    596 / 60 = 9.93         pulses/second/liter
+*/
+constexpr auto _SS_FLOW1 = 9.93;
 
-// Correction Factors
-#define _CORR1 .95
-#define _CORR2 .95
+/*
+    (hz) = [Q * 17.95] 
+    60 * 17.95 = 1077	    pulses/minute/liter
+    1077 / 60 = 17.95       pulses/second/liter
+*/
+constexpr auto _SS_FLOW2 = 17.95;
+
+std::vector<flowmeter_cfg_t> FLOW_CFGS{
+    {
+       .flow{
+           .id = "main",
+           .sensor_pin = 34,
+           .calibration_factor = _SS_FLOW2,
+           .percent_correction_factor = 1.05,
+       },
+   },
+   {
+        .flow{
+            .id = "liqr",
+            .sensor_pin = 35,
+            .calibration_factor = _SS_FLOW1,
+            .percent_correction_factor = 1.05,
+        },
+    },
+};

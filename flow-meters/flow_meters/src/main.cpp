@@ -16,9 +16,8 @@ void setup()
   Serial.begin(115200);
   client.setMaxPacketSize(4096);
   client.enableOTA();
+  // client.enableDebuggingMessages();
 
-  WiFi.disconnect(true);
-  delay(1000);
   WiFi.begin(_SSID, _PASS);
   uint8_t failed_connections = 0;
   while (WiFi.status() != WL_CONNECTED)
@@ -44,7 +43,8 @@ void setup()
 
 void onConnectionEstablished()
 {
-  while (client.isConnected())
+  // while (client.isConnected())
+  do
   {
     StaticJsonDocument<400> message;
     message["key"] = _CLIENTID;
@@ -70,7 +70,7 @@ void onConnectionEstablished()
       // serializeJsonPretty(message["data"], Serial);
     }
     delay(5000);
-  }
+  } while (client.isConnected());
 }
 
 void loop()
