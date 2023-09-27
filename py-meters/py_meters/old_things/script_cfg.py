@@ -102,7 +102,7 @@ def main():
 
     finally:
         ser.close()
-        client.loop_stop
+        client.loop_stop()
 
 
 if __name__ == '__main__':
