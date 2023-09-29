@@ -90,22 +90,3 @@ std::vector<flowmeter_cfg_t> FLOW_CFGS{
         },
     },
 };
-// dev: qt32s3
-// std::vector<flowmeter_cfg_t> FLOW_CFGS{
-//     {
-//         .flow{
-//             .id = "main",
-//             .sensor_pin = 35,
-//             .calibration_factor = _SS_FLOW2,
-//             .percent_correction_factor = 1.05,
-//         },
-//     },
-//     {
-//         .flow{
-//             .id = "liqr",
-//             .sensor_pin = 36,
-//             .calibration_factor = _YFS402B,
-//             .percent_correction_factor = 1.05,
-//         },
-//     },
-// };
