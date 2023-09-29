@@ -2,7 +2,7 @@
 #include <FunctionalInterrupt.h>
 #include "FlowMeter.hpp"
 
-const unsigned long MIN_INTERVAL = 1000000; // Minimum interval between flow events (in microseconds)
+const unsigned long MIN_INTERVAL = 1000000.0; // Minimum interval between flow events (in microseconds)
 
 FlowMeter::FlowMeter(flowmeter_cfg_t cfg)
 {
@@ -10,8 +10,12 @@ FlowMeter::FlowMeter(flowmeter_cfg_t cfg)
     sensor_pin = cfg.flow.sensor_pin;
     calibration_factor = cfg.flow.calibration_factor;
     percent_correction_factor = cfg.flow.percent_correction_factor;
-    total_pulse_count = 0;
+
     pulse_count = 0;
+    flow_rate = 0.0;
+    flow_milliliters = 0;
+    total_milliliters = 0;
+    old_time = 0;
 
     pinMode(sensor_pin, INPUT_PULLUP);
     attachInterrupt(digitalPinToInterrupt(sensor_pin), std::bind(&FlowMeter::pulseCounter, this), RISING);
@@ -34,9 +38,12 @@ void FlowMeter::run()
         detachInterrupt(sensor_pin);
         getFlowRate();
         old_time = micros();
-        total_pulse_count += pulse_count;
-        total_liters = total_pulse_count / (calibration_factor * 60);
-        total_mLs = total_liters * 1000;
+        flow_milliliters = (flow_rate / 60) * 1000;
+        total_milliliters += flow_milliliters;
+        total_liters = total_milliliters / 1000.0;
+        // total_pulse_count += pulse_count;
+        // total_liters = total_pulse_count / (calibration_factor * 60);
+        // total_mLs = total_liters * 1000;
         pulse_count = 0;
         attachPinInt();
     }

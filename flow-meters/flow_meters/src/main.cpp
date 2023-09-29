@@ -43,8 +43,7 @@ void setup()
 
 void onConnectionEstablished()
 {
-  // while (client.isConnected())
-  do
+  while (client.isConnected())
   {
     StaticJsonDocument<400> message;
     message["key"] = _CLIENTID;
@@ -54,23 +53,25 @@ void onConnectionEstablished()
       flowmeter->run();
 
       message["data"][flowmeter->id]["Flow_rate[LPM]"] = flowmeter->flow_rate;
-      message["data"][flowmeter->id]["Total[mL]"] = flowmeter->total_mLs;
+      message["data"][flowmeter->id]["Total[mL]"] = flowmeter->total_milliliters;
       message["data"][flowmeter->id]["Total[L]"] = flowmeter->total_liters;
     }
     message["data"]["memory"]["Output_memory_size"] = message.memoryUsage();
 
-    if (_PUBLISHMQTT) {
+    if (_PUBLISHMQTT)
+    {
       client.publish(_PUBTOPIC, message.as<String>());
       serializeJsonPretty(message, Serial);
     }
-    
-    if (!_PUBLISHMQTT) {
+
+    if (!_PUBLISHMQTT)
+    {
       serializeJson(message["data"], Serial);
       Serial.println("");
       // serializeJsonPretty(message["data"], Serial);
     }
     delay(5000);
-  } while (client.isConnected());
+  }
 }
 
 void loop()

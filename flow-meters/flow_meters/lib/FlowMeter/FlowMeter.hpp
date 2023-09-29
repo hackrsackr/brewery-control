@@ -22,7 +22,7 @@ public:
   std::string id;
   double flow_rate;
   double total_liters;
-  unsigned long total_mLs;
+  unsigned long total_milliliters;
 
   void run();
 
@@ -30,7 +30,7 @@ private:
   uint8_t sensor_pin;
   double calibration_factor;
   double percent_correction_factor;
-  uint16_t total_pulse_count;
+  unsigned int flow_milliliters;
   double frequency;
   volatile int pulse_count;
   unsigned long old_time;
