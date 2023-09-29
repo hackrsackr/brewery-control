@@ -1,77 +1,65 @@
-#include "ArduinoJson.h"
-#include "EspMQTTClient.h"
-
-//#include "flowmeter.hpp"
-//#include "flow_config.hpp"
+#include <Arduino.h>
+#include <FunctionalInterrupt.h>
 #include "FlowMeter.hpp"
-#include "FlowMeter/flow_config.hpp"
 
-FlowMeter f1(_SPIN1, _FLOW1, _YFS402B);
+const unsigned long MIN_INTERVAL = 1000000.0; // Minimum interval between flow events (in microseconds)
 
-EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
-
-void pulseCounter() { f1.pulse_count++; }
-void onConnectionEstablished(void);
-void publishData(void);
-
-void setup()
+FlowMeter::FlowMeter(flowmeter_cfg_t cfg)
 {
-    // Initialize a serial connection for reporting values to the host
-    Serial.begin(115200);
-    
-    // WiFi
-    WiFi.disconnect(true);
-    delay(1000);
-    WiFi.begin(_SSID, _PASS);
-    
-    uint8_t failed_connections = 0;
-    while (WiFi.status() != WL_CONNECTED)
-    {
-        delay(500);
-        Serial.println("connecting..");
-        failed_connections ++;
-        if (failed_connections > 20) 
-        {
-            Serial.println("restarting..");
-            ESP.restart();
-        }
-    }
-    
-    Serial.print("Connected to ");
-    Serial.println(WiFi.localIP());
+    id = cfg.flow.id;
+    sensor_pin = cfg.flow.sensor_pin;
+    calibration_factor = cfg.flow.calibration_factor;
+    percent_correction_factor = cfg.flow.percent_correction_factor;
 
-    pinMode(f1.sensor_pin, INPUT_PULLUP);
-    attachInterrupt(f1.sensor_pin, pulseCounter, FALLING);
+    pulse_count = 0;
+    flow_rate = 0.0;
+    flow_milliliters = 0;
+    total_milliliters = 0;
+    old_time = 0;
+
+    pinMode(sensor_pin, INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(sensor_pin), std::bind(&FlowMeter::pulseCounter, this), RISING);
 }
 
-
-void publish_data()
+FlowMeter::~FlowMeter()
 {
-    if (client.isConnected())
-    {
-        StaticJsonDocument<200> message;
-        message["key"] = _CLIENTID;
+    detachInterrupt(sensor_pin);
+}
 
-        f1.flowmeter_run();
-        message["data"][f1.name]["Flow rate[LPM]"] = f1.flow_rate;
-        message["data"][f1.name]["Total[mLs]"] = f1.total_mLs;
-        attachInterrupt(f1.sensor_pin, pulseCounter, FALLING);
-        
-        client.publish(_PUBTOPIC, message.as<String>());
-        serializeJsonPretty(message, Serial);
-        delay(5000);
+void FlowMeter::attachPinInt()
+{
+    attachInterrupt(digitalPinToInterrupt(sensor_pin), std::bind(&FlowMeter::pulseCounter, this), RISING);
+}
+
+void FlowMeter::run()
+{
+    if ((micros() - old_time) > MIN_INTERVAL)
+    {
+        detachInterrupt(sensor_pin);
+        getFlowRate();
+        old_time = micros();
+        flow_milliliters = (flow_rate / 60) * 1000;
+        total_milliliters += flow_milliliters;
+        total_liters = total_milliliters / 1000.0;
+        // total_pulse_count += pulse_count;
+        // total_liters = total_pulse_count / (calibration_factor * 60);
+        // total_mLs = total_liters * 1000;
+        pulse_count = 0;
+        attachPinInt();
     }
 }
 
-
-void onConnectionEstablished()
+void FlowMeter::pulseCounter()
 {
-    publish_data();    
+    pulse_count++;
 }
 
-
-void loop()
+double FlowMeter::getFrequency()
 {
-    client.loop();
-    publish_data();
+    return frequency = (float(MIN_INTERVAL) / (micros() - old_time)) * pulse_count;
+}
+
+double FlowMeter::getFlowRate()
+{
+    return flow_rate = (getFrequency() / calibration_factor) * percent_correction_factor;
 }
