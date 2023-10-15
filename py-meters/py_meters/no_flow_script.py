@@ -34,13 +34,10 @@ API_TOPIC = 'brewcast/spark/blocks'
 # https://www.brewblox.com/dev/reference/blocks_api.html
 PATCH_TOPIC = API_TOPIC + '/patch'
 
-# Create a websocket MQTT client
-client = mqtt.Client()
-
 # ADS1115 names and addresses
-ads1 = ADS1115(address=0x48)  # ADDRESS -> GND
-ads2 = ADS1115(address=0x49)  # ADDRESS -> VDD
-ads3 = ADS1115(address=0x4a)  # ADDRESS -> SDA
+ADS1 = ADS1115(address=0x48)  # ADDRESS -> GND
+ADS2 = ADS1115(address=0x49)  # ADDRESS -> VDD
+ADS3 = ADS1115(address=0x4a)  # ADDRESS -> SDA
 
 # Max positive bits of ADS1115's 16 bit signed integer
 ADS_FULLSCALE = 32767
@@ -48,31 +45,26 @@ GAIN = 2/3
 ADS_MAX_V = 4.096 / GAIN
 
 # Names of each input
-ads1_keys = ['mash_mV', 'boil_mV', 'mash', 'boil']
-ads2_keys = ['liqr_nA', 'wort_nA', 'liqr', 'wort']
-ads3_keys = ['liqr', 'mash', 'boil']
+ADS1_KEYS = ['mash_mV', 'boil_mV', 'mash', 'boil']
+ADS2_KEYS = ['liqr_nA', 'wort_nA', 'liqr', 'wort']
+ADS3_KEYS = ['liqr', 'mash', 'boil']
 
-# USB port of esp32 thats reading flowmeters
-FLOWMETER_SERIAL_PORT = '/dev/ttyUSB0'
-
-ser = serial.Serial(port=FLOWMETER_SERIAL_PORT,
-                    baudrate=115200,
-                    timeout=1)
+# Create a websocket MQTT client
+client = mqtt.Client()
 
 
 def main():
     try:
-        # Create a websocket MQTT client
         client.connect_async(host=HOST, port=PORT)
         client.loop_start()
 
         while True:
             # Iterate through ads1 channels, populate dict d1
             d1 = {}
-            for index, key in enumerate(ads1_keys):
+            for index, key in enumerate(ADS1_KEYS):
                 m1 = Meter()
                 m1.name = key
-                m1.ads = ADS1115(address=0x48)  # ADDRESS -> GND
+                m1.ads = ADS1
 
                 d1[m1.name] = {
                     'mA': round(m1.read_mA(index), 2),
@@ -82,10 +74,10 @@ def main():
 
             # Iterate through ads2 channels, populate dict d2
             d2 = {}
-            for index, key in enumerate(ads2_keys):
+            for index, key in enumerate(ADS2_KEYS):
                 m2 = Meter()
                 m2.name = key
-                m2.ads = ADS1115(address=0x49)  # ADDRESS -> VCC
+                m2.ads = ADS2
 
                 d2[m2.name] = {
                     'mA': round(m2.read_mA(index), 2),
@@ -99,10 +91,10 @@ def main():
             volume_sensor_offsets = [8000, 5824, 6960]
             patch_list = [0]*3
 
-            for index, key in enumerate(ads3_keys):
+            for index, key in enumerate(ADS3_KEYS):
                 v = VolumeSensor()
                 v.name = key
-                v.ads = ADS1115(address=0x4a)  # ADDRESS -> SDA
+                v.ads = ADS3
                 v.offset = volume_sensor_offsets[index]
 
                 d3[v.name] = {
@@ -117,21 +109,12 @@ def main():
 
                 patch_list[index] = d3[v.name]['liters']
 
-            d4 = {}
-            flow_data = ser.readline().decode().rstrip()
-            try:
-                flow_data = json.loads(flow_data)
-            except json.JSONDecodeError:
-                continue
-            d4 = flow_data
-
             # Output
             message = {
                 'key': 'meters',
                 'data': {'pH': d1,
                          'DO': d2,
-                         'volume': d3,
-                         'flow': d4}
+                         'volume': d3}
             }
 
             client.publish(TOPIC, json.dumps(message))
@@ -175,7 +158,7 @@ def main():
             sleep(5)
 
     finally:
-        client.loop_stop
+        client.loop_stop()
 
 
 if __name__ == '__main__':
