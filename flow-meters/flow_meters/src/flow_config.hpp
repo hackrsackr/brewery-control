@@ -5,10 +5,10 @@
 
 #include <vector>
 
-constexpr bool _PUBLISHMQTT = true;
-
 constexpr auto _SSID = SECRET_SSID;
 constexpr auto _PASS = SECRET_PASS;
+
+constexpr bool _PUBLISHMQTT = false;
 constexpr auto _MQTTHOST = "10.0.0.101";
 constexpr auto _MQTTPORT = 1883;
 constexpr auto _CLIENTID = "flow-meters";
@@ -78,7 +78,7 @@ std::vector<flowmeter_cfg_t> FLOW_CFGS{
             .id = "main",
             .sensor_pin = 34,
             .calibration_factor = _SS_FLOW1,
-            .percent_correction_factor = 1.05,
+            .percent_correction_factor = .95,
         },
     },
     {

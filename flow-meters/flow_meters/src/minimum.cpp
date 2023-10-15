@@ -19,7 +19,7 @@ void setup()
   }
 }
 
-void outputSerial()
+void loop()
 {
   StaticJsonDocument<400> message;
   message["key"] = _CLIENTID;
@@ -34,14 +34,9 @@ void outputSerial()
   }
   message["data"]["memory"]["Output_memory_size"] = message.memoryUsage();
 
-  serializeJsonPretty(message["data"], Serial);
+  // serializeJsonPretty(message["data"], Serial);
+  // Serial.println("");
   serializeJson(message["data"], Serial);
-  Serial.println("");
 
-  delay(5000);
-}
-void loop()
-{
-  outputSerial();
-  // client.loop();
+  delay(2500);
 }
