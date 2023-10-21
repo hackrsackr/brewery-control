@@ -16,7 +16,7 @@ void setup()
   Serial.begin(115200);
   client.setMaxPacketSize(4096);
   client.enableOTA();
-  // client.enableDebuggingMessages();
+  client.enableDebuggingMessages();
 
   WiFi.begin(_SSID, _PASS);
   uint8_t failed_connections = 0;

@@ -8,7 +8,7 @@
 constexpr auto _SSID = SECRET_SSID;
 constexpr auto _PASS = SECRET_PASS;
 
-constexpr bool _PUBLISHMQTT = false;
+constexpr bool _PUBLISHMQTT = true;
 constexpr auto _MQTTHOST = "10.0.0.101";
 constexpr auto _MQTTPORT = 1883;
 constexpr auto _CLIENTID = "flow-meters";
@@ -74,19 +74,15 @@ constexpr auto _SS_FLOW2 = 17.95; // Q(L/m)
 // Production: dev-kit
 std::vector<flowmeter_cfg_t> FLOW_CFGS{
     {
-        .flow{
             .id = "main",
             .sensor_pin = 34,
             .calibration_factor = _SS_FLOW1,
-            .percent_correction_factor = .95,
-        },
+            .percent_correction_factor = 1.00,
     },
     {
-        .flow{
             .id = "liqr",
             .sensor_pin = 35,
             .calibration_factor = _SS_FLOW1,
-            .percent_correction_factor = 1.05,
-        },
+            .percent_correction_factor = 1.00,
     },
 };
