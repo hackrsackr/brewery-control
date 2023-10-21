@@ -13,7 +13,6 @@ FlowMeter::FlowMeter(flowmeter_cfg_t cfg)
 
     pulse_count = 0;
     flow_rate = 0.0;
-    // flow_milliliters = 0;
     total_pulse_count = 0;
     total_milliliters = 0;
     old_time = 0;
@@ -40,14 +39,10 @@ void FlowMeter::run()
         getFlowRate();
         old_time = micros();
         total_pulse_count += pulse_count;
-        total_liters = total_pulse_count / (calibration_factor * 60);
+        total_liters = total_pulse_count / (calibration_factor * 60); // seconds to minutes
         total_milliliters = total_liters * 1000;
-	pulse_count = 0; 
+	    pulse_count = 0; 
         attachPinInt();
-
-        // flow_milliliters = (flow_rate / 60) * 1000;
-        // total_milliliters += flow_milliliters;
-        // total_liters = total_milliliters / 1000.0;
     }
 }
 
@@ -63,6 +58,5 @@ double FlowMeter::getFrequency()
 
 double FlowMeter::getFlowRate()
 {
-    return flow_rate = (getFrequency() / calibration_factor);
-    //return flow_rate = (pulse_count / 596) * 60;
+    return flow_rate = (getFrequency() / calibration_factor) * percent_correction_factor;
 }
