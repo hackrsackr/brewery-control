@@ -2,10 +2,10 @@
 
 typedef struct flowmeter_cfg_t
 {
-    std::string id;
-    uint8_t sensor_pin;
-    double calibration_factor;
-    double percent_correction_factor;
+  std::string id;
+  uint8_t sensor_pin;
+  double calibration_factor;
+  double percent_correction_factor;
 
 } flowmeter_cfg_t;
 
@@ -31,7 +31,7 @@ private:
   volatile int pulse_count;
   unsigned long old_time;
 
-  void pulseCounter();
+  void IRAM_ATTR pulseCounter();
   void attachPinInt();
   double getFrequency();
   double getFlowRate();

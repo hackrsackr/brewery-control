@@ -41,12 +41,12 @@ void FlowMeter::run()
         total_pulse_count += pulse_count;
         total_liters = total_pulse_count / (calibration_factor * 60); // seconds to minutes
         total_milliliters = total_liters * 1000;
-	    pulse_count = 0; 
+        pulse_count = 0;
         attachPinInt();
     }
 }
 
-void FlowMeter::pulseCounter()
+void IRAM_ATTR FlowMeter::pulseCounter()
 {
     pulse_count++;
 }

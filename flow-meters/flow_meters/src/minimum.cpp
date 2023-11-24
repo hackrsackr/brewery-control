@@ -28,14 +28,13 @@ void loop()
   {
     flowmeter->run();
 
-    message["data"][flowmeter->id]["Flow[LPM]"] = flowmeter->flow_rate;
+    message["data"][flowmeter->id]["Flow_rate[LPM]"] = flowmeter->flow_rate;
     message["data"][flowmeter->id]["Total[mL]"] = flowmeter->total_milliliters;
     message["data"][flowmeter->id]["Total[L]"] = flowmeter->total_liters;
   }
   message["data"]["memory"]["Output_memory_size"] = message.memoryUsage();
 
   // serializeJsonPretty(message["data"], Serial);
-  // Serial.println("");
   serializeJson(message["data"], Serial);
   Serial.println("");
 
