@@ -83,6 +83,6 @@ std::vector<flowmeter_cfg_t> FLOW_CFGS{
         .id = "liqr",
         .sensor_pin = 35,
         .calibration_factor = _SS_FLOW1,
-        .percent_correction_factor = 1.10,
+        .percent_correction_factor = 1.00,
     },
 };
