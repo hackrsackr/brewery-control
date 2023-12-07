@@ -4,14 +4,15 @@
 
 MA_Meter::MA_Meter(ma_meter_cfg_t cfg)
 {
-    id {cfg.id};
-    meter_type {cfg.meter_type};
-    i2c_address {cfg.i2c_address};
-    ads_channel {cfg.ads_channel};
-    ads_gain {cfg.ads_gain};
+    meter_type = cfg.meter_type;
+    id = cfg.id;
+    measurement = cfg.measurement;
+    i2c_address = cfg.i2c_address;
+    ads_channel = cfg.ads_channel;
+    ads_gain = cfg.ads_gain;
 
-    s_ads_ {std::make_shared<Adafruit_ADS1115>()};
-    u_ads_ {std::make_unique<Adafruit_ADS1115>()};
+    s_ads_ = std::make_shared<Adafruit_ADS1115>();
+    // u_ads_{std::make_unique<Adafruit_ADS1115>()};
 
     s_ads_->begin(i2c_address);
     s_ads_->setGain(ads_gain);
@@ -40,13 +41,19 @@ auto MA_Meter::voltsToPPM() -> float
 auto MA_Meter::voltsToPPB() -> uint16_t
 {
     ppm = volts * ppmO2_per_volt;
-    return ppb = ppm * 1000;
+    return ppm * 1000;
 }
 
+auto MA_Meter::voltsToLPM() -> float
+{
+    lpm = (volts > 1) ? (volts - 1) * lpm_per_volt : 0;
+    return lpm;
+}
 void MA_Meter::read()
 {
     getVolts();
     voltsToMA();
     voltsToPH();
     voltsToPPB();
+    voltsToLPM();
 }

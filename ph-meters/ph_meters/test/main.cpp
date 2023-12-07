@@ -56,18 +56,18 @@ void onConnectionEstablished()
         for (auto &meter : _METERS)
         {
             meter->read();
-            
-            message["data"][meter->description]["volts"] = meter->volts;
-            message["data"][meter->description]["ma"] = meter->ma;
-            
+
+            message["data"][meter->measurement]["volts"] = meter->volts;
+            message["data"][meter->measurement]["ma"] = meter->ma;
+
             if (meter->meter_type == 0)
             {
-                message["data"][meter->description]["ph"] = meter->ph;
+                message["data"][meter->measurement]["ph"] = meter->ph;
             }
 
             if (meter->meter_type == 1)
             {
-                message["data"][meter->description]["ppm"] = meter->ppm;
+                message["data"][meter->measurement]["ppm"] = meter->ppm;
             }
         }
 
