@@ -46,9 +46,15 @@ auto MA_Meter::voltsToPPB() -> uint16_t
 
 auto MA_Meter::voltsToLPM() -> float
 {
-    lpm = (volts > 1) ? (volts - 1) * lpm_per_volt : 0;
+    lpm = (volts > 1) ? volts * lpm_per_volt - lpm_per_volt : 0;
     return lpm;
 }
+auto MA_Meter::voltsToTempC() -> float
+{
+    tempC = (volts > 1) ? volts * tempC_per_volt - tempC_per_volt : 0;
+    return tempC;
+}
+
 void MA_Meter::read()
 {
     getVolts();
@@ -56,4 +62,5 @@ void MA_Meter::read()
     voltsToPH();
     voltsToPPB();
     voltsToLPM();
+    voltsToTempC();
 }

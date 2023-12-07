@@ -31,8 +31,8 @@ public:
     const char *measurement;
     uint8_t i2c_address, ads_channel;
     adsGain_t ads_gain;
-    const uint8_t mA_per_volt{4}, pH_per_volt{2}, ppmO2_per_volt{2}, lpm_per_volt{6};
-    float volts, ph, ma, ppm, lpm;
+    const uint8_t mA_per_volt{4}, pH_per_volt{2}, ppmO2_per_volt{2}, lpm_per_volt{6}, tempC_per_volt{20};
+    float volts, ph, ma, ppm, lpm, tempC;
 
     MA_Meter(ma_meter_cfg_t);
 
@@ -48,4 +48,10 @@ private:
     auto voltsToPPM() -> float;
     auto voltsToPPB() -> uint16_t;
     auto voltsToLPM() -> float;
+    auto voltsToTempC() -> float;
 };
+
+// class FlowMeter : MA_Meter {
+// public:
+//     FlowMeter();
+// };

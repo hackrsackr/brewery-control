@@ -36,6 +36,7 @@ void loop()
         message["data"][meter->id]["volts"] = meter->volts;
         message["data"][meter->id]["ma"] = meter->ma;
         message["data"][meter->id]["lpm"] = meter->lpm;
+        message["data"][meter->id]["tempC"] = meter->tempC;
     }
 
     message["data"]["memory"]["Output memory size"] = message.memoryUsage();
