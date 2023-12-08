@@ -1,5 +1,6 @@
 FROM python:3.9 as base
 
+COPY config.json /config.json
 COPY ads1115.py /app/ads1115.py
 COPY Meter.py /app/Meter.py
 COPY VolumeSensor.py /app/VolumeSensor.py
@@ -7,7 +8,6 @@ COPY script.py /app/script.py
 
 # install the required packages
 RUN apt-get update && apt-get -y install build-essential
-RUN pip3 install pyserial
 RUN pip3 install paho.mqtt
 RUN pip3 install adafruit-gpio
 
