@@ -3,46 +3,151 @@
     "_PORT": 1883,
     "_HISTORY_TOPIC": "brewcast/history/",
     "_SERVICE_TOPIC": "meters",
+    "_API_TOPIC": "brewcast/spark/blocks",
     "_ADS_FULLSCALE": 32767,
-    "_GAIN": "2/3",
     "_ADS_MAX_V": 6.144,
-    "_ADC3_OFFSETS": [
-        8000,
-        5824,
-        6960,
-        8000
-    ],
-    "_ADS_ADDRESSES": {
-        "_ads1": "ADS1115(address=0x48)",
-        "_ads2": "ADS1115(address=0x49)",
-        "_ads3": "ADS1115(address=0x4a)",
-        "_ads4": "ADS1115(address=0x4b)"
-    },
-    "_ADS_KEYS": {
-        "_ads1_keys": [
-            "mash_mV",
-            "boil_mV",
-            "mash",
-            "boil"
-        ],
-        "_ads2_keys": [
-            "liqr_nA",
-            "wort_nA",
-            "liqr_",
-            "wort_"
-        ],
-        "_ads3_keys": [
-            "liqr",
-            "mash",
-            "boil",
-            "unused"
-        ],
-        "_ads4_keys": [
-            "output4-1",
-            "output4-2",
-            "output4-3",
-            "output4-4"
-        ]
-    },
-    "_FLOWMETER_SERIAL_PORT": "/dev/ttyUSB0"
+    "_METERS": {
+        "meter-1": {
+            "input-1": {
+                "meter_id": "pH",
+                "name": "mash_ORP",
+                "measurement": "mV",
+                "ads_address": "0x48",
+                "ads_channel": 0,
+                "input_LRV": 0,
+                "input_URV": 20,
+                "output_LRV": 0,
+                "output_URV": 10
+            },
+            "input-2": {
+                "meter_id": "pH",
+                "name": "boil_ORP",
+                "measurement": "mV",
+                "ads_address": "0x48",
+                "ads_channel": 1,
+                "input_LRV": 0,
+                "input_URV": 20,
+                "output_LRV": 0,
+                "output_URV": 10
+            },
+            "input-3": {
+                "meter_id": "pH",
+                "name": "mash",
+                "measurement": "mV",
+                "ads_address": "0x48",
+                "ads_channel": 2,
+                "input_LRV": 0,
+                "input_URV": 20,
+                "output_LRV": 0,
+                "output_URV": 10
+            },
+            "input-4": {
+                "meter_id": "pH",
+                "name": "boil",
+                "measurement": "mV",
+                "ads_address": "0x48",
+                "ads_channel": 3,
+                "input_LRV": 0,
+                "input_URV": 20,
+                "output_LRV": 0,
+                "output_URV": 10
+            }
+        },
+        "meter-2": {
+            "input-1": {
+                "meter_id": "DO",
+                "name": "liqr_temp",
+                "measurement": "C",
+                "ads_address": "0x49",
+                "ads_channel": 0,
+                "input_LRV": 0,
+                "input_URV": 20,
+                "output_LRV": 0,
+                "output_URV": 10
+            },
+            "input-2": {
+                "meter_id": "DO",
+                "name": "wort_temp",
+                "measurement": "C",
+                "ads_address": "0x49",
+                "ads_channel": 1,
+                "input_LRV": 0,
+                "input_URV": 20,
+                "output_LRV": 0,
+                "output_URV": 10
+            },
+            "input-3": {
+                "meter_id": "DO",
+                "name": "liqr",
+                "measurement": "PPM",
+                "ads_address": "0x49",
+                "ads_channel": 2,
+                "input_LRV": 0,
+                "input_URV": 20,
+                "output_LRV": 0,
+                "output_URV": 10
+            },
+            "input-4": {
+                "meter_id": "DO",
+                "name": "wort",
+                "measurement": "PPM",
+                "ads_address": "0x49",
+                "ads_channel": 3,
+                "input_LRV": 0,
+                "input_URV": 20,
+                "output_LRV": 0,
+                "output_URV": 10
+            }
+        },
+        "meter-3": {
+            "input-1": {
+                "meter_id": "Volume",
+                "name": "liqr",
+                "measurement": "liters",
+                "ads_address": "0x4a",
+                "ads_channel": 0,
+                "ads_offset": 8000
+            },
+            "input-2": {
+                "meter_id": "Volume",
+                "name": "mash",
+                "measurement": "liters",
+                "ads_address": "0x4a",
+                "ads_channel": 1,
+                "ads_offset": 5824
+            },
+            "input-3": {
+                "meter_id": "Volume",
+                "name": "boil",
+                "measurement": "liters",
+                "ads_address": "0x4a",
+                "ads_channel": 2,
+                "ads_offset": 6960
+            }
+        },
+        "meter-4": {
+            "input-1": {
+                "meter_id": "Liqr-Flow",
+                "name": "temp",
+                "measurement": "C",
+                "ads_address": "0x4b",
+                "ads_channel": 0,
+                "input_LRV": 4,
+                "input_URV": 20,
+                "output_LRV": 0,
+                "output_URV": 80
+            },
+            "input-2": {
+                "meter_id": "Liqr-Flow",
+                "name": "flow",
+                "measurement": "L/min",
+                "ads_address": "0x4b",
+                "ads_channel": 1,
+                "input_LRV": 4,
+                "input_URV": 20,
+                "output_LRV": 0,
+                "output_URV": 24
+            }
+        }
+    }
 }

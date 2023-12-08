@@ -40,7 +40,7 @@ public:
 
 private:
     std::shared_ptr<Adafruit_ADS1115> s_ads_;
-    std::unique_ptr<Adafruit_ADS1115> u_ads_;
+    // std::unique_ptr<Adafruit_ADS1115> u_ads_;
 
     auto getVolts() -> float;
     auto voltsToMA() -> float;
