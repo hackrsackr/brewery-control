@@ -1,12 +1,10 @@
 #include "Arduino.h"
 #include "ArduinoJson.h"
 #include "Adafruit_ADS1X15.h"
-#include "EspMQTTClient.h"
 
 #include "MA_Meter.h"
 #include "config.h"
 
-// EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
 std::vector<MA_Meter *> _METERS;
 
 void setup()
@@ -32,16 +30,16 @@ void loop()
     for (auto &meter : _METERS)
     {
         meter->read();
-        message["data"][meter->id]["measurement"] = meter->measurement;
-        message["data"][meter->id]["volts"] = meter->volts;
-        message["data"][meter->id]["ma"] = meter->ma;
-        message["data"][meter->id]["lpm"] = meter->lpm;
-        message["data"][meter->id]["tempC"] = meter->tempC;
+        // message["data"][meter->id]["volts"] = meter->volts;
+        // message["data"][meter->id]["ma"] = meter->ma;
+        message["data"][meter->id][meter->measurement] = meter->output;
     }
 
     message["data"]["memory"]["Output memory size"] = message.memoryUsage();
 
-    serializeJsonPretty(message["data"], Serial);
+    // serializeJsonPretty(message["data"], Serial);
+    serializeJson(message["data"], Serial);
+    Serial.println("");
 
     delay(5000);
 }
