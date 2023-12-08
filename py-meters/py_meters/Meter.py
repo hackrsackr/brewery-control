@@ -9,14 +9,14 @@ with open('config.json', 'r') as f:
     cfg = json.load(f)
 
 # Brewblox Host ip address
-HOST = '10.0.0.101'
+HOST = cfg['_HOST']
 
-# 80 is the default port for HTTP, but this can be changed in brewblox env settings.
-PORT = 80
+# Brewblox Port
+PORT = cfg['_PORT']
 
-# This is a constant value. You never need to change it.
-HISTORY_TOPIC = 'brewcast/history'
-TOPIC = HISTORY_TOPIC + '/volume-sensor'
+# The history service is subscribed to all topic starting with this
+HISTORY_TOPIC = cfg['_HISTORY_TOPIC']
+TOPIC = HISTORY_TOPIC + cfg['_SERVICE_TOPIC']
 
 # Ads Addresses
 ADS1 = ADS1115(address=0x48)  # ADDRESS -> GND
@@ -25,9 +25,12 @@ ADS3 = ADS1115(address=0x4a)  # ADDRESS -> SDA
 ADS4 = ADS1115(address=0x4b)  # ADDRESS -> SDL
 
 # Max positive bits of ADS1115's 16 bit signed integer
-ADS_FULLSCALE = 32767
+ADS_FULLSCALE = cfg['_ADS_FULLSCALE']
 GAIN = 2/3
 ADS_MAX_V = 4.096 / GAIN
+
+# ads1_keys = ['mash_mV', 'boil_mV', 'mash', 'boil']
+# ads2_keys = ['liqr_nA', 'wort_nA', 'liqr', 'wort']
 
 # Create a websocket MQTT client
 client = mqtt.Client()
@@ -61,17 +64,18 @@ class Meter:
             while True:
                 """ Iterate through ads1 channels and compile data """
                 d1 = {}
+                # for input in cfg['METERS']['ads-1']:
                 for input in cfg['_METERS']['meter-1']:
                     self.__init__()
                     self.ads = ADS1
-                    # self.meter_id = cfg['_METERS']['meter-1'][input]['meter_id']
-                    # self.name = cfg['_METERS']['meter-1'][input]['name']
-                    self.measurement = "mA_unit"
-                    # self.ads_channel = cfg['_METERS']['meter-1'][input]['ads_channel']
-                    # self.ilrv = cfg['_METERS']['meter-1'][input]['input_LRV']
-                    # self.iurv = cfg['_METERS']['meter-1'][input]['input_URV']
-                    # self.olrv = cfg['_METERS']['meter-1'][input]['output_LRV']
-                    # self.ourv = cfg['_METERS']['meter-1'][input]['output_URV']
+                    self.meter_id = cfg['_METERS']['meter-1'][input]['meter_id']
+                    self.name = cfg['_METERS']['meter-1'][input]['name']
+                    self.measurement = cfg['_METERS']['meter-1'][input]['measurement']
+                    self.ads_channel = cfg['_METERS']['meter-1'][input]['ads_channel']
+                    self.ilrv = cfg['_METERS']['meter-1'][input]['input_LRV']
+                    self.iurv = cfg['_METERS']['meter-1'][input]['input_URV']
+                    self.olrv = cfg['_METERS']['meter-1'][input]['output_LRV']
+                    self.ourv = cfg['_METERS']['meter-1'][input]['output_URV']
 
                     d1[self.name] = {
                         'mA': round(self.readMa(), 2),
@@ -84,8 +88,8 @@ class Meter:
                 for input in cfg['_METERS']['meter-2']:
                     self.__init__()
                     self.ads = ADS2
-                    # self.meter_id = cfg['_METERS']['meter-2'][input]['meter_id']
-                    # self.name = cfg['_METERS']['meter-2'][input]['name']
+                    self.meter_id = cfg['_METERS']['meter-2'][input]['meter_id']
+                    self.name = cfg['_METERS']['meter-2'][input]['name']
                     self.measurement = cfg['_METERS']['meter-2'][input]['measurement']
                     self.ads_channel = cfg['_METERS']['meter-2'][input]['ads_channel']
                     self.ilrv = cfg['_METERS']['meter-2'][input]['input_LRV']
