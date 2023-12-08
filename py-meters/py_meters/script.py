@@ -1,10 +1,9 @@
 """
 main script
-reads up to 4 ads1115 ADC boards outputs into one dictionary
+reads 4 ads1115 ADC boards outputs into one dictionary
 publishes output to brewblox over mqtt
 """
 import json
-import serial
 
 from time import sleep
 
@@ -14,124 +13,140 @@ from ads1115 import ADS1115
 from Meter import Meter
 from VolumeSensor import VolumeSensor
 
+with open('config.json', 'r') as f:
+    cfg = json.load(f)
+    # print(cfg)
+
 # Brewblox Host ip address
-HOST = '10.0.0.101'
+HOST = cfg['_HOST']
 
 # Brewblox Port
-PORT = 1883
+PORT = cfg['_PORT']
 
 # The history service is subscribed to all topic starting with this
-HISTORY_TOPIC = 'brewcast/history'
+HISTORY_TOPIC = cfg['_HISTORY_TOPIC']
 
 # Specific topic for this script
-TOPIC = HISTORY_TOPIC + '/meters'
+TOPIC = HISTORY_TOPIC + cfg['_SERVICE_TOPIC']
 
 # This is a constant value. You never need to change it.
-API_TOPIC = 'brewcast/spark/blocks'
+API_TOPIC = cfg['_API_TOPIC']
 
 # We'll be using the 'patch' command
 # 'create', 'write', and 'delete' are also available
 # https://www.brewblox.com/dev/reference/blocks_api.html
 PATCH_TOPIC = API_TOPIC + '/patch'
 
-# ADS1115 names and addresses
+# Ads Addresses
 ADS1 = ADS1115(address=0x48)  # ADDRESS -> GND
 ADS2 = ADS1115(address=0x49)  # ADDRESS -> VDD
 ADS3 = ADS1115(address=0x4a)  # ADDRESS -> SDA
+ADS4 = ADS1115(address=0x4b)  # ADDRESS -> SDL
 
 # Max positive bits of ADS1115's 16 bit signed integer
-ADS_FULLSCALE = 32767
+ADS_FULLSCALE = cfg['_ADS_FULLSCALE']
 GAIN = 2/3
 ADS_MAX_V = 4.096 / GAIN
-
-# Names of each input
-ADS1_KEYS = ['mash_mV', 'boil_mV', 'mash', 'boil']
-ADS2_KEYS = ['liqr_nA', 'wort_nA', 'liqr', 'wort']
-ADS3_KEYS = ['liqr', 'mash', 'boil']
-
-# USB port of esp32 thats reading flowmeters
-FLOWMETER_SERIAL_PORT = '/dev/ttyUSB0'
 
 # Create a websocket MQTT client
 client = mqtt.Client()
 
 
-ser = serial.Serial(port=FLOWMETER_SERIAL_PORT,
-                    baudrate=115200,
-                    timeout=1)
-
-
 def main():
     try:
+        # Create a websocket MQTT client
         client.connect_async(host=HOST, port=PORT)
         client.loop_start()
 
         while True:
             # Iterate through ads1 channels, populate dict d1
             d1 = {}
-            for index, key in enumerate(ADS1_KEYS):
+            for input in cfg['_METERS']['meter-1']:
                 m1 = Meter()
-                m1.name = key
-                m1.ads = ADS1
+                m1.ads = ADS1115(address=0x48)
+                m1.meter_id = cfg['_METERS']['meter-1'][input]['meter_id']
+                m1.name = cfg['_METERS']['meter-1'][input]['name']
+                m1.measurement = cfg['_METERS']['meter-1'][input]['measurement']
+                m1.ads_channel = cfg['_METERS']['meter-1'][input]['ads_channel']
+                m1.ilrv = cfg['_METERS']['meter-1'][input]['input_LRV']
+                m1.iurv = cfg['_METERS']['meter-1'][input]['input_URV']
+                m1.olrv = cfg['_METERS']['meter-1'][input]['output_LRV']
+                m1.ourv = cfg['_METERS']['meter-1'][input]['output_URV']
 
                 d1[m1.name] = {
-                    'mA': round(m1.read_mA(index), 2),
-                    'mV': round(m1.mA_to_mV(m1.mA), 2),
-                    'pH': round(m1.mA_to_pH(m1.mA), 2)
+                    'mA': round(m1.readMa(), 2),
+                    'volts': round(m1.volts, 2),
+                    m1.measurement: round(m1.maToUnit(), 2)
                 }
 
             # Iterate through ads2 channels, populate dict d2
             d2 = {}
-            for index, key in enumerate(ADS2_KEYS):
+            for input in cfg['_METERS']['meter-2']:
                 m2 = Meter()
-                m2.name = key
-                m2.ads = ADS2
+                m2.ads = ADS1115(address=0x49)
+                m2.meter_id = cfg['_METERS']['meter-2'][input]['meter_id']
+                m2.name = cfg['_METERS']['meter-2'][input]['name']
+                m2.measurement = cfg['_METERS']['meter-2'][input]['measurement']
+                m2.ads_channel = cfg['_METERS']['meter-2'][input]['ads_channel']
+                m2.ilrv = cfg['_METERS']['meter-2'][input]['input_LRV']
+                m2.iurv = cfg['_METERS']['meter-2'][input]['input_URV']
+                m2.olrv = cfg['_METERS']['meter-2'][input]['output_LRV']
+                m2.ourv = cfg['_METERS']['meter-2'][input]['output_URV']
 
                 d2[m2.name] = {
-                    'mA': round(m2.read_mA(index), 2),
-                    'nA': round(m2.mA_to_nA(m2.mA), 2),
-                    'DO': round(m2.mA_to_DO(m2.mA), 2)
+                    'mA': round(m2.readMa(), 2),
+                    'volts': round(m2.volts, 2),
+                    m2.measurement: round(m2.maToUnit(), 2)
                 }
 
-            # Iterate through ads3 channels, populate dict d3
+            # # Iterate through ads3 channels, populate dict d3
             d3 = {}
-
-            volume_sensor_offsets = [8000, 5824, 6960]
             patch_list = [0]*3
 
-            for index, key in enumerate(ADS3_KEYS):
-                v = VolumeSensor()
-                v.name = key
-                v.ads = ADS3
-                v.offset = volume_sensor_offsets[index]
+            for index, input in enumerate(cfg['_METERS']['meter-3']):
+                m3 = VolumeSensor()
+                ads = ADS1115(address=0x4a)
+                m3.meter_id = cfg['_METERS']['meter-3'][input]['meter_id']
+                m3.name = cfg['_METERS']['meter-3'][input]['name']
+                m3.measurement = cfg['_METERS']['meter-3'][input]['measurement']
+                m3.ads = cfg['_METERS']['meter-3'][input]['ads_address']
+                m3.ads_channel = cfg['_METERS']['meter-3'][input]['ads_channel']
+                m3.ads_offset = cfg['_METERS']['meter-3'][input]['ads_offset']
+                m3.adc = ads.read_adc(m3.ads_channel, gain=GAIN)
 
-                d3[v.name] = {
-                    'calibration': {
-                        'adc': v.read_ads(index),
-                        'trimmed-adc': v.trim_adc(v.adc, v.offset),
-                        'volts': round(v.read_volts(index), 2)
-                    },
-                    'liters': round(v.adc_to_liters(), 2),
-                    'gallons': round(v.adc_to_gallons(), 2)
+                d3[m3.name] = {
+                    m3.measurement: round(m3.readLiters(), 2)
+
                 }
 
-                patch_list[index] = d3[v.name]['liters']
+                patch_list[index] = d3[m3.name]['liters']
 
-            d4 = {}
-            flow_data = ser.readline().decode().rstrip()
-            try:
-                flow_data = json.loads(flow_data)
-            except json.JSONDecodeError:
-                continue
-            d4 = flow_data
+            # d4 = {}
+            # for input in cfg['_METERS']['meter-4']:
+            #     m4 = Meter()
+            #     m4.ads = ADS1115(address=0x4b)
+            #     m4.meter_id = cfg['_METERS']['meter-4'][input]['meter_id']
+            #     m4.name = cfg['_METERS']['meter-4'][input]['name']
+            #     m4.measurement = cfg['_METERS']['meter-4'][input]['measurement']
+            #     m4.ads_channel = cfg['_METERS']['meter-4'][input]['ads_channel']
+            #     m4.ilrv = cfg['_METERS']['meter-4'][input]['input_LRV']
+            #     m4.iurv = cfg['_METERS']['meter-4'][input]['input_URV']
+            #     m4.olrv = cfg['_METERS']['meter-4'][input]['output_LRV']
+            #     m4.ourv = cfg['_METERS']['meter-4'][input]['output_URV']
+
+            #     d4[m4.name] = {
+            #         'mA': round(m4.readMa(), 2),
+            #         'volts': round(m4.volts, 2),
+            #         m4.measurement: round(m4.maToUnit(), 2),
+            #     }
 
             # Output
             message = {
                 'key': 'meters',
                 'data': {'pH': d1,
                          'DO': d2,
-                         'volume': d3,
-                         'flow': d4}
+                         'volume': d3}
+                #  'flow': d4}
             }
 
             client.publish(TOPIC, json.dumps(message))
