@@ -63,7 +63,7 @@
                 "input_LRV": 0,
                 "input_URV": 20,
                 "output_LRV": 0,
-                "output_URV": 10
+                "output_URV": 100
             },
             "input-2": {
                 "meter_id": "DO",
@@ -74,7 +74,7 @@
                 "input_LRV": 0,
                 "input_URV": 20,
                 "output_LRV": 0,
-                "output_URV": 10
+                "output_URV": 100
             },
             "input-3": {
                 "meter_id": "DO",
@@ -85,7 +85,7 @@
                 "input_LRV": 0,
                 "input_URV": 20,
                 "output_LRV": 0,
-                "output_URV": 10
+                "output_URV": 20
             },
             "input-4": {
                 "meter_id": "DO",
@@ -96,7 +96,7 @@
                 "input_LRV": 0,
                 "input_URV": 20,
                 "output_LRV": 0,
-                "output_URV": 10
+                "output_URV":20
             }
         },
         "meter-3": {
@@ -140,7 +140,7 @@
             "input-2": {
                 "meter_id": "Liqr-Flow",
                 "name": "flow",
-                "measurement": "L/min",
+                "measurement": "LPM",
                 "ads_address": "0x4b",
                 "ads_channel": 1,
                 "input_LRV": 4,

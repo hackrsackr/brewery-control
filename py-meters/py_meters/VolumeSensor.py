@@ -36,6 +36,8 @@ ADS_MAX_V = 4.096 / GAIN
 client = mqtt.Client(transport='websockets')
 client.ws_set_options(path='/eventbus')
 
+Sensors = ['liqr', 'mash', 'boil']
+Offsets = [8000, 5824, 6960]
 
 class VolumeSensor:
     def __init__(self) -> None:
@@ -50,7 +52,7 @@ class VolumeSensor:
         self.bitsPerLiter = 442.54
 
     def read_ads(self) -> int:
-        self.adc = self.ads.read_adc(self.ads_channel, gain=GAIN)
+        self.adc = self.ads.readADC(self.ads_channel, gain=GAIN)
         return self.adc
 
     def trim_adc(self) -> int:
@@ -58,7 +60,7 @@ class VolumeSensor:
         return self.trimmed_adc
 
     def read_volts(self) -> float:
-        self.volts = self.read_ads(self.ads_channel) * ADS_MAX_V / ADS_FULLSCALE
+        self.volts = self.read_ads() * ADS_MAX_V / ADS_FULLSCALE
         return self.volts
 
     def adc_to_volts(self) -> float:
@@ -86,21 +88,26 @@ class VolumeSensor:
             while True:
                 data = {}
 
-                for input in cfg['_METERS']['meter-3']:
+                for index, sensor in enumerate(Sensors):
                     self.__init__()
-                    self.ads = ADS1115(cfg['_METERS']['meter-3'][input]['ads_address'])
-                    self.meter_id = cfg['_METERS']['meter-3'][input]['id']
-                    self.name = cfg['_METERS']['meter-3'][input]['name']
-                    self.measurement = cfg['_METERS']['meter-3'][input]['measurement']
-                    self.ads = cfg['_METERS']['meter-3']['ads_address']
-                    self.ads_channel = cfg['_METERS']['meter-3'][input]['ads_channel']
-                    self.ads_offset = cfg['_METERS']['meter-3'][input]['ads_offset']
+                    self.ads = ADS1115(address=0x4a)
+                    self.meter_id = index
+                    self.name = sensor
+                    self.measurement = 'liters'
+                    self.ads_channel = index
+                    self.ads_offset = Offsets[index]
 
                     data[self.name] = {
-                        'volts': round(self.read_volts(self.ads_channel), 2),
+                        'volts': round(self.read_volts(), 2),
                         self.measurement: round(self.readLiters(), 2),
                     }
-
+                    # data[self.name] = {
+                    #     'adc': self.read_ads(),
+                    #     'trimmed-adc': self.trim_adc(),
+                    #     'volts': round(self.read_volts(), 2),
+                    #     'liters': round(self.adc_to_liters(), 2),
+                    #     'gallons': round(self.adc_to_gallons(), 2)
+                    # }
                 # MQTT message to send to brewblox
                 message = {
                     'key': 'VolumeSensors',
@@ -108,7 +115,7 @@ class VolumeSensor:
                 }
 
                 # Publish message
-                client.publish(TOPIC, json.dumps(message))
+                #client.publish(TOPIC, json.dumps(message))
                 print(json.dumps(message, sort_keys=False, indent=4))
                 sleep(5)
 

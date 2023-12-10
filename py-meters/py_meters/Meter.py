@@ -42,7 +42,7 @@ class Meter:
         self.adsMaxV = ADS_MAX_V
 
     def read_ads(self, channel, offset=0) -> int:
-        self.adc = self.ads.read_adc(channel, gain=GAIN) + offset
+        self.adc = self.ads.readADC(channel, gain=GAIN) + offset
         return self.adc
 
     def readVolts(self) -> float:
@@ -54,7 +54,7 @@ class Meter:
         return self.mA
 
     def maToUnit(self) -> float:
-        return (self.mA - self.ilrv) / (self.iurv - self.ilrv) * (self.ourv - self.olrv)
+        return (self.readMa() - self.ilrv) / (self.iurv - self.ilrv) * (self.ourv - self.olrv)
 
     def run(self):
         try:

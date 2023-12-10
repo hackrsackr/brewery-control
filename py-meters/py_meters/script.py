@@ -74,8 +74,8 @@ def main():
                 m1.ourv = cfg['_METERS']['meter-1'][input]['output_URV']
 
                 d1[m1.name] = {
-                    'mA': round(m1.readMa(), 2),
-                    'volts': round(m1.volts, 2),
+                    # 'mA': round(m1.readMa(), 2),
+                    # 'volts': round(m1.volts, 2),
                     m1.measurement: round(m1.maToUnit(), 2)
                 }
 
@@ -94,8 +94,8 @@ def main():
                 m2.ourv = cfg['_METERS']['meter-2'][input]['output_URV']
 
                 d2[m2.name] = {
-                    'mA': round(m2.readMa(), 2),
-                    'volts': round(m2.volts, 2),
+                    # 'mA': round(m2.readMa(), 2),
+                    # 'volts': round(m2.volts, 2),
                     m2.measurement: round(m2.maToUnit(), 2)
                 }
 
@@ -112,7 +112,7 @@ def main():
                 m3.ads = cfg['_METERS']['meter-3'][input]['ads_address']
                 m3.ads_channel = cfg['_METERS']['meter-3'][input]['ads_channel']
                 m3.ads_offset = cfg['_METERS']['meter-3'][input]['ads_offset']
-                m3.adc = ads.read_adc(m3.ads_channel, gain=GAIN)
+                m3.adc = ads.readADC(m3.ads_channel, gain=GAIN)
 
                 d3[m3.name] = {
                     m3.measurement: round(m3.readLiters(), 2)
@@ -121,32 +121,32 @@ def main():
 
                 patch_list[index] = d3[m3.name]['liters']
 
-            # d4 = {}
-            # for input in cfg['_METERS']['meter-4']:
-            #     m4 = Meter()
-            #     m4.ads = ADS1115(address=0x4b)
-            #     m4.meter_id = cfg['_METERS']['meter-4'][input]['meter_id']
-            #     m4.name = cfg['_METERS']['meter-4'][input]['name']
-            #     m4.measurement = cfg['_METERS']['meter-4'][input]['measurement']
-            #     m4.ads_channel = cfg['_METERS']['meter-4'][input]['ads_channel']
-            #     m4.ilrv = cfg['_METERS']['meter-4'][input]['input_LRV']
-            #     m4.iurv = cfg['_METERS']['meter-4'][input]['input_URV']
-            #     m4.olrv = cfg['_METERS']['meter-4'][input]['output_LRV']
-            #     m4.ourv = cfg['_METERS']['meter-4'][input]['output_URV']
+            d4 = {}
+            for input in cfg['_METERS']['meter-4']:
+                m4 = Meter()
+                m4.ads = ADS1115(address=0x4b)
+                m4.meter_id = cfg['_METERS']['meter-4'][input]['meter_id']
+                m4.name = cfg['_METERS']['meter-4'][input]['name']
+                m4.measurement = cfg['_METERS']['meter-4'][input]['measurement']
+                m4.ads_channel = cfg['_METERS']['meter-4'][input]['ads_channel']
+                m4.ilrv = cfg['_METERS']['meter-4'][input]['input_LRV']
+                m4.iurv = cfg['_METERS']['meter-4'][input]['input_URV']
+                m4.olrv = cfg['_METERS']['meter-4'][input]['output_LRV']
+                m4.ourv = cfg['_METERS']['meter-4'][input]['output_URV']
 
-            #     d4[m4.name] = {
-            #         'mA': round(m4.readMa(), 2),
-            #         'volts': round(m4.volts, 2),
-            #         m4.measurement: round(m4.maToUnit(), 2),
-            #     }
+                d4[m4.name] = {
+                    # 'mA': round(m4.readMa(), 2),
+                    # 'volts': round(m4.volts, 2),
+                    m4.measurement: round(m4.maToUnit(), 2),
+                }
 
             # Output
             message = {
                 'key': 'meters',
                 'data': {'pH': d1,
                          'DO': d2,
-                         'volume': d3}
-                #  'flow': d4}
+                         'volume': d3,
+                         'flow': d4}
             }
 
             client.publish(TOPIC, json.dumps(message))

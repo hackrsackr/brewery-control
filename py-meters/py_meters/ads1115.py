@@ -50,7 +50,7 @@ class ADS1115(object):
         if i2c is None:
             import Adafruit_GPIO.I2C as I2C
             i2c = I2C
-        self._device = i2c.get_i2c_device(address, **kwargs)
+        self._device = i2c.get_i2c_device(address, busnum=1, **kwargs)
 
     def _data_rate_default(self):
         """Default from datasheet page 16, config register DR bit default."""
@@ -97,10 +97,17 @@ class ADS1115(object):
         result = self._device.readList(ADS1115_POINTER_CONVERSION, 2)
         return self._conversion_value(result[1], result[0])
 
-    def read_adc(self, channel, gain=1, data_rate=None):
+    def readADC(self, channel, gain=2/3, data_rate=None):
         """Read a single ADC channel and return the ADC value as a signed integer
         result.  Channel must be a value within 0-3.
         """
         assert 0 <= channel <= 3, 'Channel must be a value within 0-3!'
         # Perform a single shot read and set the mux value to the channel plus
         return self._read(channel + 0x04, gain, data_rate, ADS1115_CONFIG_MODE_SINGLE)
+
+    def readVolts(self, channel, max_v, fullscale, ):
+        """
+        """
+        assert 0 <= channel <= 3, 'Channel must be a value within 0-3!'
+        # Perform a single shot read and set the mux value to the channel plus
+        return self.readADC(channel) * max_v / fullscale
