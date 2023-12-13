@@ -61,7 +61,6 @@ class Meter:
             while True:
                 """ Iterate through ads1 channels and compile data """
                 d1 = {}
-                # for input in cfg['METERS']['ads-1']:
                 for input in cfg['_METERS']['meter-1']:
                     self.__init__()
                     self.ads = ADS1
