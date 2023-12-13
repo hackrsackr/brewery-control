@@ -116,7 +116,6 @@ def main():
 
                 d3[m3.name] = {
                     m3.measurement: round(m3.readLiters(), 2)
-
                 }
 
                 patch_list[index] = d3[m3.name]['liters']

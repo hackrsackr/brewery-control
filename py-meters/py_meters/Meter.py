@@ -29,9 +29,6 @@ ADS_FULLSCALE = cfg['_ADS_FULLSCALE']
 GAIN = 2/3
 ADS_MAX_V = 4.096 / GAIN
 
-# ads1_keys = ['mash_mV', 'boil_mV', 'mash', 'boil']
-# ads2_keys = ['liqr_nA', 'wort_nA', 'liqr', 'wort']
-
 # Create a websocket MQTT client
 client = mqtt.Client()
 
