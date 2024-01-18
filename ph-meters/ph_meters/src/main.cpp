@@ -55,20 +55,16 @@ void onConnectionEstablished()
 
         for (auto &meter : _METERS)
         {
+            if (!meter->adsReady())
+            {
+                break;
+            }
+
             meter->read();
 
-            message["data"][meter->measurement]["volts"] = meter->volts;
-            message["data"][meter->measurement]["ma"] = meter->ma;
-
-            if (meter->meter_type == 0)
-            {
-                message["data"][meter->measurement]["ph"] = meter->ph;
-            }
-
-            if (meter->meter_type == 1)
-            {
-                message["data"][meter->measurement]["ppm"] = meter->ppm;
-            }
+            // message["data"][meter->id]["volts"] = meter->volts;                 // DEBUG
+            message["data"][meter->id]["ma"] = meter->ma; // Calibration
+            message["data"][meter->id][meter->measurement] = meter->output;
         }
 
         message["data"]["memory"]["Output memory size"] = message.memoryUsage();
@@ -81,7 +77,8 @@ void onConnectionEstablished()
 
         if (!_PUBLISHMQTT)
         {
-            serializeJson(message["data"], Serial);
+            // serializeJson(message["data"], Serial);
+            serializeJsonPretty(message, Serial);
         }
 
         delay(5000);
