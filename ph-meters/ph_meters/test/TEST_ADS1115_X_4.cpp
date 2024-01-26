@@ -2,21 +2,20 @@
 #include <Adafruit_ADS1X15.h>
 #include "config.h"
 
+#define I2C_SDA 18
+#define I2C_SCL 17
+
 Adafruit_ADS1115 ads1; /* Use this for the 16-bit version */
 Adafruit_ADS1115 ads2; /* Use this for the 16-bit version */
 Adafruit_ADS1115 ads3; /* Use this for the 16-bit version */
 Adafruit_ADS1115 ads4; /* Use this for the 16-bit version */
 
 std::vector<Adafruit_ADS1115> _ADS{ads1, ads2, ads3, ads4};
-// _ADS.push_back(ads1);
 
 void setup(void)
 {
+    Wire.begin(I2C_SDA, I2C_SCL);
     Serial.begin(115200);
-
-    Wire.end();
-    Wire.setPins(_I2C_SDA, _I2C_SCL);
-    Wire.begin();
 
     ads1.begin(_I2C_ADDRESS1);
     ads2.begin(_I2C_ADDRESS2);
