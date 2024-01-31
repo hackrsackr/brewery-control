@@ -11,33 +11,15 @@ std::vector<MA_Meter *> _METERS;
 
 void setup()
 {
+    client.enableDebuggingMessages();
+    client.setMaxPacketSize(4096);
+    // client.enableOTA();
+    // client.enableDrasticResetOnConnectionFailures();
+    // client.enableMQTTPersistence();
+
     Serial.begin(115200);
 
-    Wire.end();
-    Wire.setPins(_I2C_SDA, _I2C_SCL);
-    Wire.begin();
-
-    // client.enableDebuggingMessages();
-    client.setMaxPacketSize(4096);
-    client.enableOTA();
-
-    WiFi.disconnect(true);
-    delay(1000);
-    WiFi.begin(_SSID, _PASS);
-    uint8_t failed_connections = 0;
-    while (WiFi.status() != WL_CONNECTED)
-    {
-        delay(500);
-        Serial.println("connecting..");
-        failed_connections++;
-        if (failed_connections > 10)
-        {
-            Serial.println("restarting..");
-            ESP.restart();
-        }
-    }
-    Serial.print("Connected to ");
-    Serial.println(WiFi.localIP());
+    Wire.begin(_I2C_SDA, _I2C_SCL);
 
     for (auto &meter_cfg : meter_cfgs)
     {
@@ -72,7 +54,19 @@ void onConnectionEstablished()
         if (_PUBLISHMQTT)
         {
             client.publish(_PUBTOPIC, message.as<String>());
+
+            if (!client.publish(_PUBTOPIC, message.as<String>()))
+            {
+                ESP.restart();
+            }
+
             serializeJsonPretty(message, Serial);
+
+            // Execute delayed instructions
+            // client.executeDelayed(5000, [&message]()
+            //                       {
+            //     client.publish(_PUBTOPIC, message.as<String>());
+            //     serializeJsonPretty(message, Serial); });
         }
 
         if (!_PUBLISHMQTT)

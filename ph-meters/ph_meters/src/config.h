@@ -15,10 +15,12 @@ constexpr auto _PASS{SECRET_PASS};
  * true = publish over mqtt
  * false = print to serial to be read by docker container
  */
-constexpr bool _PUBLISHMQTT{false};
+constexpr bool _PUBLISHMQTT{true};
+// constexpr bool _PUBLISHMQTT{false};
 
 // MQTT constants
-constexpr auto _MQTTHOST{"10.0.0.101"};
+// constexpr auto _MQTTHOST{"10.0.0.101"};  // main
+constexpr auto _MQTTHOST{"10.0.0.113"}; // dev
 constexpr auto _MQTTPORT{1883};
 constexpr auto _CLIENTID{"mA-meters"};
 constexpr auto _PUBTOPIC{"brewcast/history/mA-meters"};
@@ -26,8 +28,10 @@ constexpr auto _PUBTOPIC{"brewcast/history/mA-meters"};
 // I2C pins
 // constexpr uint8_t _I2C_SCL{22};
 // constexpr uint8_t _I2C_SDA{21};
-constexpr uint8_t _I2C_SCL{25};
-constexpr uint8_t _I2C_SDA{26};
+// constexpr uint8_t _I2C_SCL{25};
+// constexpr uint8_t _I2C_SDA{26};
+constexpr uint8_t _I2C_SCL{17};
+constexpr uint8_t _I2C_SDA{18};
 
 // I2C adresses
 constexpr byte _I2C_ADDRESS1{0x48}; // GND
