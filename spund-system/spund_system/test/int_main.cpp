@@ -7,36 +7,43 @@
 #include "Spund_System.h"
 #include "Relay.h"
 
+#include "secrets.h"
 #include "server.h"
 #include "config.h"
 
 #include <vector>
 
-std::vector<Spund_System *> _SPUNDERS;
-
-EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
 AsyncWebServer server(80);
+EspMQTTClient client(SECRET_SSID, SECRET_PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
+
+std::vector<Spund_System *> _SPUNDERS;
 
 void onConnectionEstablished();
 void notFound(AsyncWebServerRequest *request);
 String processor(const String &var);
 
-void setup(void)
+int main(void)
 {
-    Serial.begin(115200);
-
-    client.enableDebuggingMessages();
     client.setMaxPacketSize(4096);
     client.enableOTA();
+    client.enableDebuggingMessages();
 
-    WiFi.mode(WIFI_STA);
-    WiFi.begin(_SSID, _PASS);
-    if (WiFi.waitForConnectResult() != WL_CONNECTED)
+    Serial.begin(115200);
+
+    WiFi.begin(SECRET_SSID, SECRET_PASS);
+    uint8_t failed_connections = 0;
+    while (WiFi.status() != WL_CONNECTED)
     {
-        Serial.printf("WiFi Failed!\n");
-        return;
+        delay(500);
+        Serial.println("connecting..");
+        failed_connections++;
+        if (failed_connections > 10)
+        {
+            Serial.println("restarting..");
+            ESP.restart();
+        }
     }
-    Serial.print("IP Address: ");
+    Serial.print("Connected to ");
     Serial.println(WiFi.localIP());
 
     for (auto &spund_cfg : spund_cfgs)
@@ -73,10 +80,7 @@ void setup(void)
                                             "<br><a href=\"/\">Return to Home Page</a>"); });
     server.onNotFound(notFound);
     server.begin();
-}
 
-void loop(void)
-{
     client.loop();
 }
 

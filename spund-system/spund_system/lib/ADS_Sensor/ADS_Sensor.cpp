@@ -8,9 +8,10 @@ ADS_Sensor::~ADS_Sensor() {}
 void ADS_Sensor::begin(uint8_t address, adsGain_t gain, uint8_t sda, uint8_t scl, uint8_t ads_chan)
 {
     s_ads = std::make_shared<Adafruit_ADS1115>();
-    Wire.end();
-    Wire.setPins(sda, scl);
-    Wire.begin();
+    // Wire.end();
+    // Wire.setPins(sda, scl);
+    // Wire.begin();
+    Wire.begin(sda, scl);
     s_ads->begin(address);
     s_ads->setGain(gain);
     ads_channel = ads_chan;

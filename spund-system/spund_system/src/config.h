@@ -1,25 +1,31 @@
 #pragma once
 
-#include "Spund_System.h"
-
 #include <vector>
+
+#include "Spund_System.h"
+#include "secrets.h"
 
 /* Output message option
 true = publish over mqtt
 false = print to serial, to be read by docker container
 */
 constexpr bool _PUBLISHMQTT = true;
+// constexpr bool _PUBLISHMQTT = false;
+
+// WiFi credentials
+constexpr auto _SSID{SECRET_SSID};
+constexpr auto _PASS{SECRET_PASS};
+
+// MQTT parameters
+constexpr auto _MQTTHOST = "10.0.0.113";
+constexpr auto _MQTTPORT = 1883;
+constexpr auto _CLIENTID = "spund-system";
+constexpr auto _SUBTOPIC = "brewcast/history/spark-four";
+constexpr auto _PUBTOPIC = "brewcast/history/spund-system";
 
 // I2C pins
 constexpr uint8_t _I2C_SCL = 25;
 constexpr uint8_t _I2C_SDA = 26;
-
-// MQTT parameters
-constexpr auto _MQTTHOST = "192.168.1.2";
-constexpr auto _MQTTPORT = 1883;
-constexpr auto _CLIENTID = "spund-system";
-constexpr auto _SUBTOPIC = "brewcast/history/spark-one";
-constexpr auto _PUBTOPIC = "brewcast/history/spund-system";
 
 std::vector<spund_system_cfg_t> spund_cfgs{
     {
@@ -42,7 +48,7 @@ std::vector<spund_system_cfg_t> spund_cfgs{
             .sensor_offset_volts = 0.00,
         },
         .mqtt{
-            .temp_sensor_id = "TEMP_conicalBeer",
+            .temp_sensor_id = "Mock_temp-1",
             .server_setpoint_input = "setpoint_input-1",
             .server_sensor_input = "mqtt_input-1",
         },
@@ -67,7 +73,7 @@ std::vector<spund_system_cfg_t> spund_cfgs{
             .sensor_offset_volts = 0.02,
         },
         .mqtt{
-            .temp_sensor_id = "TEMP_glycolReservoir",
+            .temp_sensor_id = "Mock_temp-2",
             .server_setpoint_input = "setpoint_input-2",
             .server_sensor_input = "mqtt_input-2",
         },
@@ -88,11 +94,11 @@ std::vector<spund_system_cfg_t> spund_cfgs{
         .sensor{
             .min_sensor_volts = .5,
             .max_sensor_volts = 4.5,
-            .max_sensor_psi = 60.0,
+            .max_sensor_psi = 30.0,
             .sensor_offset_volts = 0.0,
         },
         .mqtt{
-            .temp_sensor_id = "TEMP_mock1",
+            .temp_sensor_id = "Mock_temp-3",
             .server_setpoint_input = "setpoint_input-3",
             .server_sensor_input = "mqtt_input-3",
         },
@@ -117,7 +123,7 @@ std::vector<spund_system_cfg_t> spund_cfgs{
             .sensor_offset_volts = 0.0,
         },
         .mqtt{
-            .temp_sensor_id = "TEMP_mock2",
+            .temp_sensor_id = "Mock_temp-4",
             .server_setpoint_input = "setpoint_input-4",
             .server_sensor_input = "mqtt_input-4",
         },
