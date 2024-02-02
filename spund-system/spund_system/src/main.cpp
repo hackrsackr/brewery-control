@@ -25,7 +25,7 @@ void setup(void)
 {
     Serial.begin(115200);
 
-    client.enableDebuggingMessages();
+    // client.enableDebuggingMessages();
     client.setMaxPacketSize(4096);
     client.enableOTA();
 
@@ -123,13 +123,12 @@ void onConnectionEstablished()
         {
             client.executeDelayed(5000, [&message]()
             {
-                client.publish(_PUBTOPIC, message.as<String>());
+                if (!client.publish(_PUBTOPIC, message.as<String>()))
+                {   
+                    Serial.println("restarting due to failed MQTT publish");
+                    ESP.restart();
+                }
             });
-            
-            if (!client.publish(_PUBTOPIC, message.as<String>()))
-            {
-                ESP.restart();
-            }
 
             serializeJsonPretty(message, Serial);
         } 
