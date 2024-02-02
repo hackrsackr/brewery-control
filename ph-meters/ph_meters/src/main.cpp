@@ -8,10 +8,11 @@
 
 EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
 std::vector<MA_Meter *> _METERS;
+void onConnectionEstablished();
 
 void setup()
 {
-    client.enableDebuggingMessages();
+    // client.enableDebuggingMessages();
     client.setMaxPacketSize(4096);
     // client.enableOTA();
     // client.enableDrasticResetOnConnectionFailures();
@@ -26,6 +27,11 @@ void setup()
         MA_Meter *m = new MA_Meter(meter_cfg);
         _METERS.push_back(m);
     }
+}
+
+void loop()
+{
+    client.loop();
 }
 
 void onConnectionEstablished()
@@ -77,9 +83,4 @@ void onConnectionEstablished()
 
         delay(5000);
     }
-}
-
-void loop()
-{
-    client.loop();
 }
