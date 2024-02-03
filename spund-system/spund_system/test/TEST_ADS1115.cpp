@@ -3,23 +3,28 @@
 
 #include "ADS_Sensor.h"
 
-// ads constructor
+uint8_t ads_chan = 0;
+
 ADS_Sensor ads;
-TwoWire I2CADS = TwoWire(0);
 
 void setup(void)
 {
     Serial.begin(115200);
-
-    ads.begin(ADS1115_ADDRESS2); // address = 0x49, ADDR -> VCC
+    ads.begin(
+        ADS1115_ADDRESS1,
+        GAIN_TWOTHIRDS,
+        _I2C_SDA,
+        _I2C_SCL,
+        ads_chan);
 }
 
 void loop(void)
 {
-    for (uint8_t i = 0; i < 4; ++i)
+    for (auto &spund_cfg : spund_cfgs)
     {
-        Serial.printf("ADC%d: %6d \t", i, ads.getADC(i));
-        Serial.printf("VOLTS%d: %1.2f \n", i, ads.getVolts(i));
+        ads.ads_channel = spund_cfg.ads1115.ads_channel;
+        Serial.printf("ADC%d: %6d \t", ads.ads_channel, ads.readADC());
+        Serial.printf("VOLTS%d: %1.2f \n", ads.ads_channel, ads.readVolts());
     }
 
     Serial.println("------------------------------------------");

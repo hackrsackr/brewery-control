@@ -1,36 +1,26 @@
-#include "Arduino.h"
-#include <array>
-
-#include "ADS1115.h"
-#include "spund.h"
-#include "Pressure_Sensor.h"
-#include "relay.h"
+#include "ADS_Sensor.h"
 #include "config.h"
 
-// #define NUMBER_OF_SPUNDERS 4
-
-// std::array<Relay, NUMBER_OF_RELAYS> relay_arr;
-std::array<Spund_System, NUMBER_OF_SPUNDERS> spund_arr;
+std::vector<Spund_System *> _SPUNDERS;
 
 void setup(void)
 {
     Serial.begin(115200);
 
-    for (uint8_t i = 0; i < NUMBER_OF_SPUNDERS; ++i)
+    for (auto &spund_cfg : spund_cfgs)
     {
-        spund_arr[i].begin(ADS1115_ADDRESS2, GAIN_TWOTHIRDS, OFFSET_VOLTS[i], UNIT_MAXS[i], RELAY_PINS[i]);
+        Spund_System *s = new Spund_System(spund_cfg);
+        _SPUNDERS.push_back(s);
     }
 }
 
 void loop(void)
 {
-    for (uint8_t i = 0; i < NUMBER_OF_SPUNDERS; ++i)
+    for (auto &spunder : _SPUNDERS)
     {
-        // Serial.printf("ADC%d: %6d \t", i, _ps->getADC(i));
-        Serial.printf("VOLTS%d: %1.2f \t", i, spund_arr[i].readVolts(i));
-        Serial.printf("PSI%d: %2.2f \n", i, spund_arr[i].readPSI(i));
-        Serial.printf("relay_pin%d: %d\n", i, spund_arr[i].relay_pin);
-        spund_arr[i].vent();
-        delay(5000);
+        Serial.printf("VOLTS%d: %1.2f \t", spunder->ads_channel, spunder->getVolts());
+        Serial.printf("PSI%d: %2.2f \n", spunder->ads_channel, spunder->getPSI());
     }
+    Serial.println("------------------------------------------");
+    delay(1000);
 }

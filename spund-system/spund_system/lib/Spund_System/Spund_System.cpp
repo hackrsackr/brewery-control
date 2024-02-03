@@ -6,7 +6,7 @@ Spund_System::Spund_System(spund_system_cfg_t cfg)
 {
     spunder_id = cfg.spunder.spunder_id;
     desired_vols = cfg.spunder.desired_vols;
-    relay_pin = cfg.spunder.relay_pin;
+    // relay_pin = cfg.spunder.relay_pin;
 
     ads_addr = cfg.ads1115.ads_addr;
     ads_gain = cfg.ads1115.ads_gain;
@@ -39,13 +39,13 @@ Spund_System::Spund_System(spund_system_cfg_t cfg)
         max_sensor_psi,
         sensor_offset_volts);
 
-    s_re_ = std::make_shared<Relay>();
-    s_re_->begin(relay_pin);
+    s_re_ = std::make_shared<Relay>(cfg.spunder.relay_pin);
+    // s_re_->begin(relay_pin);
 }
 
 double Spund_System::getVolts()
 {
-    return s_ps_->getADSVolts();
+    return s_ps_->readVolts();
 }
 
 double Spund_System::getPSI()
@@ -78,7 +78,7 @@ double Spund_System::computeVols()
 
 uint8_t Spund_System::testCarb()
 {
-    s_re_->relay_toggled = false;
+    uint8_t vented;
 
     if (vols > desired_vols)
     {
@@ -86,9 +86,14 @@ uint8_t Spund_System::testCarb()
         delay(500);
         time_of_last_vent = millis();
         s_re_->closeRelay();
+        vented = 1;
+    }
+    else
+    {
+        vented = 0;
     }
 
-    return s_re_->relay_toggled;
+    return vented;
 }
 
 double Spund_System::getLastVent()

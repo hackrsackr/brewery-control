@@ -4,19 +4,14 @@
 
 class Relay
 {
-public:
-    uint8_t relay_pin;
-    uint8_t relay_state;
-    uint8_t relay_toggled;
+private:
+    uint8_t m_relay_pin;
+    uint8_t m_relay_state;
 
-    // Constructors
-    Relay();
+public:
+    Relay(uint8_t);
     ~Relay();
 
-    // Initializer
-    void begin(uint8_t);
-
-    // Methods
     void openRelay();
     void closeRelay();
 };

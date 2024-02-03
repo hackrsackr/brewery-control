@@ -13,12 +13,13 @@ const uint16_t ADS_FULLSCALE = 32767;
 
 class ADS_Sensor
 {
-protected:
-    double readVolts();
-
 public:
+    std::shared_ptr<Adafruit_ADS1115> s_ads;
+
     ADS_Sensor();
     ~ADS_Sensor();
+
+    uint8_t ads_channel;
 
     void begin(
         uint8_t address,
@@ -27,10 +28,10 @@ public:
         uint8_t scl,
         uint8_t ads_chan);
 
-private:
-    std::shared_ptr<Adafruit_ADS1115> s_ads;
-    uint8_t ads_channel;
+    double readVolts();
     uint16_t readADC();
+
+private:
 };
 
 class ADS_Pressure_Sensor : public ADS_Sensor
@@ -54,7 +55,6 @@ public:
         double max_unit,
         double sensor_offset_volts);
 
-    double getADSVolts();
     double computePSI();
 };
 
