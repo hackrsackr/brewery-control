@@ -14,20 +14,9 @@ typedef struct spund_system_cfg_t
 
     struct ads_cfg
     {
-        uint8_t ads_addr;
-        adsGain_t ads_gain;
-        uint8_t i2c_sda;
-        uint8_t i2c_scl;
-        uint8_t ads_channel;
-    } ads1115;
+        ads_sensor_cfg_t ads_cfg;
 
-    struct sensor_cfg
-    {
-        double min_sensor_volts;
-        double max_sensor_volts;
-        double max_sensor_psi;
-        double sensor_offset_volts;
-    } sensor;
+    } ads1115;
 
     struct mqtt_cfg
     {
@@ -52,7 +41,7 @@ public:
     double min_sensor_volts;
     double max_sensor_volts;
     double max_sensor_psi;
-    double sensor_offset_volts;
+    double offset_volts;
     String server_setpoint;
     String server_sensor;
     String server_setpoint_input;

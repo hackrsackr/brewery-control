@@ -8,16 +8,16 @@ Spund_System::Spund_System(spund_system_cfg_t cfg)
     desired_vols = cfg.spunder.desired_vols;
     // relay_pin = cfg.spunder.relay_pin;
 
-    ads_addr = cfg.ads1115.ads_addr;
-    ads_gain = cfg.ads1115.ads_gain;
-    i2c_sda = cfg.ads1115.i2c_sda;
-    i2c_scl = cfg.ads1115.i2c_scl;
-    ads_channel = cfg.ads1115.ads_channel;
+    ads_addr = cfg.ads1115.ads_cfg.ads_addr;
+    ads_gain = cfg.ads1115.ads_cfg.ads_gain;
+    i2c_sda = cfg.ads1115.ads_cfg.i2c_sda;
+    i2c_scl = cfg.ads1115.ads_cfg.i2c_scl;
+    ads_channel = cfg.ads1115.ads_cfg.ads_channel;
 
-    min_sensor_volts = cfg.sensor.min_sensor_volts;
-    max_sensor_volts = cfg.sensor.max_sensor_volts;
-    max_sensor_psi = cfg.sensor.max_sensor_psi;
-    sensor_offset_volts = cfg.sensor.sensor_offset_volts;
+    min_sensor_volts = cfg.ads1115.ads_cfg.input_low_range;
+    max_sensor_volts = cfg.ads1115.ads_cfg.input_high_range;
+    max_sensor_psi = cfg.ads1115.ads_cfg.output_high_range;
+    offset_volts = cfg.ads1115.ads_cfg.offset_volts;
 
     temp_sensor_id = cfg.mqtt.temp_sensor_id;
     server_setpoint_input = cfg.mqtt.server_setpoint_input;
@@ -37,7 +37,7 @@ Spund_System::Spund_System(spund_system_cfg_t cfg)
         min_sensor_volts,
         max_sensor_volts,
         max_sensor_psi,
-        sensor_offset_volts);
+        offset_volts);
 
     s_re_ = std::make_shared<Relay>(cfg.spunder.relay_pin);
     // s_re_->begin(relay_pin);
