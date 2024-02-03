@@ -10,6 +10,15 @@ const uint8_t ADS1115_ADDRESS3 = 0x4a; // ADDR -> SDA
 const uint8_t ADS1115_ADDRESS4 = 0x4b; // ADDR -> SCL
 
 const uint16_t ADS_FULLSCALE = 32767;
+typedef struct ads_sensor_cfg_t
+{
+    uint8_t ads_addr;
+    adsGain_t ads_gain;
+    uint8_t i2c_sda;
+    uint8_t i2c_scl;
+    uint8_t ads_channel;
+
+} ads_sensor_cfg_t;
 
 class ADS_Sensor
 {

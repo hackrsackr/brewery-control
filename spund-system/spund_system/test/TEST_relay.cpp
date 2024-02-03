@@ -18,10 +18,9 @@ void loop(void)
 {
     for (auto &relay : _RELAYS)
     {
-        Serial.printf("PIN%d: %6d \t", relay->relay_pin);
-        Serial.printf("STATE%d: %6d \t", relay->relay_state);
-        Serial.printf("Toggled%d: %6d \t", relay->relay_toggled);
+        relay->openRelay();
     }
+
     Serial.println("------------------------------------------");
     delay(1000);
 }
