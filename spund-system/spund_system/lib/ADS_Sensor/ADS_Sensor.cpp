@@ -54,7 +54,7 @@ void ADS_Pressure_Sensor::begin(
 
 double ADS_Pressure_Sensor::computePSI()
 {
-    return (readVolts() - volt_min + offset_volts) * (unit_max / (volt_max - volt_min));
+    return (readVolts() - volt_min) * (unit_max / (volt_max - volt_min));
 }
 
 // ########################################

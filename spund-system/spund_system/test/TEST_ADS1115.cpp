@@ -5,7 +5,8 @@
 
 uint8_t ads_chan = 0;
 
-ADS_Sensor ads(spund_cfgs[0].ads1115.ads_cfg);
+// ADS_Sensor ads(spund_cfgs[0].ads1115.ads_cfg);
+ADS_Sensor ads;
 
 void setup(void)
 {
