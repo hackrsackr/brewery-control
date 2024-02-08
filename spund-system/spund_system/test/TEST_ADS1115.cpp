@@ -1,32 +1,37 @@
 #include "Arduino.h"
 #include "config.h"
+#include <Adafruit_ADS1X15.h>
 
 #include "ADS_Sensor.h"
+#include <string>
 
-uint8_t ads_chan = 0;
-
-ADS_Sensor ads(spund_cfgs[0].ads1115.ads_cfg);
+std::vector<ADS_Sensor *> _ADCS;
 
 void setup(void)
 {
     Serial.begin(115200);
-    ads.begin(
-        ADS1115_ADDRESS1,
-        GAIN_TWOTHIRDS,
-        _I2C_SDA,
-        _I2C_SCL,
-        ads_chan);
+    Wire.begin(_I2C_SDA, _I2C_SCL);
+
+    for (auto &ads_cfg : ads_cfgs)
+    {
+        ADS_Sensor *a = new ADS_Sensor(ads_cfg);
+        _ADCS.push_back(a);
+
+        if (!a->begin())
+        {
+            Serial.printf("ads failed to initialize");
+        }
+    }
 }
 
 void loop(void)
 {
-    for (auto &spund_cfg : spund_cfgs)
+    for (auto &ADC : _ADCS)
     {
-        ads.ads_channel = spund_cfg.ads1115.ads_cfg.ads_channel;
-        Serial.printf("ADC%d: %6d \t", ads.ads_channel, ads.readADC());
-        Serial.printf("VOLTS%d: %1.2f \n", ads.ads_channel, ads.readVolts());
+        Serial.printf("ADC%i: %6d \t", ADC->getSensorChannel(), ADC->readADC());
+        Serial.printf("VOLTS%i: %1.2f \t", ADC->getSensorChannel(), ADC->readVolts());
+        Serial.printf("%s%i: %2.2f \n", ADC->getSensorUnitType().c_str(), ADC->getSensorChannel(), ADC->readSensorUnits());
     }
-
     Serial.println("------------------------------------------");
     delay(1000);
 }

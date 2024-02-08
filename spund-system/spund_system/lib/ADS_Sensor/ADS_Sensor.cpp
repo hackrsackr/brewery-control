@@ -1,151 +1,45 @@
 #include "ADS_Sensor.h"
 #include "config.h"
 
-ADS_Sensor::ADS_Sensor() {}
+ADS_Sensor::ADS_Sensor(ads_sensor_cfg_t cfg)
+{
+    _i2c_addr = cfg.i2c_addr;
+    _ads_channel = cfg.ads_channel;
+    _ads_sensor_unit = cfg.ads_sensor_unit;
+    _input_low_val = cfg.input_low_val;
+    _input_high_val = cfg.input_high_val;
+    _output_low_val = cfg.output_low_val;
+    _output_high_val = cfg.output_high_val;
+
+    _p_ads = std::make_shared<Adafruit_ADS1115>();
+}
 
 ADS_Sensor::~ADS_Sensor() {}
 
-void ADS_Sensor::begin(uint8_t address, adsGain_t gain, uint8_t sda, uint8_t scl, uint8_t ads_chan)
+bool ADS_Sensor::begin()
 {
-    s_ads = std::make_shared<Adafruit_ADS1115>();
-    Wire.begin(sda, scl);
-    s_ads->begin(address);
-    s_ads->setGain(gain);
-    ads_channel = ads_chan;
+    return _p_ads->begin(_i2c_addr);
 }
 
-uint16_t ADS_Sensor::readADC()
+std::string ADS_Sensor::getSensorUnitType()
 {
-    return s_ads->readADC_SingleEnded(ads_channel);
+    return _ads_sensor_unit;
+}
+uint8_t ADS_Sensor::getSensorChannel()
+{
+    return _ads_channel;
+}
+auto ADS_Sensor::readADC() -> uint16_t
+{
+    return _p_ads->readADC_SingleEnded(_ads_channel);
 }
 
-double ADS_Sensor::readVolts()
+auto ADS_Sensor::readVolts() -> float
 {
-    return s_ads->computeVolts(s_ads->readADC_SingleEnded(ads_channel));
+    return _p_ads->computeVolts(_p_ads->readADC_SingleEnded(_ads_channel));
 }
 
-// ########################################
-
-ADS_Pressure_Sensor::ADS_Pressure_Sensor() {}
-
-void ADS_Pressure_Sensor::begin(
-    uint8_t ads_address,
-    adsGain_t ads_gain,
-    uint8_t sda,
-    uint8_t scl,
-    uint8_t ads_chan,
-    double input_low_range,
-    double input_high_range,
-    double output_high_range,
-    double offset_volts)
+auto ADS_Sensor::readSensorUnits() -> float
 {
-    ADS_Sensor::begin(
-        ads_address,
-        ads_gain,
-        sda,
-        scl,
-        ads_chan);
-
-    volt_min = input_low_range;
-    volt_max = input_high_range;
-    unit_max = output_high_range;
-    offset_volts = offset_volts;
+    return (readVolts() - _input_low_val) / (_input_high_val - _input_low_val) * (_output_high_val - _output_low_val);
 }
-
-double ADS_Pressure_Sensor::computePSI()
-{
-    return (readVolts() - volt_min + offset_volts) * (unit_max / (volt_max - volt_min));
-}
-
-// ########################################
-
-// ADS_Level_Sensor::ADS_Level_Sensor() {}
-
-// void ADS_Level_Sensor::begin(uint8_t ads_address, adsGain_t ads_gain, uint8_t sda, uint8_t scl, uint8_t ads_chan, double min_vs, double max_vs, double max_unit)
-// {
-//     ADS_Sensor::begin(
-//         ads_address,
-//         ads_gain,
-//         sda,
-//         scl,
-//         ads_chan);
-
-//     volt_min = min_vs;
-//     volt_max = max_vs;
-//     liters_max = max_unit;
-// }
-
-// double ADS_Level_Sensor::computeLiters()
-// {
-//     return (readVolts() - volt_min) * (liters_max / 4.0);
-// }
-// // ########################################
-
-// ADS_MA_Meter::ADS_MA_Meter() {}
-
-// void ADS_MA_Meter::begin(uint8_t ads_address, adsGain_t ads_gain, uint8_t sda, uint8_t scl, uint8_t ads_chan, double min_vs, double max_vs, double max_mAs)
-// {
-//     ADS_Sensor::begin(
-//         ads_address,
-//         ads_gain,
-//         sda,
-//         scl,
-//         ads_chan);
-
-//     volt_min = min_vs;
-//     volt_max = max_vs;
-//     mA_max = max_mAs;
-// }
-
-// double ADS_MA_Meter::computeMilliAmps()
-// {
-//     return readVolts() * 4.0;
-// }
-
-// ADS_PH_Meter::ADS_PH_Meter() {}
-
-// void ADS_PH_Meter::begin(uint8_t ads_address, adsGain_t ads_gain, uint8_t sda, uint8_t scl, uint8_t ads_chan, double min_vs, double max_vs, double max_mAs)
-// {
-//     ADS_Sensor::begin(
-//         ads_address,
-//         ads_gain,
-//         sda,
-//         scl,
-//         ads_chan);
-
-//     volt_min = min_vs;
-//     volt_max = max_vs;
-//     mA_max = max_mAs;
-// }
-
-// double ADS_PH_Meter::computePH()
-// {
-//     return readVolts() * 2.0;
-// }
-
-// double ADS_PH_Meter::computeORP()
-// {
-//     return 400 - (computeMilliAmps() * 28.57);
-// }
-
-// ADS_Conductivity_Meter::ADS_Conductivity_Meter() {}
-
-// void ADS_Conductivity_Meter::begin(uint8_t ads_address, adsGain_t ads_gain, uint8_t sda, uint8_t scl, uint8_t ads_chan, double min_vs, double max_vs, double max_mAs)
-// {
-//     ADS_Sensor::begin(
-//         ads_address,
-//         ads_gain,
-//         sda,
-//         scl,
-//         ads_chan);
-
-//     volt_min = min_vs;
-//     volt_max = max_vs;
-//     mA_max = max_mAs;
-// }
-
-// double ADS_Conductivity_Meter::computeConductivity()
-// {
-//     return computeMilliAmps() * 0.2; // WIP
-// }
-// // ########################################

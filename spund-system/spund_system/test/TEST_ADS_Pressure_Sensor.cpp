@@ -30,7 +30,7 @@ void loop(void)
 {
     for (auto &spund_cfg : spund_cfgs)
     {
-        ads_ps.ads_channel = spund_cfg.ads1115.ads_channel;
+        ads_ps.ads_channel = spund_cfg.ads1115.ads_cfg.ads_channel;
         Serial.printf("ADC%d: %6d \t", ads_ps.ads_channel, ads_ps.readADC());
         Serial.printf("VOLTS%d: %1.2f \t", ads_ps.ads_channel, ads_ps.readVolts());
         Serial.printf("PSI%d: %2.2f \n", ads_ps.ads_channel, ads_ps.computePSI());

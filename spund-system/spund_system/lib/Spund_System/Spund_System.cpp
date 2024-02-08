@@ -1,91 +1,112 @@
-#include "ADS_Sensor.h"
+// #include "ADS_Sensor.h"
+#include "config.h"
 #include "Relay.h"
 #include "Spund_System.h"
 
 Spund_System::Spund_System(spund_system_cfg_t cfg)
 {
+    // .spunder
     spunder_id = cfg.spunder.spunder_id;
     desired_vols = cfg.spunder.desired_vols;
-    // relay_pin = cfg.spunder.relay_pin;
+    _relay_pin = cfg.spunder.relay_pin;
 
-    ads_addr = cfg.ads1115.ads_cfg.ads_addr;
-    ads_gain = cfg.ads1115.ads_cfg.ads_gain;
-    i2c_sda = cfg.ads1115.ads_cfg.i2c_sda;
-    i2c_scl = cfg.ads1115.ads_cfg.i2c_scl;
-    ads_channel = cfg.ads1115.ads_cfg.ads_channel;
+    // .ads1115
+    _i2c_addr = cfg.ads1115.i2c_addr;
+    _ads_channel = cfg.ads1115.ads_channel;
+    _ads_sensor_unit = cfg.ads1115.ads_sensor_unit;
+    _input_low_val = cfg.ads1115.input_low_val;
+    _input_high_val = cfg.ads1115.input_high_val;
+    _output_low_val = cfg.ads1115.output_low_val;
+    _output_high_val = cfg.ads1115.output_high_val;
 
-    min_sensor_volts = cfg.ads1115.ads_cfg.input_low_range;
-    max_sensor_volts = cfg.ads1115.ads_cfg.input_high_range;
-    max_sensor_psi = cfg.ads1115.ads_cfg.output_high_range;
-    offset_volts = cfg.ads1115.ads_cfg.offset_volts;
-
+    // .mqtt
     temp_sensor_id = cfg.mqtt.temp_sensor_id;
     server_setpoint_input = cfg.mqtt.server_setpoint_input;
     server_sensor_input = cfg.mqtt.server_sensor_input;
 
-    server_setpoint = String(desired_vols);
+    // server variables
+    server_setpoint = desired_vols;
     server_sensor = temp_sensor_id;
-    time_of_last_vent = millis();
+    _time_of_last_vent = millis();
 
-    s_ps_ = std::make_shared<ADS_Pressure_Sensor>();
-    s_ps_->begin(
-        ads_addr,
-        ads_gain,
-        i2c_sda,
-        i2c_scl,
-        ads_channel,
-        min_sensor_volts,
-        max_sensor_volts,
-        max_sensor_psi,
-        offset_volts);
+    // _p_ads->begin(_i2c_addr);
+    _p_ads = std::make_shared<Adafruit_ADS1115>();
 
-    s_re_ = std::make_shared<Relay>(cfg.spunder.relay_pin);
-    // s_re_->begin(relay_pin);
+    _p_re = std::make_shared<Relay>();
+    _p_re->begin(_relay_pin);
 }
 
-double Spund_System::getVolts()
+bool Spund_System::begin()
 {
-    return s_ps_->readVolts();
+    return _p_ads->begin(_i2c_addr);
 }
 
-double Spund_System::getPSI()
+// auto Spund_System::getSpunderId() -> String
+// {
+//     return _spunder_id;
+// }
+
+// auto Spund_System::getTempSensorId() -> String
+// {
+//     return _temp_sensor_id;
+// }
+auto Spund_System::getSensorUnit() -> std::string
 {
-    return s_ps_->computePSI();
+    return _ads_sensor_unit;
+}
+// auto Spund_System::getDesiredVols() -> float
+// {
+//     return _desired_vols;
+// }
+
+auto Spund_System::readADC() -> uint16_t
+{
+    return _p_ads->readADC_SingleEnded(_ads_channel);
 }
 
-double Spund_System::computePSISetpoint()
+auto Spund_System::readVolts() -> float
+{
+    return _p_ads->computeVolts(_p_ads->readADC_SingleEnded(_ads_channel));
+}
+
+auto Spund_System::readSensorUnits() -> float
+{
+    return (readVolts() - _input_low_val) / (_input_high_val - _input_low_val) * (_output_high_val - _output_low_val);
+}
+
+auto Spund_System::computePSISetpoint() -> float
 {
     double a = -16.669 - (.0101059 * tempF) + (.00116512 * (tempF * tempF));
     double b = .173354 * tempF * desired_vols;
     double c = (4.24267 * desired_vols) - (.0684226 * (desired_vols * desired_vols));
 
-    psi_setpoint = a + b + c;
+    _psi_setpoint = a + b + c;
 
-    return psi_setpoint;
+    return _psi_setpoint;
 }
 
-double Spund_System::computeVols()
+auto Spund_System::computeVols() -> float
 {
     double a = -.0684226;
     double b = ((.173354 * tempF) + 4.24267);
-    double c = (-s_ps_->computePSI() + -16.669 + (-0.0101059 * tempF) + (0.00116512 * tempF * tempF));
+    double c = (-readSensorUnits() + -16.669 + (-0.0101059 * tempF) + (0.00116512 * tempF * tempF));
     double d = ((b * b) - (4 * a * c));
 
-    vols = ((-b + (pow(d, .5))) / (2 * a));
+    _vols = ((-b + (pow(d, .5))) / (2 * a));
 
-    return vols;
+    return _vols;
 }
 
-uint8_t Spund_System::testCarb()
+auto Spund_System::testCarb() -> uint8_t
 {
     uint8_t vented;
 
-    if (vols > desired_vols)
+    if (_vols > desired_vols)
     {
-        s_re_->openRelay();
+        _p_re->openRelay();
         delay(500);
-        time_of_last_vent = millis();
-        s_re_->closeRelay();
+        _time_of_last_vent = millis();
+        _p_re->closeRelay();
         vented = 1;
     }
     else
@@ -96,9 +117,11 @@ uint8_t Spund_System::testCarb()
     return vented;
 }
 
-double Spund_System::getLastVent()
+auto Spund_System::getLastVent() -> float
 {
-    double minutes_since_vent = (millis() - time_of_last_vent) / 60000.0;
+    constexpr auto MILLISECONDS_PER_MINUTE = 60000;
+
+    auto minutes_since_vent = (millis() - _time_of_last_vent) / MILLISECONDS_PER_MINUTE;
 
     return minutes_since_vent;
 }
