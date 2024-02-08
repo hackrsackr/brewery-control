@@ -25,7 +25,7 @@ void setup(void)
 {
     Serial.begin(115200);
 
-    client.enableDebuggingMessages();
+    // client.enableDebuggingMessages();
     client.setMaxPacketSize(4096);
     client.enableOTA();
 
