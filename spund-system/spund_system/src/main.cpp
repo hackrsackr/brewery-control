@@ -31,7 +31,7 @@ void setup(void)
     client.setMaxPacketSize(4096);
     client.enableOTA();
 
-    Wire.begin(_I2C_SDA, _I2C_SCL);
+    // Wire.begin(_I2C_SDA, _I2C_SCL);
 
     WiFi.begin(_SSID, _PASS);
     if (WiFi.waitForConnectResult() != WL_CONNECTED)
@@ -125,8 +125,11 @@ void onConnectionEstablished()
             	message["data"][spunder->spunder_id]["PSI_setpoint"] = spunder->computePSISetpoint();
             	message["data"][spunder->spunder_id]["Desired_vols"] = spunder->desired_vols;
             	message["data"][spunder->spunder_id]["Vols"] = spunder->computeVols();
-            	message["data"][spunder->spunder_id]["Relay_Toggled"] = spunder->testForVent();
-            	message["data"][spunder->spunder_id]["Minutes_since_vent"] = spunder->getLastVent();
+                if (_VENT_TO_AIR) 
+                {
+                    message["data"][spunder->spunder_id]["Relay_Toggled"] = spunder->testForVent();
+            	    message["data"][spunder->spunder_id]["Minutes_since_vent"] = spunder->getLastVent(); 
+                }
 	        }
 
         }
@@ -145,7 +148,6 @@ void onConnectionEstablished()
                 }
                 serializeJsonPretty(message, Serial);
             });
-
         } 
 
         if (!_PUBLISHMQTT) 
