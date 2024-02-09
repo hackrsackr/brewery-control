@@ -1,4 +1,5 @@
 #include "ADS_Sensor.h"
+
 #include "config.h"
 
 ADS_Sensor::ADS_Sensor(ads_sensor_cfg_t cfg)

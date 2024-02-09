@@ -24,23 +24,24 @@ constexpr auto _CLIENTID = "spund-system-s3";
 constexpr auto _SUBTOPIC = "brewcast/history/spark-four";
 constexpr auto _PUBTOPIC = "brewcast/history/spund-system-s3";
 
-// I2C pins
-// constexpr uint8_t _I2C_SCL = 25;
-// constexpr uint8_t _I2C_SDA = 26;
-constexpr uint8_t _I2C_SCL = 17;
-constexpr uint8_t _I2C_SDA = 18;
-
 // ADS I2C addresses
 constexpr auto ADS1115_ADDRESS1 = 0x48; // ADDR -> GND
 constexpr auto ADS1115_ADDRESS2 = 0x49; // ADDR -> VCC
 constexpr auto ADS1115_ADDRESS3 = 0x4a; // ADDR -> SDA
 constexpr auto ADS1115_ADDRESS4 = 0x4b; // ADDR -> SCL
 
-//
+// GPIO Pins (espduino)
+// constexpr uint8_t _I2C_SCL = 25;
+// constexpr uint8_t _I2C_SDA = 26;
+
 // constexpr auto RELAY_PIN1 = 14;
 // constexpr auto RELAY_PIN2 = 27;
 // constexpr auto RELAY_PIN3 = 16;
 // constexpr auto RELAY_PIN4 = 17;
+
+// GPIO Pins (esp32-s3-devkit)
+constexpr uint8_t _I2C_SCL = 17;
+constexpr uint8_t _I2C_SDA = 18;
 
 constexpr auto RELAY_PIN1 = 14;
 constexpr auto RELAY_PIN2 = 03;

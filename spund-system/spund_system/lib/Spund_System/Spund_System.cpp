@@ -1,7 +1,7 @@
-// #include "ADS_Sensor.h"
-#include "config.h"
 #include "Relay.h"
 #include "Spund_System.h"
+
+#include "config.h"
 
 Spund_System::Spund_System(spund_system_cfg_t cfg)
 {
@@ -29,8 +29,8 @@ Spund_System::Spund_System(spund_system_cfg_t cfg)
     server_sensor = temp_sensor_id;
     _time_of_last_vent = millis();
 
-    // _p_ads->begin(_i2c_addr);
     _p_ads = std::make_shared<Adafruit_ADS1115>();
+    _p_ads->begin();
 
     _p_re = std::make_shared<Relay>();
     _p_re->begin(_relay_pin);
@@ -41,23 +41,10 @@ bool Spund_System::begin()
     return _p_ads->begin(_i2c_addr);
 }
 
-// auto Spund_System::getSpunderId() -> String
-// {
-//     return _spunder_id;
-// }
-
-// auto Spund_System::getTempSensorId() -> String
-// {
-//     return _temp_sensor_id;
-// }
 auto Spund_System::getSensorUnit() -> std::string
 {
     return _ads_sensor_unit;
 }
-// auto Spund_System::getDesiredVols() -> float
-// {
-//     return _desired_vols;
-// }
 
 auto Spund_System::readADC() -> uint16_t
 {
@@ -97,7 +84,7 @@ auto Spund_System::computeVols() -> float
     return _vols;
 }
 
-auto Spund_System::testCarb() -> uint8_t
+auto Spund_System::testForVent() -> uint8_t
 {
     uint8_t vented;
 

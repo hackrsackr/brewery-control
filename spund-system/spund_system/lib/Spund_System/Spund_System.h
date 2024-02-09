@@ -49,28 +49,16 @@ public:
     ~Spund_System();
 
     bool begin();
-
-    // auto getSpunderId() -> String;
-    // auto getTempSensorId() -> String;
     auto getSensorUnit() -> std::string;
-    // auto getDesiredVols() -> float;
-
-    void setDesiredVols(float);
-
     auto readADC() -> uint16_t;
     auto readVolts() -> float;
     auto readSensorUnits() -> float;
-
     auto computePSISetpoint() -> float;
     auto computeVols() -> float;
-
-    auto testCarb() -> uint8_t;
+    auto testForVent() -> uint8_t;
     auto getLastVent() -> float;
 
 private:
-    // spund
-    // String _spunder_id;
-    // double _desired_vols;
     uint8_t _relay_pin;
 
     // ads
@@ -82,15 +70,12 @@ private:
     float _output_low_val;
     float _output_high_val;
 
-    // mqtt
-    // String _temp_sensor_id;
-
     // pointers
     std::shared_ptr<Adafruit_ADS1115> _p_ads;
     std::shared_ptr<Relay> _p_re;
 
     // data
     uint32_t _time_of_last_vent;
-    double _psi_setpoint;
-    double _vols;
+    float _psi_setpoint;
+    float _vols;
 };

@@ -89,7 +89,8 @@ void onConnectionEstablished()
 {
     client.subscribe(_SUBTOPIC, [](const String &payload)
                      {
-        //  Serial.println(payload);
+        // DEBUG:
+        // Serial.println(payload);
         StaticJsonDocument<4000> input;
         deserializeJson(input, payload);
 
@@ -98,10 +99,12 @@ void onConnectionEstablished()
 
         for (auto &spunder : _SPUNDERS)
         {   
-	    	// Serial.println(spunder->temp_sensor_id);
             spunder->tempC = input["data"][spunder->temp_sensor_id]["value[degC]"];
-	    	// Serial.println(spunder->tempC);
             spunder->tempF = spunder->tempC * 1.8 + 32;
+            
+            // DEBUG:
+	    	// Serial.println(spunder->temp_sensor_id);
+	    	// Serial.println(spunder->tempC);
 
 	        if (!spunder->tempC) 
 	        { 
@@ -118,12 +121,12 @@ void onConnectionEstablished()
             	message["data"][spunder->spunder_id]["PSI_setpoint"] = spunder->computePSISetpoint();
             	message["data"][spunder->spunder_id]["Desired_vols"] = spunder->desired_vols;
             	message["data"][spunder->spunder_id]["Vols"] = spunder->computeVols();
-            	message["data"][spunder->spunder_id]["Relay_Toggled"] = spunder->testCarb();
+            	message["data"][spunder->spunder_id]["Relay_Toggled"] = spunder->testForVent();
             	message["data"][spunder->spunder_id]["Minutes_since_vent"] = spunder->getLastVent();
 	        }
 
         }
-            message["data"]["general"]["IP_address"] = WiFi.localIP();
+            message["data"]["general"]["Server_address"] = WiFi.localIP();
             message["data"]["general"]["Input_memory_size"] = input.memoryUsage();
             message["data"]["general"]["Output_memory_size"] = message.memoryUsage();
 
