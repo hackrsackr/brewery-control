@@ -2,24 +2,31 @@
 
 #include "Relay.h"
 
-Relay::Relay(uint8_t relay_pin)
-{
-    m_relay_pin = relay_pin;
-    m_relay_state = !RELAY_OPEN;
-    pinMode(m_relay_pin, OUTPUT);
-    closeRelay();
-}
+Relay::Relay() {}
 
 Relay::~Relay() {}
 
+void Relay::begin(uint8_t pin)
+{
+    _relay_pin = pin;
+    _relay_state = !RELAY_OPEN;
+    pinMode(_relay_pin, OUTPUT);
+    closeRelay();
+}
+
+void Relay::setRelayPin(uint8_t pin)
+{
+    _relay_pin = pin;
+}
+
 void Relay::openRelay()
 {
-    digitalWrite(m_relay_pin, RELAY_OPEN);
-    m_relay_state = RELAY_OPEN;
+    digitalWrite(_relay_pin, RELAY_OPEN);
+    _relay_state = RELAY_OPEN;
 }
 
 void Relay::closeRelay()
 {
-    digitalWrite(m_relay_pin, !RELAY_OPEN);
-    m_relay_state = !RELAY_OPEN;
+    digitalWrite(_relay_pin, !RELAY_OPEN);
+    _relay_state = !RELAY_OPEN;
 }

@@ -2,6 +2,7 @@
 
 #include <vector>
 
+// #include "ADS_Sensor.h"
 #include "Spund_System.h"
 #include "secrets.h"
 
@@ -13,40 +14,56 @@ constexpr bool _PUBLISHMQTT = true;
 // constexpr bool _PUBLISHMQTT = false;
 
 // WiFi credentials
-constexpr auto _SSID{SECRET_SSID};
-constexpr auto _PASS{SECRET_PASS};
+constexpr auto _SSID = SECRET_SSID;
+constexpr auto _PASS = SECRET_PASS;
 
 // MQTT parameters
 constexpr auto _MQTTHOST = "10.0.0.113";
 constexpr auto _MQTTPORT = 1883;
-constexpr auto _CLIENTID = "spund-system";
+constexpr auto _CLIENTID = "spund-system-s3";
 constexpr auto _SUBTOPIC = "brewcast/history/spark-four";
-constexpr auto _PUBTOPIC = "brewcast/history/spund-system";
+constexpr auto _PUBTOPIC = "brewcast/history/spund-system-s3";
 
-// I2C pins
-constexpr uint8_t _I2C_SCL = 25;
-constexpr uint8_t _I2C_SDA = 26;
+// ADS I2C addresses
+constexpr auto ADS1115_ADDRESS1 = 0x48; // ADDR -> GND
+constexpr auto ADS1115_ADDRESS2 = 0x49; // ADDR -> VCC
+constexpr auto ADS1115_ADDRESS3 = 0x4a; // ADDR -> SDA
+constexpr auto ADS1115_ADDRESS4 = 0x4b; // ADDR -> SCL
+
+// GPIO Pins (espduino)
+// constexpr uint8_t _I2C_SCL = 25;
+// constexpr uint8_t _I2C_SDA = 26;
+
+// constexpr auto RELAY_PIN1 = 14;
+// constexpr auto RELAY_PIN2 = 27;
+// constexpr auto RELAY_PIN3 = 16;
+// constexpr auto RELAY_PIN4 = 17;
+
+// GPIO Pins (esp32-s3-devkit)
+constexpr uint8_t _I2C_SCL = 17;
+constexpr uint8_t _I2C_SDA = 18;
+
+constexpr auto RELAY_PIN1 = 14;
+constexpr auto RELAY_PIN2 = 03;
+constexpr auto RELAY_PIN3 = 20;
+constexpr auto RELAY_PIN4 = 19;
 
 std::vector<spund_system_cfg_t> spund_cfgs{
     {
         .spunder{
             .spunder_id = "spunder-1",
             .desired_vols = 3.41,
-            .relay_pin = 14,
+            .relay_pin = RELAY_PIN1,
         },
         .ads1115{
-            .ads_cfg{
-                .ads_addr = ADS1115_ADDRESS1,
-                .ads_gain = GAIN_TWOTHIRDS,
-                .i2c_sda = _I2C_SDA,
-                .i2c_scl = _I2C_SCL,
-                .ads_channel = 0,
-                .input_low_range = .5,
-                .input_high_range = 4.5,
-                .output_low_range = 0.0,
-                .output_high_range = 60.0,
-                .offset_volts = 0.0,
-            },
+            .i2c_addr = ADS1115_ADDRESS1,
+            .ads_channel = 0,
+            .ads_gain = GAIN_TWOTHIRDS,
+            .ads_sensor_unit = "PSI",
+            .input_low_val = 0.5,
+            .input_high_val = 4.5,
+            .output_low_val = 0.0,
+            .output_high_val = 60.0,
         },
         .mqtt{
             .temp_sensor_id = "Mock_temp-1",
@@ -58,21 +75,17 @@ std::vector<spund_system_cfg_t> spund_cfgs{
         .spunder{
             .spunder_id = "spunder-2",
             .desired_vols = 3.42,
-            .relay_pin = 27,
+            .relay_pin = RELAY_PIN2,
         },
         .ads1115{
-            .ads_cfg{
-                .ads_addr = ADS1115_ADDRESS1,
-                .ads_gain = GAIN_TWOTHIRDS,
-                .i2c_sda = _I2C_SDA,
-                .i2c_scl = _I2C_SCL,
-                .ads_channel = 1,
-                .input_low_range = .5,
-                .input_high_range = 4.5,
-                .output_low_range = 0.0,
-                .output_high_range = 60.0,
-                .offset_volts = 0.0,
-            },
+            .i2c_addr = ADS1115_ADDRESS1,
+            .ads_channel = 1,
+            .ads_gain = GAIN_TWOTHIRDS,
+            .ads_sensor_unit = "PSI",
+            .input_low_val = 0.5,
+            .input_high_val = 4.5,
+            .output_low_val = 0.0,
+            .output_high_val = 60.0,
         },
         .mqtt{
             .temp_sensor_id = "Mock_temp-2",
@@ -84,21 +97,17 @@ std::vector<spund_system_cfg_t> spund_cfgs{
         .spunder{
             .spunder_id = "spunder-3",
             .desired_vols = 3.43,
-            .relay_pin = 16,
+            .relay_pin = RELAY_PIN3,
         },
         .ads1115{
-            .ads_cfg{
-                .ads_addr = ADS1115_ADDRESS1,
-                .ads_gain = GAIN_TWOTHIRDS,
-                .i2c_sda = _I2C_SDA,
-                .i2c_scl = _I2C_SCL,
-                .ads_channel = 2,
-                .input_low_range = .5,
-                .input_high_range = 4.5,
-                .output_low_range = 0.0,
-                .output_high_range = 30.0,
-                .offset_volts = 0.0,
-            },
+            .i2c_addr = ADS1115_ADDRESS1,
+            .ads_channel = 2,
+            .ads_gain = GAIN_TWOTHIRDS,
+            .ads_sensor_unit = "PSI",
+            .input_low_val = 0.5,
+            .input_high_val = 4.5,
+            .output_low_val = 0.0,
+            .output_high_val = 30.0,
         },
         .mqtt{
             .temp_sensor_id = "Mock_temp-3",
@@ -110,21 +119,17 @@ std::vector<spund_system_cfg_t> spund_cfgs{
         .spunder{
             .spunder_id = "spunder-4",
             .desired_vols = 3.44,
-            .relay_pin = 17,
+            .relay_pin = RELAY_PIN4,
         },
         .ads1115{
-            .ads_cfg{
-                .ads_addr = ADS1115_ADDRESS1,
-                .ads_gain = GAIN_TWOTHIRDS,
-                .i2c_sda = _I2C_SDA,
-                .i2c_scl = _I2C_SCL,
-                .ads_channel = 3,
-                .input_low_range = .5,
-                .input_high_range = 4.5,
-                .output_low_range = 0.0,
-                .output_high_range = 60.0,
-                .offset_volts = 0.0,
-            },
+            .i2c_addr = ADS1115_ADDRESS1,
+            .ads_channel = 3,
+            .ads_gain = GAIN_TWOTHIRDS,
+            .ads_sensor_unit = "PSI",
+            .input_low_val = 0.5,
+            .input_high_val = 4.5,
+            .output_low_val = 0.0,
+            .output_high_val = 60.0,
         },
         .mqtt{
             .temp_sensor_id = "Mock_temp-4",
@@ -133,3 +138,46 @@ std::vector<spund_system_cfg_t> spund_cfgs{
         },
     },
 };
+
+// std::vector<ads_sensor_cfg_t> ads_cfgs{
+//     {
+//         .i2c_addr = ADS1115_ADDRESS1,
+//         .ads_channel = 0,
+//         .ads_gain = GAIN_TWOTHIRDS,
+//         .ads_sensor_unit = "PSI",
+//         .input_low_val = 0.5,
+//         .input_high_val = 4.5,
+//         .output_low_val = 0.0,
+//         .output_high_val = 60.0,
+//     },
+//     {
+//         .i2c_addr = ADS1115_ADDRESS1,
+//         .ads_channel = 1,
+//         .ads_gain = GAIN_TWOTHIRDS,
+//         .ads_sensor_unit = "PSI",
+//         .input_low_val = 0.5,
+//         .input_high_val = 4.5,
+//         .output_low_val = 0.0,
+//         .output_high_val = 60.0,
+//     },
+//     {
+//         .i2c_addr = ADS1115_ADDRESS1,
+//         .ads_channel = 2,
+//         .ads_gain = GAIN_TWOTHIRDS,
+//         .ads_sensor_unit = "PSI",
+//         .input_low_val = 0.5,
+//         .input_high_val = 4.5,
+//         .output_low_val = 0.0,
+//         .output_high_val = 60.0,
+//     },
+//     {
+//         .i2c_addr = ADS1115_ADDRESS1,
+//         .ads_channel = 3,
+//         .ads_gain = GAIN_TWOTHIRDS,
+//         .ads_sensor_unit = "PSI",
+//         .input_low_val = 0.5,
+//         .input_high_val = 4.5,
+//         .output_low_val = 0.0,
+//         .output_high_val = 60.0,
+//     },
+// };
