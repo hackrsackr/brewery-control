@@ -1,7 +1,9 @@
 #pragma once
 
-#include "ADS_Sensor.h"
+#include <Adafruit_ADS1X15.h>
 #include "Relay.h"
+
+#include <memory>
 
 typedef struct spund_system_cfg_t
 {
@@ -48,7 +50,7 @@ public:
     Spund_System(spund_system_cfg_t);
     ~Spund_System();
 
-    bool begin();
+    auto begin() -> bool;
     auto getSensorUnit() -> std::string;
     auto readADC() -> uint16_t;
     auto readVolts() -> float;

@@ -2,6 +2,7 @@
 #include <EspMQTTClient.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
+#include <Adafruit_ADS1X15.h>
 
 #include "Spund_System.h"
 #include "Relay.h"
@@ -19,6 +20,7 @@ AsyncWebServer server(80);
 // void onConnectionEstablished();
 void notFound(AsyncWebServerRequest *request);
 String processor(const String &var);
+
 void onConnectionEstablished();
 
 void setup(void)
@@ -28,8 +30,6 @@ void setup(void)
     // client.enableDebuggingMessages();
     client.setMaxPacketSize(4096);
     client.enableOTA();
-
-    // Wire.begin(_I2C_SDA, _I2C_SCL);
 
     Wire.begin(_I2C_SDA, _I2C_SCL);
 
@@ -92,10 +92,11 @@ void onConnectionEstablished()
 {
     client.subscribe(_SUBTOPIC, [](const String &payload)
                      {
-        // DEBUG:
-        // Serial.println(payload);
         StaticJsonDocument<4000> input;
         deserializeJson(input, payload);
+        
+        // DEBUG:
+        // Serial.println(payload);
 
         StaticJsonDocument<1000> message;
         message["key"] = _CLIENTID;
@@ -129,11 +130,9 @@ void onConnectionEstablished()
 	        }
 
         }
-            message["data"]["general"]["Server_address"] = WiFi.localIP();
             message["data"]["general"]["Input_memory_size"] = input.memoryUsage();
             message["data"]["general"]["Output_memory_size"] = message.memoryUsage();
 
-            serializeJsonPretty(message["data"], Serial);
 
         if (_PUBLISHMQTT)
         {
@@ -151,10 +150,15 @@ void onConnectionEstablished()
 
         if (!_PUBLISHMQTT) 
         {
-            // serializeJson(message["data"], Serial);
-            // Serial.println("");
-            serializeJsonPretty(message["data"], Serial);
+            serializeJson(message["data"], Serial);
+            Serial.println("");
         } });
+
+    // DEBUG:
+    // serializeJsonPretty(message, Serial);
+    // Serial.println("");
+    // Serial.print("Server Address: ");
+    // Serial.println(WiFi.localIP());
 }
 void notFound(AsyncWebServerRequest *request)
 {

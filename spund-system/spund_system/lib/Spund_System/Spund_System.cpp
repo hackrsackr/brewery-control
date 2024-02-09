@@ -36,7 +36,7 @@ Spund_System::Spund_System(spund_system_cfg_t cfg)
     _p_re->begin(_relay_pin);
 }
 
-bool Spund_System::begin()
+auto Spund_System::begin() -> bool
 {
     return _p_ads->begin(_i2c_addr);
 }

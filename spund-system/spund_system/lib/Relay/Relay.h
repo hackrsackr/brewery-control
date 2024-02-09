@@ -11,11 +11,12 @@ private:
 
 public:
     Relay();
-
     ~Relay();
 
     void begin(uint8_t);
     void setRelayPin(uint8_t);
+    auto getRelayPin() -> uint8_t;
+    auto getRelayState() -> uint8_t;
     void openRelay();
     void closeRelay();
 };
