@@ -51,7 +51,7 @@ class Meter:
         return self.mA
 
     def maToUnit(self) -> float:
-        return (self.readMa() - self.ilrv) / (self.iurv - self.ilrv) * (self.ourv - self.olrv)
+        return ((self.readMa() - self.ilrv) / (self.iurv - self.ilrv) * (self.ourv - self.olrv)) + self.offset
 
     def run(self):
         try:

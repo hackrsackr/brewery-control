@@ -1,7 +1,6 @@
 services:
   meters:
     container_name: meters
-    image: hackrsackr/py-meters:main
+    image: hackrsackr/py-meters:main2.0
     restart: unless-stopped
     privileged: true
-version: '3.7'

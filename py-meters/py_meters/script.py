@@ -72,6 +72,7 @@ def main():
                 m1.iurv = cfg['_METERS']['meter-1'][input]['input_URV']
                 m1.olrv = cfg['_METERS']['meter-1'][input]['output_LRV']
                 m1.ourv = cfg['_METERS']['meter-1'][input]['output_URV']
+                m1.offset = cfg['_METERS']['meter-1'][input]['offset']
 
                 d1[m1.name] = {
                     # 'mA': round(m1.readMa(), 2),
@@ -92,6 +93,7 @@ def main():
                 m2.iurv = cfg['_METERS']['meter-2'][input]['input_URV']
                 m2.olrv = cfg['_METERS']['meter-2'][input]['output_LRV']
                 m2.ourv = cfg['_METERS']['meter-2'][input]['output_URV']
+                m2.offset = cfg['_METERS']['meter-2'][input]['offset']
 
                 d2[m2.name] = {
                     # 'mA': round(m2.readMa(), 2),
@@ -132,11 +134,12 @@ def main():
                 m4.iurv = cfg['_METERS']['meter-4'][input]['input_URV']
                 m4.olrv = cfg['_METERS']['meter-4'][input]['output_LRV']
                 m4.ourv = cfg['_METERS']['meter-4'][input]['output_URV']
+                m4.offset = cfg['_METERS']['meter-4'][input]['offset']
 
                 d4[m4.name] = {
                     # 'mA': round(m4.readMa(), 2),
                     # 'volts': round(m4.volts, 2),
-                    m4.measurement: round(m4.maToUnit(), 2),
+                    m4.measurement: round(m4.maToUnit(), 3),
                 }
 
             # Output
