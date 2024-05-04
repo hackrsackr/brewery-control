@@ -1,34 +1,29 @@
-#include "Arduino.h"
-#include <array>
+#include "config.h"
+#include "Relay.h"
 
-#include "relay.h"
-
-#define RPIN1 14
-#define RPIN2 27
-#define RPIN3 16
-#define RPIN4 17
-
-std::array<const uint8_t, NUMBER_OF_RELAYS>
-    RELAY_PINS = {RPIN1, RPIN2, RPIN3, RPIN4};
-
-std::array<Relay, NUMBER_OF_RELAYS> relay_arr;
+std::vector<Relay *> _RELAYS;
 
 void setup(void)
 {
     Serial.begin(115200);
 
-    for (uint8_t i = 0; i < NUMBER_OF_RELAYS; ++i)
+    for (auto &spund_cfg : spund_cfgs)
     {
-        relay_arr[i].begin(RELAY_PINS[i]);
+        Relay *r = new Relay();
+        r->begin(spund_cfg.spunder.relay_pin);
+        _RELAYS.push_back(r);
     }
 }
 
 void loop(void)
 {
-    for (uint8_t i = 0; i < NUMBER_OF_RELAYS; ++i)
+    for (auto &relay : _RELAYS)
     {
-        Serial.printf("relay_pin%d: %d\n", i, relay_arr[i].relay_pin);
-        relay_arr[i].toggleRelay(relay_arr[i].relay_pin);
-        delay(5000);
+        relay->openRelay();
+        Serial.printf("relay pin %i opened \n", relay->getRelayPin());
+        delay(1000);
+        relay->closeRelay();
+        Serial.printf("relay pin %i closed \n", relay->getRelayPin());
+        delay(1000);
     }
 }

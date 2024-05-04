@@ -1,22 +1,22 @@
 #pragma once
+#include <cstdint>
 
 #define RELAY_OPEN HIGH
 
 class Relay
 {
-public:
-    uint8_t relay_pin;
-    uint8_t relay_state;
-    uint8_t relay_toggled;
+private:
+    uint8_t _relay_pin;
+    uint8_t _relay_state;
 
-    // Constructors
+public:
     Relay();
     ~Relay();
 
-    // Initializer
     void begin(uint8_t);
-
-    // Methods
+    void setRelayPin(uint8_t);
+    auto getRelayPin() -> uint8_t;
+    auto getRelayState() -> uint8_t;
     void openRelay();
     void closeRelay();
 };

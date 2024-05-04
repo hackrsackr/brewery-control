@@ -20,9 +20,25 @@ MA_Meter::MA_Meter(ma_meter_cfg_t cfg)
     s_ads_->setGain(ads_gain);
 }
 
-void MA_Meter::read()
+auto MA_Meter::adsReady() -> bool
+{
+    if (!s_ads_->begin(i2c_address))
+    {
+        Serial.print("Failed to initialize ADS @ ");
+        Serial.println(i2c_address);
+        return 0;
+    }
+    else
+    {
+        return 1;
+    }
+}
+
+auto MA_Meter::read() -> float
 {
     volts = s_ads_->computeVolts(s_ads_->readADC_SingleEnded(ads_channel));
     ma = volts * mA_per_volt;
     output = (ma - input_LRV) / (input_URV - input_LRV) * (output_URV - output_LRV);
+
+    return output;
 }

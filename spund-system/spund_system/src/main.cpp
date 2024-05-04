@@ -2,12 +2,11 @@
 #include <EspMQTTClient.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
+#include <Adafruit_ADS1X15.h>
 
-#include "ADS_Sensor.h"
 #include "Spund_System.h"
 #include "Relay.h"
 
-#include "secrets.h"
 #include "server.h"
 #include "config.h"
 
@@ -15,41 +14,43 @@
 
 std::vector<Spund_System *> _SPUNDERS;
 
-EspMQTTClient client(SECRET_SSID, SECRET_PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
-void onConnectionEstablished();
-
+EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
 AsyncWebServer server(80);
+
+// void onConnectionEstablished();
 void notFound(AsyncWebServerRequest *request);
 String processor(const String &var);
+
+void onConnectionEstablished();
 
 void setup(void)
 {
     Serial.begin(115200);
+
+    // client.enableDebuggingMessages();
     client.setMaxPacketSize(4096);
     client.enableOTA();
 
-    WiFi.disconnect(true);
-    delay(1000);
-    WiFi.begin(SECRET_SSID, SECRET_PASS);
-    uint8_t failed_connections = 0;
-    while (WiFi.status() != WL_CONNECTED)
+    // Wire.begin(_I2C_SDA, _I2C_SCL);
+
+    WiFi.begin(_SSID, _PASS);
+    if (WiFi.waitForConnectResult() != WL_CONNECTED)
     {
-        delay(500);
-        Serial.println("connecting..");
-        failed_connections++;
-        if (failed_connections > 10)
-        {
-            Serial.println("restarting..");
-            ESP.restart();
-        }
+        Serial.printf("WiFi Failed!\n");
+        return;
     }
-    Serial.print("Connected to ");
+    Serial.print("IP Address: ");
     Serial.println(WiFi.localIP());
 
     for (auto &spund_cfg : spund_cfgs)
     {
         Spund_System *s = new Spund_System(spund_cfg);
         _SPUNDERS.push_back(s);
+
+        if (!s->begin())
+        {
+            Serial.printf("ads failed to initialize");
+        }
     }
 
     // // Webserver
@@ -91,57 +92,76 @@ void onConnectionEstablished()
 {
     client.subscribe(_SUBTOPIC, [](const String &payload)
                      {
-        //  Serial.println(payload);
         StaticJsonDocument<4000> input;
         deserializeJson(input, payload);
+        
+        // DEBUG:
+        // Serial.println(payload);
 
         StaticJsonDocument<1000> message;
         message["key"] = _CLIENTID;
 
         for (auto &spunder : _SPUNDERS)
-        {
+        {   
             spunder->tempC = input["data"][spunder->temp_sensor_id]["value[degC]"];
             spunder->tempF = spunder->tempC * 1.8 + 32;
+            
+            // DEBUG:
+	    	// Serial.println(spunder->temp_sensor_id);
+	    	// Serial.println(spunder->tempC);
 
-	    if (!spunder->tempC) 
-	    { 
-	    	Serial.print(spunder->spunder_id);
-	    	Serial.println(": no temp reading!");
-	    	continue;
-	    } 
-	    else 
-	    {
+	        if (!spunder->tempC) 
+	        { 
+	    	    Serial.print(spunder->spunder_id);
+	    	    Serial.println(": no temp reading!");
+	    	    continue;
+	        } 
+	        else 
+	        {
             	message["data"][spunder->spunder_id]["TempC"] = spunder->tempC;
             	message["data"][spunder->spunder_id]["Temp_Sensor"] = spunder->temp_sensor_id;
-            	message["data"][spunder->spunder_id]["Volts"] = spunder->getVolts();
-            	message["data"][spunder->spunder_id]["PSI"] = spunder->getPSI();
+            	message["data"][spunder->spunder_id]["Volts"] = spunder->readVolts();
+            	message["data"][spunder->spunder_id][spunder->getSensorUnit()] = spunder->readSensorUnits();
             	message["data"][spunder->spunder_id]["PSI_setpoint"] = spunder->computePSISetpoint();
             	message["data"][spunder->spunder_id]["Desired_vols"] = spunder->desired_vols;
             	message["data"][spunder->spunder_id]["Vols"] = spunder->computeVols();
-            	message["data"][spunder->spunder_id]["Relay_Toggled"] = spunder->testCarb();
-            	message["data"][spunder->spunder_id]["Minutes_since_vent"] = spunder->getLastVent();
-	    }
-        }
+                if (_VENT_TO_AIR) 
+                {
+                    message["data"][spunder->spunder_id]["Relay_Toggled"] = spunder->testForVent();
+            	    message["data"][spunder->spunder_id]["Minutes_since_vent"] = spunder->getLastVent(); 
+                }
+	        }
 
-        message["data"]["memory"]["Input_memory_size"] = input.memoryUsage();
-        message["data"]["memory"]["Output_memory_size"] = message.memoryUsage();
+        }
+            message["data"]["general"]["Input_memory_size"] = input.memoryUsage();
+            message["data"]["general"]["Output_memory_size"] = message.memoryUsage();
+
 
         if (_PUBLISHMQTT)
         {
             client.executeDelayed(5000, [&message]()
             {
-                client.publish(_PUBTOPIC, message.as<String>());
+                if (!client.publish(_PUBTOPIC, message.as<String>()))
+                {   
+                    Serial.println("restarting due to failed MQTT publish");
+                    ESP.restart();
+                }
                 serializeJsonPretty(message, Serial);
             });
         } 
+
         if (!_PUBLISHMQTT) 
         {
             serializeJson(message["data"], Serial);
             Serial.println("");
-            // serializeJsonPretty(message["data"], Serial);
         } });
-}
 
+    // DEBUG:
+    // serializeJsonPretty(message, Serial);
+    // Serial.println("");
+    // Serial.print("Server Address: ");
+    // Serial.println(WiFi.localIP());
+}
 void notFound(AsyncWebServerRequest *request)
 {
     request->send(404, "text/plain", "Not found");
@@ -181,5 +201,6 @@ String processor(const String &var)
     {
         return _SPUNDERS[3]->server_sensor;
     }
+
     return String();
 }

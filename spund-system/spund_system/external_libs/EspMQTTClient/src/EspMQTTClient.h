@@ -7,25 +7,25 @@
 
 #ifdef ESP8266
 
-  #include <ESP8266WiFi.h>
-  #include <ESP8266WebServer.h>
-  #include <ESP8266mDNS.h>
-  #include <ESP8266HTTPUpdateServer.h>
+#include <ESP8266WiFi.h>
+#include <ESP8266WebServer.h>
+#include <ESP8266mDNS.h>
+#include <ESP8266HTTPUpdateServer.h>
 
-  #define DEFAULT_MQTT_CLIENT_NAME "ESP8266"
-  #define ESPHTTPUpdateServer ESP8266HTTPUpdateServer
-  #define ESPmDNS ESP8266mDNS
-  #define WebServer ESP8266WebServer
+#define DEFAULT_MQTT_CLIENT_NAME "ESP8266"
+#define ESPHTTPUpdateServer ESP8266HTTPUpdateServer
+#define ESPmDNS ESP8266mDNS
+#define WebServer ESP8266WebServer
 
 #else // for ESP32
 
-  #include <WiFiClient.h>
-  #include <WebServer.h>
-  #include <ESPmDNS.h>
-  #include "ESP32HTTPUpdateServer.h"
+#include <WiFiClient.h>
+#include <WebServer.h>
+#include <ESPmDNS.h>
+#include "ESP32HTTPUpdateServer.h"
 
-  #define DEFAULT_MQTT_CLIENT_NAME "ESP32"
-  #define ESPHTTPUpdateServer ESP32HTTPUpdateServer
+#define DEFAULT_MQTT_CLIENT_NAME "ESP32"
+#define ESPHTTPUpdateServer ESP32HTTPUpdateServer
 
 #endif
 
@@ -46,28 +46,29 @@ private:
   unsigned long _lastWifiConnectiomAttemptMillis;
   unsigned long _nextWifiConnectionAttemptMillis;
   unsigned int _wifiReconnectionAttemptDelay;
-  const char* _wifiSsid;
-  const char* _wifiPassword;
+  const char *_wifiSsid;
+  const char *_wifiPassword;
   WiFiClient _wifiClient;
 
   // MQTT related
   bool _mqttConnected;
   unsigned long _nextMqttConnectionAttemptMillis;
   unsigned int _mqttReconnectionAttemptDelay;
-  const char* _mqttServerIp;
-  const char* _mqttUsername;
-  const char* _mqttPassword;
-  const char* _mqttClientName;
+  const char *_mqttServerIp;
+  const char *_mqttUsername;
+  const char *_mqttPassword;
+  const char *_mqttClientName;
   short _mqttServerPort;
   bool _mqttCleanSession;
-  char* _mqttLastWillTopic;
-  char* _mqttLastWillMessage;
+  char *_mqttLastWillTopic;
+  char *_mqttLastWillMessage;
   bool _mqttLastWillRetain;
   unsigned int _failedMQTTConnectionAttemptCount;
 
   PubSubClient _mqttClient;
 
-  struct TopicSubscriptionRecord {
+  struct TopicSubscriptionRecord
+  {
     String topic;
     MessageReceivedCallback callback;
     MessageReceivedCallbackWithTopic callbackWithTopic;
@@ -75,15 +76,16 @@ private:
   std::vector<TopicSubscriptionRecord> _topicSubscriptionList;
 
   // HTTP/OTA update related
-  char* _updateServerAddress;
-  char* _updateServerUsername;
-  char* _updateServerPassword;
-  WebServer* _httpServer;
-  ESPHTTPUpdateServer* _httpUpdater;
+  char *_updateServerAddress;
+  char *_updateServerUsername;
+  char *_updateServerPassword;
+  WebServer *_httpServer;
+  ESPHTTPUpdateServer *_httpUpdater;
   bool _enableOTA;
 
   // Delayed execution related
-  struct DelayedExecutionRecord {
+  struct DelayedExecutionRecord
+  {
     unsigned long targetMillis;
     DelayedExecutionCallback callback;
   };
@@ -97,52 +99,52 @@ private:
 
 public:
   EspMQTTClient(
-    // port and client name are swapped here to prevent a collision with the MQTT w/o auth constructor
-    const short mqttServerPort = 1883,
-    const char* mqttClientName = DEFAULT_MQTT_CLIENT_NAME);
+      // port and client name are swapped here to prevent a collision with the MQTT w/o auth constructor
+      const short mqttServerPort = 1883,
+      const char *mqttClientName = DEFAULT_MQTT_CLIENT_NAME);
 
   /// Wifi + MQTT with no MQTT authentification
   EspMQTTClient(
-    const char* wifiSsid,
-    const char* wifiPassword,
-    const char* mqttServerIp,
-    const char* mqttClientName = DEFAULT_MQTT_CLIENT_NAME,
-    const short mqttServerPort = 1883);
+      const char *wifiSsid,
+      const char *wifiPassword,
+      const char *mqttServerIp,
+      const char *mqttClientName = DEFAULT_MQTT_CLIENT_NAME,
+      const short mqttServerPort = 1883);
 
   /// Wifi + MQTT with MQTT authentification
   EspMQTTClient(
-    const char* wifiSsid,
-    const char* wifiPassword,
-    const char* mqttServerIp,
-    const char* mqttUsername,
-    const char* mqttPassword,
-    const char* mqttClientName = DEFAULT_MQTT_CLIENT_NAME,
-    const short mqttServerPort = 1883);
+      const char *wifiSsid,
+      const char *wifiPassword,
+      const char *mqttServerIp,
+      const char *mqttUsername,
+      const char *mqttPassword,
+      const char *mqttClientName = DEFAULT_MQTT_CLIENT_NAME,
+      const short mqttServerPort = 1883);
 
   /// Only MQTT handling (no wifi), with MQTT authentification
   EspMQTTClient(
-    const char* mqttServerIp,
-    const short mqttServerPort,
-    const char* mqttUsername,
-    const char* mqttPassword,
-    const char* mqttClientName = DEFAULT_MQTT_CLIENT_NAME);
+      const char *mqttServerIp,
+      const short mqttServerPort,
+      const char *mqttUsername,
+      const char *mqttPassword,
+      const char *mqttClientName = DEFAULT_MQTT_CLIENT_NAME);
 
   /// Only MQTT handling without MQTT authentification
   EspMQTTClient(
-    const char* mqttServerIp,
-    const short mqttServerPort,
-    const char* mqttClientName = DEFAULT_MQTT_CLIENT_NAME);
+      const char *mqttServerIp,
+      const short mqttServerPort,
+      const char *mqttClientName = DEFAULT_MQTT_CLIENT_NAME);
 
   ~EspMQTTClient();
 
   // Optional functionality
-  void enableDebuggingMessages(const bool enabled = true); // Allow to display useful debugging messages. Can be set to false to disable them during program execution
-  void enableHTTPWebUpdater(const char* username, const char* password, const char* address = "/"); // Activate the web updater, must be set before the first loop() call.
-  void enableHTTPWebUpdater(const char* address = "/"); // Will set user and password equal to _mqttUsername and _mqttPassword
-  void enableOTA(const char *password = NULL, const uint16_t port = 0); // Activate OTA updater, must be set before the first loop() call.
-  void enableMQTTPersistence(); // Tell the broker to establish a persistent connection. Disabled by default. Must be called before the first loop() execution
-  void enableLastWillMessage(const char* topic, const char* message, const bool retain = false); // Must be set before the first loop() call.
-  void enableDrasticResetOnConnectionFailures() {_drasticResetOnConnectionFailures = true;} // Can be usefull in special cases where the ESP board hang and need resetting (#59)
+  void enableDebuggingMessages(const bool enabled = true);                                          // Allow to display useful debugging messages. Can be set to false to disable them during program execution
+  void enableHTTPWebUpdater(const char *username, const char *password, const char *address = "/"); // Activate the web updater, must be set before the first loop() call.
+  void enableHTTPWebUpdater(const char *address = "/");                                             // Will set user and password equal to _mqttUsername and _mqttPassword
+  void enableOTA(const char *password = NULL, const uint16_t port = 0);                             // Activate OTA updater, must be set before the first loop() call.
+  void enableMQTTPersistence();                                                                     // Tell the broker to establish a persistent connection. Disabled by default. Must be called before the first loop() execution
+  void enableLastWillMessage(const char *topic, const char *message, const bool retain = false);    // Must be set before the first loop() call.
+  void enableDrasticResetOnConnectionFailures() { _drasticResetOnConnectionFailures = true; }       // Can be usefull in special cases where the ESP board hang and need resetting (#59)
 
   /// Main loop, to call at each sketch loop()
   void loop();
@@ -152,29 +154,30 @@ public:
   bool publish(const String &topic, const String &payload, bool retain = false);
   bool subscribe(const String &topic, MessageReceivedCallback messageReceivedCallback, uint8_t qos = 0);
   bool subscribe(const String &topic, MessageReceivedCallbackWithTopic messageReceivedCallback, uint8_t qos = 0);
-  bool unsubscribe(const String &topic);   //Unsubscribes from the topic, if it exists, and removes it from the CallbackList.
-  void setKeepAlive(uint16_t keepAliveSeconds); // Change the keepalive interval (15 seconds by default)
-  inline void setMqttClientName(const char* name) { _mqttClientName = name; }; // Allow to set client name manually (must be done in setup(), else it will not work.)
-  inline void setMqttServer(const char* server, const char* username = "", const char* password = "", const short port = 1883) { // Allow setting the MQTT info manually (must be done in setup())
-    _mqttServerIp   = server;
-    _mqttUsername   = username;
-    _mqttPassword   = password;
+  bool unsubscribe(const String &topic);                                       // Unsubscribes from the topic, if it exists, and removes it from the CallbackList.
+  void setKeepAlive(uint16_t keepAliveSeconds);                                // Change the keepalive interval (15 seconds by default)
+  inline void setMqttClientName(const char *name) { _mqttClientName = name; }; // Allow to set client name manually (must be done in setup(), else it will not work.)
+  inline void setMqttServer(const char *server, const char *username = "", const char *password = "", const short port = 1883)
+  { // Allow setting the MQTT info manually (must be done in setup())
+    _mqttServerIp = server;
+    _mqttUsername = username;
+    _mqttPassword = password;
     _mqttServerPort = port;
   };
 
   // Wifi related
-  void setWifiCredentials(const char* wifiSsid, const char* wifiPassword);
+  void setWifiCredentials(const char *wifiSsid, const char *wifiPassword);
 
   // Other
   void executeDelayed(const unsigned long delay, DelayedExecutionCallback callback);
 
-  inline bool isConnected() const { return isWifiConnected() && isMqttConnected(); }; // Return true if everything is connected
-  inline bool isWifiConnected() const { return _wifiConnected; }; // Return true if wifi is connected
-  inline bool isMqttConnected() const { return _mqttConnected; }; // Return true if mqtt is connected
+  inline bool isConnected() const { return isWifiConnected() && isMqttConnected(); };                // Return true if everything is connected
+  inline bool isWifiConnected() const { return _wifiConnected; };                                    // Return true if wifi is connected
+  inline bool isMqttConnected() const { return _mqttConnected; };                                    // Return true if mqtt is connected
   inline unsigned int getConnectionEstablishedCount() const { return _connectionEstablishedCount; }; // Return the number of time onConnectionEstablished has been called since the beginning.
 
-  inline const char* getMqttClientName() { return _mqttClientName; };
-  inline const char* getMqttServerIp() { return _mqttServerIp; };
+  inline const char *getMqttClientName() { return _mqttClientName; };
+  inline const char *getMqttServerIp() { return _mqttServerIp; };
   inline short getMqttServerPort() { return _mqttServerPort; };
 
   // Default to onConnectionEstablished, you might want to override this for special cases like two MQTT connections in the same sketch
@@ -198,7 +201,7 @@ private:
   bool connectToMqttBroker();
   void processDelayedExecutionRequests();
   bool mqttTopicMatch(const String &topic1, const String &topic2);
-  void mqttMessageReceivedCallback(char* topic, uint8_t* payload, unsigned int length);
+  void mqttMessageReceivedCallback(char *topic, uint8_t *payload, unsigned int length);
 };
 
 #endif

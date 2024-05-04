@@ -1,7 +1,9 @@
 #pragma once
 
-#include "ADS_Sensor.h"
+#include <Adafruit_ADS1X15.h>
 #include "Relay.h"
+
+#include <memory>
 
 typedef struct spund_system_cfg_t
 {
@@ -14,20 +16,15 @@ typedef struct spund_system_cfg_t
 
     struct ads_cfg
     {
-        uint8_t ads_addr;
-        adsGain_t ads_gain;
-        uint8_t i2c_sda;
-        uint8_t i2c_scl;
+        uint8_t i2c_addr;
         uint8_t ads_channel;
+        adsGain_t ads_gain;
+        std::string ads_sensor_unit;
+        float input_low_val;
+        float input_high_val;
+        float output_low_val;
+        float output_high_val;
     } ads1115;
-
-    struct sensor_cfg
-    {
-        double min_sensor_volts;
-        double max_sensor_volts;
-        double max_sensor_psi;
-        double sensor_offset_volts;
-    } sensor;
 
     struct mqtt_cfg
     {
@@ -42,37 +39,45 @@ class Spund_System
 public:
     String spunder_id;
     String temp_sensor_id;
-    double desired_vols;
-    uint8_t ads_addr;
-    adsGain_t ads_gain;
-    uint8_t i2c_sda;
-    uint8_t i2c_scl;
-    uint8_t ads_channel;
-    uint8_t relay_pin;
-    double min_sensor_volts;
-    double max_sensor_volts;
-    double max_sensor_psi;
-    double sensor_offset_volts;
+    float desired_vols;
     String server_setpoint;
     String server_sensor;
     String server_setpoint_input;
     String server_sensor_input;
-    uint32_t time_of_last_vent;
-    double psi_setpoint;
-    double tempC;
-    double tempF;
-    double vols;
+    float tempC;
+    float tempF;
 
     Spund_System(spund_system_cfg_t);
+    ~Spund_System();
 
-    double getVolts();
-    double getPSI();
-    double computePSISetpoint();
-    double computeVols();
-    uint8_t testCarb();
-    double getLastVent();
+    auto begin() -> bool;
+    auto getSensorUnit() -> std::string;
+    auto readADC() -> uint16_t;
+    auto readVolts() -> float;
+    auto readSensorUnits() -> float;
+    auto computePSISetpoint() -> float;
+    auto computeVols() -> float;
+    auto testForVent() -> uint8_t;
+    auto getLastVent() -> float;
 
 private:
-    std::shared_ptr<ADS_Pressure_Sensor> s_ps_;
-    std::shared_ptr<Relay> s_re_;
+    uint8_t _relay_pin;
+
+    // ads
+    uint8_t _i2c_addr;
+    uint8_t _ads_channel;
+    std::string _ads_sensor_unit;
+    float _input_low_val;
+    float _input_high_val;
+    float _output_low_val;
+    float _output_high_val;
+
+    // pointers
+    std::shared_ptr<Adafruit_ADS1115> _p_ads;
+    std::shared_ptr<Relay> _p_re;
+
+    // data
+    uint32_t _time_of_last_vent;
+    float _psi_setpoint;
+    float _vols;
 };
