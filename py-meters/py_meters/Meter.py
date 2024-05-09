@@ -72,6 +72,7 @@ class Meter:
                     self.iurv = cfg['_METERS']['meter-1'][input]['input_URV']
                     self.olrv = cfg['_METERS']['meter-1'][input]['output_LRV']
                     self.ourv = cfg['_METERS']['meter-1'][input]['output_URV']
+                    self.offset = cfg['_METERS']['meter-1'][input]['offset']
 
                     d1[self.name] = {
                         'mA': round(self.readMa(), 2),
@@ -92,9 +93,10 @@ class Meter:
                     self.iurv = cfg['_METERS']['meter-2'][input]['input_URV']
                     self.olrv = cfg['_METERS']['meter-2'][input]['output_LRV']
                     self.ourv = cfg['_METERS']['meter-2'][input]['output_URV']
+                    self.offset = cfg['_METERS']['meter-2'][input]['offset']
 
                     d2[self.name] = {
-                        'mA': round(self.readMa(), 2),
+                            #'mA': round(self.readMa(), 2),
                         'volts': round(self.volts, 2),
                         self.measurement: round(self.maToUnit(), 2),
                     }
@@ -102,7 +104,8 @@ class Meter:
                 """ Output """
                 message = {
                     'key': 'meters',
-                    'data': {'pH': d1, 'DO': d2}
+                    #'data': {'pH': d1, 'DO': d2}
+                    'data': {'DO': d2}
                 }
 
                 # client.publish(TOPIC, json.dumps(message))

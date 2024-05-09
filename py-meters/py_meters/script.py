@@ -96,8 +96,8 @@ def main():
                 m2.offset = cfg['_METERS']['meter-2'][input]['offset']
 
                 d2[m2.name] = {
-                    # 'mA': round(m2.readMa(), 2),
-                    # 'volts': round(m2.volts, 2),
+                    'mA': round(m2.readMa(), 2),
+                    'volts': round(m2.volts, 2),
                     m2.measurement: round(m2.maToUnit(), 2)
                 }
 
