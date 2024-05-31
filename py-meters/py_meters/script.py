@@ -96,8 +96,8 @@ def main():
                 m2.offset = cfg['_METERS']['meter-2'][input]['offset']
 
                 d2[m2.name] = {
-                    'mA': round(m2.readMa(), 2),
-                    'volts': round(m2.volts, 2),
+                    # 'mA': round(m2.readMa(), 2),
+                    # 'volts': round(m2.volts, 2),
                     m2.measurement: round(m2.maToUnit(), 2)
                 }
 
@@ -106,21 +106,38 @@ def main():
             patch_list = [0]*3
 
             for index, input in enumerate(cfg['_METERS']['meter-3']):
-                m3 = VolumeSensor()
-                ads = ADS1115(address=0x4a)
-                m3.meter_id = cfg['_METERS']['meter-3'][input]['meter_id']
-                m3.name = cfg['_METERS']['meter-3'][input]['name']
-                m3.measurement = cfg['_METERS']['meter-3'][input]['measurement']
-                m3.ads = cfg['_METERS']['meter-3'][input]['ads_address']
-                m3.ads_channel = cfg['_METERS']['meter-3'][input]['ads_channel']
-                m3.ads_offset = cfg['_METERS']['meter-3'][input]['ads_offset']
-                m3.adc = ads.readADC(m3.ads_channel, gain=GAIN)
+                if input == 'input-4':
+                    m3 = Meter()
+                    m3.ads = ADS1115(address=0x4a)
+                    m3.meter_id = cfg['_METERS']['meter-3'][input]['meter_id']
+                    m3.name = cfg['_METERS']['meter-3'][input]['name']
+                    m3.measurement = cfg['_METERS']['meter-3'][input]['measurement']
+                    m3.ads_channel = cfg['_METERS']['meter-3'][input]['ads_channel']
+                    m3.ilrv = cfg['_METERS']['meter-3'][input]['input_LRV']
+                    m3.iurv = cfg['_METERS']['meter-3'][input]['input_URV']
+                    m3.olrv = cfg['_METERS']['meter-3'][input]['output_LRV']
+                    m3.ourv = cfg['_METERS']['meter-3'][input]['output_URV']
+                    m3.offset = cfg['_METERS']['meter-3'][input]['offset']
 
-                d3[m3.name] = {
-                    m3.measurement: round(m3.readLiters(), 2)
-                }
+                    d3[m3.name] = {
+                            'mA': round(m3.readMa(), 2),
+                            'volts': round(m3.volts, 2),
+                            m3.measurement: round(m3.maToUnit(), 2)}
+                else: 
+                    m3 = VolumeSensor()
+                    ads = ADS1115(address=0x4a)
+                    m3.meter_id = cfg['_METERS']['meter-3'][input]['meter_id']
+                    m3.name = cfg['_METERS']['meter-3'][input]['name']
+                    m3.measurement = cfg['_METERS']['meter-3'][input]['measurement']
+                    m3.ads = cfg['_METERS']['meter-3'][input]['ads_address']
+                    m3.ads_channel = cfg['_METERS']['meter-3'][input]['ads_channel']
+                    m3.ads_offset = cfg['_METERS']['meter-3'][input]['ads_offset']
+                    m3.adc = ads.readADC(m3.ads_channel, gain=GAIN)
 
-                patch_list[index] = d3[m3.name]['liters']
+                    d3[m3.name] = {
+                            m3.measurement: round(m3.readLiters(), 2)
+                            }
+                    patch_list[index] = d3[m3.name]['liters']
 
             d4 = {}
             for input in cfg['_METERS']['meter-4']:
@@ -137,9 +154,9 @@ def main():
                 m4.offset = cfg['_METERS']['meter-4'][input]['offset']
 
                 d4[m4.name] = {
-                    # 'mA': round(m4.readMa(), 2),
-                    # 'volts': round(m4.volts, 2),
-                    m4.measurement: round(m4.maToUnit(), 3),
+                    'mA': round(m4.readMa(), 2),
+                    'volts': round(m4.volts, 2),
+                    m4.measurement: round(m4.maToUnit(), 3)
                 }
 
             # Output
