@@ -114,7 +114,7 @@
                 "measurement": "liters",
                 "ads_address": "0x4a",
                 "ads_channel": 0,
-                "ads_offset": 8000
+                "ads_offset": 7500
             },
             "input-2": {
                 "meter_id": "Volume",
