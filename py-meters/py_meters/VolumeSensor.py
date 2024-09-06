@@ -97,17 +97,18 @@ class VolumeSensor:
                     self.ads_channel = index
                     self.ads_offset = Offsets[index]
 
+                    #data[self.name] = {
+                    #    'volts': round(self.read_volts(), 2),
+                    #    self.measurement: round(self.readLiters(), 2),
+                    #}
                     data[self.name] = {
+                        'adc': self.read_ads(),
+                        'trimmed-adc': self.trim_adc(),
                         'volts': round(self.read_volts(), 2),
-                        self.measurement: round(self.readLiters(), 2),
+                        'liters': round(self.adc_to_liters(), 2),
+                        'gallons': round(self.adc_to_gallons(), 2)
                     }
-                    # data[self.name] = {
-                    #     'adc': self.read_ads(),
-                    #     'trimmed-adc': self.trim_adc(),
-                    #     'volts': round(self.read_volts(), 2),
-                    #     'liters': round(self.adc_to_liters(), 2),
-                    #     'gallons': round(self.adc_to_gallons(), 2)
-                    # }
+
                 # MQTT message to send to brewblox
                 message = {
                     'key': 'VolumeSensors',
