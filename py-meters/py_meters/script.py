@@ -206,7 +206,7 @@ def main():
 
             print(f'sent {liqr_liters, mash_liters, boil_liters}')
 
-            sleep(5)
+            sleep(2.5)
 
     finally:
         client.loop_stop()
