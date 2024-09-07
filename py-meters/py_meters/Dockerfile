@@ -1,4 +1,4 @@
-FROM python:3.9 as base
+FROM python:3.9 AS base
 
 COPY config.json /config.json
 COPY ads1115.py /app/ads1115.py
