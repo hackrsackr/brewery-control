@@ -1,5 +1,6 @@
 {
     "_HOST": "10.0.0.113",
+    "_HOSTNAME": "spark-four",
     "_PORT": 1883,
     "_HISTORY_TOPIC": "brewcast/history/",
     "_SERVICE_TOPIC": "meters",

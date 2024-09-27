@@ -20,6 +20,9 @@ with open('config.json', 'r') as f:
 # Brewblox Host ip address
 HOST = cfg['_HOST']
 
+# Brewblox Host ip address
+HOSTNAME = cfg['_HOSTNAME']
+
 # Brewblox Port
 PORT = cfg['_PORT']
 
@@ -181,21 +184,21 @@ def main():
             # Because we're using patch, the other settings will remain unchanged
             liqr_liters = {
                 'id': 'EXT_liqrLiters',
-                'serviceId': 'spark-three',
+                'serviceId': HOSTNAME,
                 'type': 'TempSensorExternal',
                 'data': {'setting[degC]': patch_list[0]},
             }
 
             mash_liters = {
                 'id': 'EXT_mashLiters',
-                'serviceId': 'spark-three',
+                'serviceId': HOSTNAME,
                 'type': 'TempSensorExternal',
                 'data': {'setting[degC]': patch_list[1]},
             }
 
             boil_liters = {
                 'id': 'EXT_boilLiters',
-                'serviceId': 'spark-three',
+                'serviceId': HOSTNAME,
                 'type': 'TempSensorExternal',
                 'data': {'setting[degC]': patch_list[2]},
             }
