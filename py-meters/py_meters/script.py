@@ -54,8 +54,8 @@ ADS_MAX_V = 4.096 / GAIN
 # Create a websocket MQTT client
 client = mqtt.Client()
 
-
 def main():
+    p = 0
     try:
         # Create a websocket MQTT client
         client.connect_async(host=HOST, port=PORT)
@@ -171,8 +171,6 @@ def main():
                          'flow': d4}
             }
 
-            client.publish(TOPIC, json.dumps(message))
-            print(json.dumps(message, sort_keys=False, indent=4))
 
             # IMPORTANT !!
             # Don't forget to first create the 'Tutorial Sensor' block
@@ -203,13 +201,20 @@ def main():
                 'data': {'setting[degC]': patch_list[2]},
             }
 
+            client.publish(TOPIC, json.dumps(message))
+
             client.publish(PATCH_TOPIC, json.dumps(liqr_liters))
             client.publish(PATCH_TOPIC, json.dumps(mash_liters))
             client.publish(PATCH_TOPIC, json.dumps(boil_liters))
 
-            print(f'sent {liqr_liters, mash_liters, boil_liters}')
+            print(json.dumps(message, sort_keys=False, indent=4))
 
-            sleep(2.5)
+            print(f'sent {liqr_liters, mash_liters, boil_liters}')
+            
+            p += 1
+            print(p)
+
+            sleep(5)
 
     finally:
         client.loop_stop()

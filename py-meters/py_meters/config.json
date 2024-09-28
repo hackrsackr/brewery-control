@@ -1,5 +1,5 @@
 {
-    "_HOST": "10.0.0.113",
+    "_HOST": "10.0.0.115",
     "_HOSTNAME": "spark-four",
     "_PORT": 1883,
     "_HISTORY_TOPIC": "brewcast/history/",
@@ -115,7 +115,7 @@
                 "measurement": "liters",
                 "ads_address": "0x4a",
                 "ads_channel": 0,
-                "ads_offset": 7500
+                "ads_offset": 7250
             },
             "input-2": {
                 "meter_id": "Volume",
