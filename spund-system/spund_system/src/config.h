@@ -16,8 +16,8 @@ constexpr bool _PUBLISHMQTT = true;
 true = test carbonation and vent if neccessary
 false = monitor pressure only
 */
-// constexpr bool _VENT_TO_AIR = true;
-constexpr bool _VENT_TO_AIR = false;
+constexpr bool _VENT_TO_AIR = true;
+// constexpr bool _VENT_TO_AIR = false;
 
 // WiFi credentials
 constexpr auto _SSID = SECRET_SSID;
