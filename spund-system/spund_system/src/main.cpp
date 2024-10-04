@@ -17,7 +17,6 @@ std::vector<Spund_System *> _SPUNDERS;
 EspMQTTClient client(_SSID, _PASS, _MQTTHOST, _CLIENTID, _MQTTPORT);
 AsyncWebServer server(80);
 
-// void onConnectionEstablished();
 void notFound(AsyncWebServerRequest *request);
 String processor(const String &var);
 
@@ -27,7 +26,7 @@ void setup(void)
 {
     Serial.begin(115200);
 
-    client.enableDebuggingMessages();
+    // client.enableDebuggingMessages();
     client.setMaxPacketSize(4096);
     client.enableOTA();
 
