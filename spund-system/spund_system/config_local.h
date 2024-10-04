@@ -15,11 +15,11 @@ const uint8_t _I2C_SCL = 25;
 const uint8_t _I2C_SDA = 26;
 
 // MQTT parameters
-const auto _MQTTHOST = "192.168.1.6";
+const auto _MQTTHOST = "10.0.0.115";
 const auto _MQTTPORT = 1883;
-const auto _CLIENTID = "spund-dev";
-const auto _SUBTOPIC = "brewcast/history/spark-dev";
-const auto _PUBTOPIC = "brewcast/history/spund-dev";
+const auto _CLIENTID = "spund-system";
+const auto _SUBTOPIC = "brewcast/history/spark-four";
+const auto _PUBTOPIC = "brewcast/history/spund-system";
 
 std::vector<spund_system_cfg_t> spund_cfgs{
     {

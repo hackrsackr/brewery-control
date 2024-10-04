@@ -24,10 +24,10 @@ constexpr auto _SSID = SECRET_SSID;
 constexpr auto _PASS = SECRET_PASS;
 
 // MQTT parameters
-constexpr auto _MQTTHOST = "10.0.0.101";
+constexpr auto _MQTTHOST = "10.0.0.115";
 constexpr auto _MQTTPORT = 1883;
 constexpr auto _CLIENTID = "spund-system";
-constexpr auto _SUBTOPIC = "brewcast/history/spark-three";
+constexpr auto _SUBTOPIC = "brewcast/history/spark-four";
 constexpr auto _PUBTOPIC = "brewcast/history/spund-system";
 
 // ADS I2C addresses
