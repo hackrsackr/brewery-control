@@ -27,11 +27,11 @@ void setup(void)
 {
     Serial.begin(115200);
 
-    // client.enableDebuggingMessages();
+    client.enableDebuggingMessages();
     client.setMaxPacketSize(4096);
     client.enableOTA();
 
-    // Wire.begin(_I2C_SDA, _I2C_SCL);
+    Wire.begin(_I2C_SDA, _I2C_SCL);
 
     WiFi.begin(_SSID, _PASS);
     if (WiFi.waitForConnectResult() != WL_CONNECTED)
