@@ -31,6 +31,11 @@ ADS_FULLSCALE = cfg['_ADS_FULLSCALE']
 GAIN = 2/3
 ADS_MAX_V = 4.096 / GAIN
 
+ADS1 = ADS1115(address=0x48)  # ADDRESS -> GND
+ADS2 = ADS1115(address=0x49)  # ADDRESS -> VDD
+ADS3 = ADS1115(address=0x4a)  # ADDRESS -> SDA
+ADS4 = ADS1115(address=0x4b)  # ADDRESS -> SDL
+
 
 # Create a websocket MQTT client
 client = mqtt.Client(transport='websockets')
@@ -41,43 +46,40 @@ Offsets = [8000, 5824, 6960]
 
 class VolumeSensor:
     def __init__(self) -> None:
-        # Create a websocket MQTT client
-        # self.client = mqtt.Client(transport='websockets')
-        # self.client.ws_set_options(path='/eventbus')
-
         self.bit_max = ADS_FULLSCALE
         self.adsMaxV = ADS_MAX_V
-
         self.bitsPerGallon = 1675
-        self.bitsPerLiter = 442.54
+        self.bitsPerLiter = 442
+    
+    def read(self) -> None:
+        self.adc = self.ads.readADC(self.ads_channel, gain=GAIN)
+        self.trimmed_adc = self.adc - self.ads_offset
+        self.volts = self.trimmed_adc * ADS_MAX_V / ADS_FULLSCALE
+        self.liters = ( self.adc - self.ads_offset ) / self.bitsPerLiter
+        self.gallons = ( self.adc - self.ads_offset ) / self.bitsPerGallon
 
-    def read_ads(self) -> int:
+    def readADS(self) -> int:
         self.adc = self.ads.readADC(self.ads_channel, gain=GAIN)
         return self.adc
 
-    def trim_adc(self) -> int:
+    def trimADC(self) -> int:
         self.trimmed_adc = self.adc - self.ads_offset
         return self.trimmed_adc
 
-    def read_volts(self) -> float:
+    def readVolts(self) -> float:
         self.volts = self.read_ads() * ADS_MAX_V / ADS_FULLSCALE
         return self.volts
 
-    def adc_to_volts(self) -> float:
-        return self.adc * self.adsMaxV / self.bit_max
+    #def adc_to_volts(self) -> float:
+     #   return self.adc * self.adsMaxV / self.bit_max
 
-    def adc_to_gallons(self) -> float:
-        self.gallons = self.trimmed_adc / self.bitsPerGallon
+    def readGallons(self) -> float:
+        self.gallons = ( self.adc - self.ads_offset ) / self.bitsPerGallon
         return self.gallons if self.gallons > 0 else 0
 
     def readLiters(self) -> float:
-        self.trim_adc()
-        self.liters = self.trimmed_adc / self.bitsPerLiter
+        self.liters = ( self.adc - self.ads_offset ) / self.bitsPerLiter
 
-        return self.liters if self.liters > 0 else 0
-
-    def adc_to_liters(self) -> float:
-        self.liters = self.trimmed_adc / self.bitsPerLiter
         return self.liters if self.liters > 0 else 0
 
     def run(self):
@@ -90,7 +92,6 @@ class VolumeSensor:
 
                 for index, sensor in enumerate(Sensors):
                     self.__init__()
-                    self.ads = ADS1115(address=0x4a)
                     self.meter_id = index
                     self.name = sensor
                     self.measurement = 'liters'
@@ -98,15 +99,16 @@ class VolumeSensor:
                     self.ads_offset = Offsets[index]
 
                     #data[self.name] = {
-                    #    'volts': round(self.read_volts(), 2),
-                    #    self.measurement: round(self.readLiters(), 2),
+                    #    'volts': round(self.readVolts(), 2),
+                    #    sel.measurement: round(self.readLiters(), 2),
                     #}
                     data[self.name] = {
-                        'adc': self.read_ads(),
-                        'trimmed-adc': self.trim_adc(),
-                        'volts': round(self.read_volts(), 2),
-                        'liters': round(self.adc_to_liters(), 2),
-                        'gallons': round(self.adc_to_gallons(), 2)
+                        'adc': self.ads.readADC(),
+                        'trimmed-adc': self.adc - self.ads_offset,
+                        'volts': round(self.readVolts(), 2),
+                        'liters': round(self.readliters(), 2)
+                        # ,
+                        # 'gallons': round(self.readGallons(), 2)
                     }
 
                 # MQTT message to send to brewblox
@@ -116,8 +118,8 @@ class VolumeSensor:
                 }
 
                 # Publish message
-                #client.publish(TOPIC, json.dumps(message))
-                print(json.dumps(message, sort_keys=False, indent=4))
+                client.publish(TOPIC, json.dumps(message))
+                # print(json.dumps(message, sort_keys=False, indent=4))
                 sleep(5)
 
         finally:
