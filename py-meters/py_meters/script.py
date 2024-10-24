@@ -50,6 +50,10 @@ PATCH_TOPIC = API_TOPIC + '/patch'
 ADS_FULLSCALE = cfg['_ADS_FULLSCALE']
 GAIN = 2/3
 ADS_MAX_V = 4.096 / GAIN
+ADS1115_ADDRESS_1 = 0x48
+ADS1115_ADDRESS_2 = 0x49
+ADS1115_ADDRESS_3 = 0x4a
+ADS1115_ADDRESS_4 = 0x4b
 
 # Create a websocket MQTT client
 client = mqtt.Client()
@@ -65,10 +69,10 @@ def main():
             d1 = {}
             for input in cfg['_METERS']['meter-1']:
                 m1 = Meter()
-                m1.ads = ADS1115(address=0x48)
+                m1.ads = ADS1115(ADS1115_ADDRESS_1)
                 m1.meter_id = cfg['_METERS']['meter-1'][input]['meter_id']
                 m1.name = cfg['_METERS']['meter-1'][input]['name']
-                m1.measurement = cfg['_METERS']['meter-1'][input]['measurement']
+                m1.unit = cfg['_METERS']['meter-1'][input]['unit']
                 m1.ads_channel = cfg['_METERS']['meter-1'][input]['ads_channel']
                 m1.ilrv = cfg['_METERS']['meter-1'][input]['input_LRV']
                 m1.iurv = cfg['_METERS']['meter-1'][input]['input_URV']
@@ -79,17 +83,17 @@ def main():
                 d1[m1.name] = {
                     # 'mA': round(m1.readMa(), 2),
                     # 'volts': round(m1.volts, 2),
-                    m1.measurement: round(m1.maToUnit(), 2)
+                    m1.unit: round(m1.maToUnit(), 2)
                 }
 
             # Iterate through ads2 channels, populate dict d2
             d2 = {}
             for input in cfg['_METERS']['meter-2']:
                 m2 = Meter()
-                m2.ads = ADS1115(address=0x49)
+                m2.ads = ADS1115(ADS1115_ADDRESS_2)
                 m2.meter_id = cfg['_METERS']['meter-2'][input]['meter_id']
                 m2.name = cfg['_METERS']['meter-2'][input]['name']
-                m2.measurement = cfg['_METERS']['meter-2'][input]['measurement']
+                m2.unit = cfg['_METERS']['meter-2'][input]['unit']
                 m2.ads_channel = cfg['_METERS']['meter-2'][input]['ads_channel']
                 m2.ilrv = cfg['_METERS']['meter-2'][input]['input_LRV']
                 m2.iurv = cfg['_METERS']['meter-2'][input]['input_URV']
@@ -100,7 +104,7 @@ def main():
                 d2[m2.name] = {
                     # 'mA': round(m2.readMa(), 2),
                     # 'volts': round(m2.volts, 2),
-                    m2.measurement: round(m2.maToUnit(), 2)
+                    m2.unit: round(m2.maToUnit(), 2)
                 }
 
             # # Iterate through ads3 channels, populate dict d3
@@ -110,10 +114,10 @@ def main():
             for index, input in enumerate(cfg['_METERS']['meter-3']):
                 if input == 'input-4':
                     m3 = Meter()
-                    m3.ads = ADS1115(address=0x4a)
+                    m3.ads = ADS1115(ADS1115_ADDRESS_3)
                     m3.meter_id = cfg['_METERS']['meter-3'][input]['meter_id']
                     m3.name = cfg['_METERS']['meter-3'][input]['name']
-                    m3.measurement = cfg['_METERS']['meter-3'][input]['measurement']
+                    m3.unit = cfg['_METERS']['meter-3'][input]['unit']
                     m3.ads_channel = cfg['_METERS']['meter-3'][input]['ads_channel']
                     m3.ilrv = cfg['_METERS']['meter-3'][input]['input_LRV']
                     m3.iurv = cfg['_METERS']['meter-3'][input]['input_URV']
@@ -124,32 +128,32 @@ def main():
                     d3[m3.name] = {
                             # 'mA': round(m3.readMa(), 2),
                             # 'volts': round(m3.volts, 2),
-                            m3.measurement: round(m3.maToUnit(), 2)}
+                            m3.unit: round(m3.maToUnit(), 2)}
                 else: 
                     m3 = VolumeSensor()
-                    ads = ADS1115(address=0x4a)
+                    m3.ads = ADS1115(ADS1115_ADDRESS_3)
                     m3.meter_id = cfg['_METERS']['meter-3'][input]['meter_id']
                     m3.name = cfg['_METERS']['meter-3'][input]['name']
-                    m3.measurement = cfg['_METERS']['meter-3'][input]['measurement']
-                    m3.ads = cfg['_METERS']['meter-3'][input]['ads_address']
+                    m3.unit = cfg['_METERS']['meter-3'][input]['unit']
                     m3.ads_channel = cfg['_METERS']['meter-3'][input]['ads_channel']
                     m3.ads_offset = cfg['_METERS']['meter-3'][input]['ads_offset']
-                    m3.adc = ads.readADC(m3.ads_channel, gain=GAIN)
+                    m3.adc = m3.ads.readADC(m3.ads_channel, gain=GAIN)
+                    m3.value = round(m3.readLiters(), 2)
 
                     d3[m3.name] = {
-                            # 'adc': m3.adc,
-                            # 'trimmed_adc': m3.adc - m3.ads_offset,
-                            m3.measurement: round(m3.readLiters(), 2)
+                            'adc': m3.ads.readADC(m3.ads_channel, gain=GAIN),
+                            'trimmed_adc': m3.adc - m3.ads_offset,
+                            m3.unit: m3.value
                             }
                     patch_list[index] = d3[m3.name]['liters']
 
             d4 = {}
             for input in cfg['_METERS']['meter-4']:
                 m4 = Meter()
-                m4.ads = ADS1115(address=0x4b)
+                m4.ads = ADS1115(ADS1115_ADDRESS_4)
                 m4.meter_id = cfg['_METERS']['meter-4'][input]['meter_id']
                 m4.name = cfg['_METERS']['meter-4'][input]['name']
-                m4.measurement = cfg['_METERS']['meter-4'][input]['measurement']
+                m4.unit = cfg['_METERS']['meter-4'][input]['unit']
                 m4.ads_channel = cfg['_METERS']['meter-4'][input]['ads_channel']
                 m4.ilrv = cfg['_METERS']['meter-4'][input]['input_LRV']
                 m4.iurv = cfg['_METERS']['meter-4'][input]['input_URV']
@@ -160,7 +164,7 @@ def main():
                 d4[m4.name] = {
                     # 'mA': round(m4.readMa(), 2),
                     # 'volts': round(m4.volts, 2),
-                    m4.measurement: round(m4.maToUnit(), 3)
+                    m4.unit: round(m4.maToUnit(), 3)
                 }
 
             # Output

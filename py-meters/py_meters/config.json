@@ -12,7 +12,7 @@
             "input-1": {
                 "meter_id": "pH",
                 "name": "boil_pH",
-                "measurement": "pH",
+                "unit": "pH",
                 "ads_address": "0x48",
                 "ads_channel": 0,
                 "input_LRV": 0,
@@ -24,7 +24,7 @@
             "input-2": {
                 "meter_id": "pH",
                 "name": "boil_ORP",
-                "measurement": "mV",
+                "unit": "mV",
                 "ads_address": "0x48",
                 "ads_channel": 1,
                 "input_LRV": 0,
@@ -36,7 +36,7 @@
             "input-3": {
                 "meter_id": "pH",
                 "name": "mash_pH",
-                "measurement": "pH",
+                "unit": "pH",
                 "ads_address": "0x48",
                 "ads_channel": 2,
                 "input_LRV": 0,
@@ -48,7 +48,7 @@
             "input-4": {
                 "meter_id": "pH",
                 "name": "mash_ORP",
-                "measurement": "mV",
+                "unit": "mV",
                 "ads_address": "0x48",
                 "ads_channel": 3,
                 "input_LRV": 0,
@@ -62,7 +62,7 @@
             "input-1": {
                 "meter_id": "DO",
                 "name": "liqr_temp",
-                "measurement": "C",
+                "unit": "C",
                 "ads_address": "0x49",
                 "ads_channel": 0,
                 "input_LRV": 0,
@@ -74,7 +74,7 @@
             "input-2": {
                 "meter_id": "DO",
                 "name": "wort_temp",
-                "measurement": "C",
+                "unit": "C",
                 "ads_address": "0x49",
                 "ads_channel": 1,
                 "input_LRV": 0,
@@ -86,7 +86,7 @@
             "input-3": {
                 "meter_id": "DO",
                 "name": "liqr",
-                "measurement": "PPM",
+                "unit": "PPM",
                 "ads_address": "0x49",
                 "ads_channel": 2,
                 "input_LRV": 0,
@@ -98,7 +98,7 @@
             "input-4": {
                 "meter_id": "DO",
                 "name": "wort",
-                "measurement": "PPM",
+                "unit": "PPM",
                 "ads_address": "0x49",
                 "ads_channel": 3,
                 "input_LRV": 0,
@@ -112,7 +112,7 @@
             "input-1": {
                 "meter_id": "Volume",
                 "name": "liqr",
-                "measurement": "liters",
+                "unit": "liters",
                 "ads_address": "0x4a",
                 "ads_channel": 0,
                 "ads_offset": 7250
@@ -120,7 +120,7 @@
             "input-2": {
                 "meter_id": "Volume",
                 "name": "mash",
-                "measurement": "liters",
+                "unit": "liters",
                 "ads_address": "0x4a",
                 "ads_channel": 1,
                 "ads_offset": 5824
@@ -128,7 +128,7 @@
             "input-3": {
                 "meter_id": "Volume",
                 "name": "boil",
-                "measurement": "liters",
+                "unit": "liters",
                 "ads_address": "0x4a",
                 "ads_channel": 2,
                 "ads_offset": 6960
@@ -136,7 +136,7 @@
             "input-4": {
                 "meter_id": "Flow",
                 "name": "wort-Temp",
-                "measurement": "C",
+                "unit": "C",
                 "ads_address": "0x4a",
                 "ads_channel": 3,
                 "ads_offset": 0,
@@ -151,7 +151,7 @@
             "input-1": {
                 "meter_id": "Flow",
                 "name": "liqr_temp",
-                "measurement": "C",
+                "unit": "C",
                 "ads_address": "0x4b",
                 "ads_channel": 0,
                 "input_LRV": 4,
@@ -163,7 +163,7 @@
             "input-2": {
                 "meter_id": "Flow",
                 "name": "liqr_flow",
-                "measurement": "lpm",
+                "unit": "lpm",
                 "ads_address": "0x4b",
                 "ads_channel": 1,
                 "input_LRV": 4,
@@ -175,7 +175,7 @@
             "input-3": {
                 "meter_id": "Flow",
                 "name": "density",
-                "measurement": "gcm3",
+                "unit": "gcm3",
                 "ads_address": "0x4b",
                 "ads_channel": 2,
                 "input_LRV": 4,
@@ -187,7 +187,7 @@
             "input-4": {
                 "meter_id": "Flow",
                 "name": "wort_flow",
-                "measurement": "lpm",
+                "unit": "lpm",
                 "ads_address": "0x4b",
                 "ads_channel": 3,
                 "input_LRV": 4,

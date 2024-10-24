@@ -1,5 +1,10 @@
 from time import sleep
 
+ADS1115_ADDRESS_1 = 0x48
+ADS1115_ADDRESS_2 = 0x49
+ADS1115_ADDRESS_3 = 0x4a
+ADS1115_ADDRESS_4 = 0x4b
+
 # Register and other configuration values:
 ADS1115_DEFAULT_ADDRESS = 0x48
 ADS1115_POINTER_CONVERSION = 0x00

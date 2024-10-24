@@ -40,16 +40,14 @@ API_TOPIC = cfg['_API_TOPIC']
 # https://www.brewblox.com/dev/reference/blocks_api.html
 PATCH_TOPIC = API_TOPIC + '/patch'
 
-# Ads Addresses
-# ADS1 = ADS1115(address=0x48)  # ADDRESS -> GND
-# ADS2 = ADS1115(address=0x49)  # ADDRESS -> VDD
-# ADS3 = ADS1115(address=0x4a)  # ADDRESS -> SDA
-# ADS4 = ADS1115(address=0x4b)  # ADDRESS -> SDL
-
 # Max positive bits of ADS1115's 16 bit signed integer
 ADS_FULLSCALE = cfg['_ADS_FULLSCALE']
 GAIN = 2/3
 ADS_MAX_V = 4.096 / GAIN
+ADS1115_ADDRESS_1 = 0x48
+ADS1115_ADDRESS_2 = 0x49
+ADS1115_ADDRESS_3 = 0x4a
+ADS1115_ADDRESS_4 = 0x4b
 
 # Create a websocket MQTT client
 client = mqtt.Client()
@@ -68,62 +66,51 @@ def main():
             for index, input in enumerate(cfg['_METERS']['meter-3']):
                 if input == 'input-4':
                     m3 = Meter()
-                    m3.ads = ADS1115(address=0x4a)
+                    m3.ads = ADS1115(ADS1115_ADDRESS_3)
                     m3.meter_id = cfg['_METERS']['meter-3'][input]['meter_id']
                     m3.name = cfg['_METERS']['meter-3'][input]['name']
-                    m3.measurement = cfg['_METERS']['meter-3'][input]['measurement']
+                    m3.unit = cfg['_METERS']['meter-3'][input]['unit']
                     m3.ads_channel = cfg['_METERS']['meter-3'][input]['ads_channel']
                     m3.ilrv = cfg['_METERS']['meter-3'][input]['input_LRV']
                     m3.iurv = cfg['_METERS']['meter-3'][input]['input_URV']
                     m3.olrv = cfg['_METERS']['meter-3'][input]['output_LRV']
                     m3.ourv = cfg['_METERS']['meter-3'][input]['output_URV']
                     m3.offset = cfg['_METERS']['meter-3'][input]['offset']
+                    m3.mA = round(m3.readMa(), 2)
+                    m3.volts = round(m3.volts, 2)
+                    m3.value = round(m3.maToUnit(), 2)
 
                     d3[m3.name] = {
-                            # 'mA': round(m3.readMa(), 2),
-                            # 'volts': round(m3.volts, 2),
-                            m3.measurement: round(m3.maToUnit(), 2)}
+                            'mA': m3.mA,
+                            'volts': m3.volts,
+                            m3.unit: m3.value}
+                    print(f'{m3.name}:\n'
+                          f' adc: {m3.adc} {m3.unit}: {m3.value}\n')
 
                 else: 
                     m3 = VolumeSensor()
-                    m3.ads = ADS1115(address=0x4a)
+                    # m3.ads = ADS1115(address=0x4a)
+                    m3.ads = ADS1115(address=ADS1115_ADDRESS_3)
                     m3.meter_id = cfg['_METERS']['meter-3'][input]['meter_id']
                     m3.name = cfg['_METERS']['meter-3'][input]['name']
-                    m3.measurement = cfg['_METERS']['meter-3'][input]['measurement']
+                    m3.unit = cfg['_METERS']['meter-3'][input]['unit']
                     m3.ads_channel = cfg['_METERS']['meter-3'][input]['ads_channel']
                     m3.ads_offset = cfg['_METERS']['meter-3'][input]['ads_offset']
                     m3.adc = m3.ads.readADC(m3.ads_channel, gain=GAIN)
+                    m3.trimmed_adc = m3.adc - m3.ads_offset
+                    m3.value = round(m3.readLiters(), 2)
 
                     d3[m3.name] = {
                             'adc': m3.adc,
                             'trimmed_adc': m3.adc - m3.ads_offset,
-                            m3.measurement: round(m3.readLiters(),2)
-
-                            # m3.measurement: m3.readLiters()
+                            m3.unit: m3.value
                             }
-                    print(f'{m3.name}: adc: {m3.adc} liters: {m3.readLiters():.2f}')
-                    
+                    # print(f'{m3.name}: adc: {m3.adc} liters: {m3.readLiters():.2f}')
+                    print(f'{m3.name}:\n'
+                          f'adc: {m3.adc} trimmed: {m3.trimmed_adc}\n'
+                          f'{m3.unit}: {m3.value}\n')
+
                     patch_list[index] = d3[m3.name]['liters']
-
-            # d4 = {}
-            # for input in cfg['_METERS']['meter-4']:
-            #     m4 = Meter()
-            #     m4.ads = ADS1115(address=0x4b)
-            #     m4.meter_id = cfg['_METERS']['meter-4'][input]['meter_id']
-            #     m4.name = cfg['_METERS']['meter-4'][input]['name']
-            #     m4.measurement = cfg['_METERS']['meter-4'][input]['measurement']
-            #     m4.ads_channel = cfg['_METERS']['meter-4'][input]['ads_channel']
-            #     m4.ilrv = cfg['_METERS']['meter-4'][input]['input_LRV']
-            #     m4.iurv = cfg['_METERS']['meter-4'][input]['input_URV']
-            #     m4.olrv = cfg['_METERS']['meter-4'][input]['output_LRV']
-            #     m4.ourv = cfg['_METERS']['meter-4'][input]['output_URV']
-            #     m4.offset = cfg['_METERS']['meter-4'][input]['offset']
-
-            #     d4[m4.name] = {
-            #         # 'mA': round(m4.readMa(), 2),
-            #         # 'volts': round(m4.volts, 2),
-            #         m4.measurement: round(m4.maToUnit(), 3)
-            #     }
 
             # Output
             message = {

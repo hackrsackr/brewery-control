@@ -31,10 +31,10 @@ ADS_FULLSCALE = cfg['_ADS_FULLSCALE']
 GAIN = 2/3
 ADS_MAX_V = 4.096 / GAIN
 
-ADS1 = ADS1115(address=0x48)  # ADDRESS -> GND
-ADS2 = ADS1115(address=0x49)  # ADDRESS -> VDD
-ADS3 = ADS1115(address=0x4a)  # ADDRESS -> SDA
-ADS4 = ADS1115(address=0x4b)  # ADDRESS -> SDL
+# ADS1 = ADS1115(address=0x48)  # ADDRESS -> GND
+# ADS2 = ADS1115(address=0x49)  # ADDRESS -> VDD
+# ADS3 = ADS1115(address=0x4a)  # ADDRESS -> SDA
+# ADS4 = ADS1115(address=0x4b)  # ADDRESS -> SDL
 
 
 # Create a websocket MQTT client
@@ -49,7 +49,7 @@ class VolumeSensor:
         self.bit_max = ADS_FULLSCALE
         self.adsMaxV = ADS_MAX_V
         self.bitsPerGallon = 1675
-        self.bitsPerLiter = 442
+        self.bitsPerLiter = 442.55
     
     def read(self) -> None:
         self.adc = self.ads.readADC(self.ads_channel, gain=GAIN)
