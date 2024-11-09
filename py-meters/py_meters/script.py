@@ -201,15 +201,13 @@ def main():
             client.publish(PATCH_TOPIC, json.dumps(mash_liters))
             client.publish(PATCH_TOPIC, json.dumps(boil_liters))
 
+            # print(f'liqr_liters: {patch_list[0]}\n'
+            #       f'mash_liters: {patch_list[1]}\n'
+            #       f'boil_liters: {patch_list[2]}\n')
+            
             client.publish(TOPIC, json.dumps(message))
-
-
             # print(json.dumps(message, sort_keys=False, indent=4))
 
-            print(f'liqr_liters: {patch_list[0]}\n'
-                  f'mash_liters: {patch_list[1]}\n'
-                  f'boil_liters: {patch_list[2]}\n')
-            
             sleep(2.5)
 
     finally:
