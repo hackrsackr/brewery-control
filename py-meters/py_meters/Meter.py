@@ -53,9 +53,9 @@ class Meter:
     def maToUnit(self) -> float:
         self.readMa()
         if self.mA > self.ilrv and self.mA < self.iurv:
-            self.measurement = (self.mA - self.ilrv) / (self.iurv - self.ilrv) * (self.ourv - self.olrv) + self.offset
+            self.measurement = ((self.mA - self.ilrv) / (self.iurv - self.ilrv) * (self.ourv - self.olrv)) + self.offset
         else:
-            self.measurement = 0.0
+            self.measurement = 0.0 + self.offset
         return self.measurement
 
 
@@ -102,7 +102,7 @@ class Meter:
                     self.offset = cfg['_METERS']['meter-2'][input]['offset']
 
                     d2[self.name] = {
-                            #'mA': round(self.readMa(), 2),
+                        # 'mA': round(self.readMa(), 2),
                         'volts': round(self.volts, 2),
                         self.measurement: round(self.maToUnit(), 2),
                     }

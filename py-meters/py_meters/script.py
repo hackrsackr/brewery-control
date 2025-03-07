@@ -164,7 +164,7 @@ def main():
                 d4[m4.name] = {
                     # 'mA': round(m4.readMa(), 2),
                     # 'volts': round(m4.volts, 2),
-                    m4.unit: round(m4.maToUnit(), 3)
+                    m4.unit: round(m4.maToUnit(), 4)
                 }
 
             # Output
