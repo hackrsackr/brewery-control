@@ -53,9 +53,9 @@
                 "ads_channel": 3,
                 "input_LRV": 0,
                 "input_URV": 20,
-                "output_LRV": -100,
-                "output_URV": 300,
-                "offset": -100
+                "output_LRV": 0,
+                "output_URV": 100,
+                "offset": 0
             }
         },
         "meter-2": {
