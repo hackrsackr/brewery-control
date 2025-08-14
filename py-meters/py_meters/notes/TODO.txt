@@ -1,3 +1,9 @@
-change Meter.py to self.olrv if it is out of range
+- change Meter.py to self.olrv if it is out of range
 
-make a test script for coriolis meter to figure out sg plato discrepency
+- make a test script for coriolis meter to figure out sg plato discrepency
+
+- try to add offset of 1 to config
+
+- change to PI5
+
+- 
