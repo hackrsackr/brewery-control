@@ -162,8 +162,8 @@ def main():
                 m4.offset = cfg['_METERS']['meter-4'][input]['offset']
 
                 d4[m4.name] = {
-                    'mA': round(m4.readMa(), 2),
-                    'volts': round(m4.volts, 2),
+                    # 'mA': round(m4.readMa(), 2),
+                    # 'volts': round(m4.volts, 2),
                     m4.unit: round(m4.maToUnit(), 4)
                 }
 
@@ -206,7 +206,7 @@ def main():
             #       f'boil_liters: {patch_list[2]}\n')
             
             client.publish(TOPIC, json.dumps(message))
-            print(json.dumps(message, sort_keys=False, indent=4))
+            # print(json.dumps(message, sort_keys=False, indent=4))
 
             sleep(2.5)
 

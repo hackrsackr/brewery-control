@@ -1,0 +1,3 @@
+change Meter.py to self.olrv if it is out of range
+
+make a test script for coriolis meter to figure out sg plato discrepency
