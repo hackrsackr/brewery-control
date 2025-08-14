@@ -72,7 +72,7 @@ class Meter:
                     self.ads = ADS1
                     self.meter_id = cfg['_METERS']['meter-1'][input]['meter_id']
                     self.name = cfg['_METERS']['meter-1'][input]['name']
-                    self.measurement = cfg['_METERS']['meter-1'][input]['measurement']
+                    self.measurement = cfg['_METERS']['meter-1'][input]['unit']
                     self.ads_channel = cfg['_METERS']['meter-1'][input]['ads_channel']
                     self.ilrv = cfg['_METERS']['meter-1'][input]['input_LRV']
                     self.iurv = cfg['_METERS']['meter-1'][input]['input_URV']
@@ -93,7 +93,7 @@ class Meter:
                     self.ads = ADS2
                     self.meter_id = cfg['_METERS']['meter-2'][input]['meter_id']
                     self.name = cfg['_METERS']['meter-2'][input]['name']
-                    self.measurement = cfg['_METERS']['meter-2'][input]['measurement']
+                    self.measurement = cfg['_METERS']['meter-2'][input]['unit']
                     self.ads_channel = cfg['_METERS']['meter-2'][input]['ads_channel']
                     self.ilrv = cfg['_METERS']['meter-2'][input]['input_LRV']
                     self.iurv = cfg['_METERS']['meter-2'][input]['input_URV']
