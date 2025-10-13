@@ -75,14 +75,14 @@ constexpr auto _SS_FLOW2 = 17.95; // Q(L/m)
 std::vector<flowmeter_cfg_t> FLOW_CFGS{
     {
         .id = "main",
-        .sensor_pin = 34,
-        .calibration_factor = _SS_FLOW1,
+        .sensor_pin = 33,
+        .calibration_factor = _YFS402B,
         .percent_correction_factor = 1.00,
     },
-    {
-        .id = "liqr",
-        .sensor_pin = 35,
-        .calibration_factor = _SS_FLOW1,
-        .percent_correction_factor = 0.9125,
-    },
+    // {
+    //     .id = "liqr",
+    //     .sensor_pin = 32,
+    //     .calibration_factor = _SS_FLOW1,
+    //     .percent_correction_factor = 1.00,
+    // },
 };
