@@ -27,7 +27,7 @@ constexpr auto _PASS = SECRET_PASS;
 constexpr auto _MQTTHOST = "10.0.0.115";
 constexpr auto _MQTTPORT = 1883;
 constexpr auto _CLIENTID = "spund-system";
-constexpr auto _SUBTOPIC = "brewcast/history/spark-one";
+constexpr auto _SUBTOPIC = "brewcast/history/spark-two";
 constexpr auto _PUBTOPIC = "brewcast/history/spund-system";
 
 // ADS I2C addresses
@@ -58,7 +58,7 @@ std::vector<spund_system_cfg_t> spund_cfgs{
     {
             .spunder{
                 .spunder_id = "spunder-1",
-                .desired_vols = 3.41,
+                .desired_vols = 2.5,
                 .relay_pin = RELAY_PIN1,
             },
             .ads1115{
@@ -72,7 +72,7 @@ std::vector<spund_system_cfg_t> spund_cfgs{
                 .output_high_val = 60.0,
             },
             .mqtt{
-                .temp_sensor_id = "TEMP_conicalBeer",
+                .temp_sensor_id = "TEMP_blueBeer",
                 .server_setpoint_input = "setpoint_input-1",
                 .server_sensor_input = "mqtt_input-1",
             },
@@ -80,7 +80,7 @@ std::vector<spund_system_cfg_t> spund_cfgs{
         {
             .spunder{
                 .spunder_id = "spunder-2",
-                .desired_vols = 3.42,
+                .desired_vols = 2.50,
                 .relay_pin = RELAY_PIN2,
             },
             .ads1115{
@@ -94,7 +94,7 @@ std::vector<spund_system_cfg_t> spund_cfgs{
                 .output_high_val = 60.0,
             },
             .mqtt{
-                .temp_sensor_id = "TEMP_conicalBeer",
+                .temp_sensor_id = "TEMP_orangeBeer",
                 .server_setpoint_input = "setpoint_input-2",
                 .server_sensor_input = "mqtt_input-2",
             },
@@ -102,7 +102,7 @@ std::vector<spund_system_cfg_t> spund_cfgs{
         {
             .spunder{
                 .spunder_id = "spunder-3",
-                .desired_vols = 3.43,
+                .desired_vols = 3.5,
                 .relay_pin = RELAY_PIN3,
             },
             .ads1115{
@@ -116,7 +116,7 @@ std::vector<spund_system_cfg_t> spund_cfgs{
                 .output_high_val = 30.0,
             },
             .mqtt{
-                .temp_sensor_id = "TEMP_conicalBeer",
+                .temp_sensor_id = "MOCK_coneTemp",
                 .server_setpoint_input = "setpoint_input-3",
                 .server_sensor_input = "mqtt_input-3",
             },
@@ -138,7 +138,7 @@ std::vector<spund_system_cfg_t> spund_cfgs{
                 .output_high_val = 60.0,
             },
             .mqtt{
-                .temp_sensor_id = "TEMP_conicalBeer",
+                .temp_sensor_id = "TEMP_ambientRoom",
                 .server_setpoint_input = "setpoint_input-4",
                 .server_sensor_input = "mqtt_input-4",
             },
