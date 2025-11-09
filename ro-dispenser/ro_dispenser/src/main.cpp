@@ -5,11 +5,20 @@
   The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
+#include "Arduino.h"
+#include "ArduinoJson.h"
 #include <WiFi.h>
 #include <WebServer.h>
 #include <EspMQTTClient.h>
 
+#include <vector>
+
+#include <FlowMeter.hpp>
+#include <flow_config.h>
 #include <secrets.h>
+
+
+std::vector<FlowMeter *> _FLOWMETERS;
 
 // Replace with your network credentials
 const char* ssid = SECRET_SSID;
@@ -21,10 +30,11 @@ const int LED_PIN = 23;
 
 String relay_state = "off";
 String led_state = "off";
+String flow_state;
 
 // Create a web server object
 WebServer server(80);
-EspMQTTClient client(ssid, password, "water_dispenser");
+EspMQTTClient client(ssid, password, "10.0.0.115");
 
 void onConnectionEstablished();
 void handleRoot();
@@ -70,7 +80,7 @@ void handleRoot() {
   html += "<body><h1>RO Dispenser</h1>";
 
   // Display GPIO 26 controls
-  html += "<p>Relay" + relay_state + "</p>";
+  html += "<p>Total [mLs] = " + flow_state + " </p>";
   if (relay_state == "off") {
     html += "<p><a href=\"/Relay/on\"><button class=\"button\">ON</button></a></p>";
   } else {
@@ -94,6 +104,12 @@ void setup() {
 
   client.enableDebuggingMessages();
   client.enableOTA();
+  
+  for (auto &cfg : FLOW_CFGS)
+  {
+    FlowMeter *f = new FlowMeter(cfg);
+    _FLOWMETERS.push_back(f);
+  }
 
   // Initialize the output variables as outputs
   pinMode(RELAY_PIN_1, OUTPUT);
@@ -133,10 +149,23 @@ void loop() {
   server.handleClient();
   client.loop();
 
+  StaticJsonDocument<400> message;
+  message["key"] = _CLIENTID;
+
+  for (auto &flowmeter : _FLOWMETERS)
+  {
+    flowmeter->run();
+
+    message["data"][flowmeter->id]["Flow_rate[LPM]"] = flowmeter->flow_rate;
+    message["data"][flowmeter->id]["Total[mL]"] = flowmeter->total_milliliters;
+    message["data"][flowmeter->id]["Total[L]"] = flowmeter->total_liters;
+    flow_state = String(flowmeter->total_milliliters);
+  }
+  message["data"]["memory"]["Output_memory_size"] = message.memoryUsage();
+
+  // serializeJsonPretty(message["data"], Serial);
+  serializeJson(message["data"], Serial);
   Serial.println("");
-  Serial.println("WiFi connected.");
-  Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());
 
   delay(1000);
 }
