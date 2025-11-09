@@ -9,7 +9,11 @@ constexpr auto _SSID = SECRET_SSID;
 constexpr auto _PASS = SECRET_PASS;
 
 constexpr bool _PUBLISHMQTT = true;
+<<<<<<< HEAD
+constexpr auto _MQTTHOST = "10.0.0.101";
+=======
 constexpr auto _MQTTHOST = "10.0.0.115";
+>>>>>>> 543bc2bdb26ef2cb67bd65b7e7ccf47d75a9790d
 constexpr auto _MQTTPORT = 1883;
 constexpr auto _CLIENTID = "flow-meters";
 constexpr auto _PUBTOPIC = "brewcast/history/flow-meters";
@@ -72,10 +76,18 @@ constexpr auto _SS_FLOW1 = 9.93;
 constexpr auto _SS_FLOW2 = 17.95; // Q(L/m)
 
 // Production: dev-kit
+<<<<<<< HEAD
+std::vector<flowmeter_cfg_t> FLOW_CFGS{
+    {
+        .id = "main",
+        .sensor_pin = 13,
+        
+=======
 std::vector<flowmeter_cfg_t> FLOW_CFGS {
     {
         .id = "flow",
         .sensor_pin = 33,
+>>>>>>> 543bc2bdb26ef2cb67bd65b7e7ccf47d75a9790d
         .calibration_factor = _YFS402B,
         .percent_correction_factor = 1.00,
     },
