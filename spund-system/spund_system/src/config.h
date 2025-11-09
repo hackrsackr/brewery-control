@@ -1,5 +1,7 @@
 #pragma once
 
+#include <any>
+#include <string>
 #include <vector>
 
 #include "Spund_System.h"
@@ -22,6 +24,41 @@ constexpr bool _VENT_TO_AIR = true;
 // WiFi credentials
 constexpr auto _SSID = SECRET_SSID;
 constexpr auto _PASS = SECRET_PASS;
+
+std::vector<stored_settings_t> stored_settings {
+    {
+        .stored_id = "spunder-1",
+        .stored_vols = 2.4,
+        .stored_temp = "TEMP_blueBeer",
+    },
+    {
+        .stored_id = "spunder-2",
+        .stored_vols = 2.4,
+        .stored_temp = "TEMP_orangeBeer",
+    },
+    {
+        .stored_id = "spunder-3",
+        .stored_vols = 3.4,
+        .stored_temp = "MOCK_coneTemp",
+    },
+    {
+        .stored_id = "spunder-4",
+        .stored_vols = 4.4,
+        .stored_temp = "TEMP_ambientRoom",
+    },
+
+};
+
+// stored_settings_t stored_settings {
+//     .STORED_SP1_VOLS = 2.4,
+//     .STORED_SP2_VOLS = 2.4,
+//     .STORED_SP3_VOLS = 2.4,
+//     .STORED_SP4_VOLS = 2.4,
+//     .STORED_SP1_TEMP = "TEMP_blueBeer",
+//     .STORED_SP2_TEMP = "TEMP_orangeBeer",
+//     .STORED_SP3_TEMP = "MOCK_coneTemp",
+//     .STORED_SP4_TEMP = "TEMP_ambientRoom",
+// };
 
 // MQTT parameters
 constexpr auto _MQTTHOST = "10.0.0.115";
@@ -57,8 +94,8 @@ constexpr auto RELAY_PIN4 = 17;
 std::vector<spund_system_cfg_t> spund_cfgs{
     {
             .spunder{
-                .spunder_id = "spunder-1",
-                .desired_vols = 2.5,
+                .spunder_id = "spunder-1", 
+                .desired_vols = 2.4,
                 .relay_pin = RELAY_PIN1,
             },
             .ads1115{
@@ -80,7 +117,7 @@ std::vector<spund_system_cfg_t> spund_cfgs{
         {
             .spunder{
                 .spunder_id = "spunder-2",
-                .desired_vols = 2.50,
+                .desired_vols = 2.4,
                 .relay_pin = RELAY_PIN2,
             },
             .ads1115{
@@ -102,7 +139,7 @@ std::vector<spund_system_cfg_t> spund_cfgs{
         {
             .spunder{
                 .spunder_id = "spunder-3",
-                .desired_vols = 3.5,
+                .desired_vols = 3.4,
                 .relay_pin = RELAY_PIN3,
             },
             .ads1115{
@@ -124,7 +161,7 @@ std::vector<spund_system_cfg_t> spund_cfgs{
         {
             .spunder{
                 .spunder_id = "spunder-4",
-                .desired_vols = 3.44,
+                .desired_vols = 4.4,
                 .relay_pin = RELAY_PIN4,
             },
             .ads1115{

@@ -5,6 +5,13 @@
 
 #include <memory>
 
+typedef struct stored_settings_t
+{
+    String stored_id;
+    double stored_vols;
+    String stored_temp;
+}stored_settings_t;
+    
 typedef struct spund_system_cfg_t
 {
     struct spund_cfg
