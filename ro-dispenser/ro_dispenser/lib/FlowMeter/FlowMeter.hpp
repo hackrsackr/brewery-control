@@ -16,6 +16,7 @@ public:
   ~FlowMeter();
 
   std::string id;
+  unsigned int total_pulse_count;
   double flow_rate;
   double total_liters;
   unsigned long total_milliliters;
@@ -26,7 +27,6 @@ private:
   uint8_t sensor_pin;
   double calibration_factor;
   double percent_correction_factor;
-  unsigned int total_pulse_count;
   double frequency;
   volatile int pulse_count;
   unsigned long old_time;

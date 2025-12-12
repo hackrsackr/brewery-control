@@ -29,8 +29,10 @@ const int RELAY_PIN_1 = 16;
 const int LED_PIN = 23;
 
 String relay_state = "off";
-String led_state = "off";
+String ready_state = "Ready";
 String flow_state;
+
+auto target_pulses = 6900;
 
 // Create a web server object
 WebServer server(80);
@@ -43,32 +45,29 @@ void handleRoot();
 void activateRelay1() {
   relay_state = "on";
   digitalWrite(RELAY_PIN_1, HIGH);
-  delay(5000);
-  relay_state = "off";
-  digitalWrite(RELAY_PIN_1, LOW);
   handleRoot();
 }
 
-// Function to handle turning GPIO 26 off
+// Function to handle turning GPIO 16 off
 void deactivateRelay1() {
   relay_state = "off";
   digitalWrite(RELAY_PIN_1, LOW);
+  ready_state = "Not Ready";
   handleRoot();
 }
 
 // Function to handle turning GPIO 27 on
-void activateLed() {
-  led_state = "on";
-  digitalWrite(LED_PIN, HIGH);
+void lockDispenser() {
+  ready_state = "Not Ready";
   handleRoot();
 }
 
 // Function to handle turning GPIO 27 off
-void deactivateLed() {
-  led_state = "off";
-  digitalWrite(LED_PIN, LOW);
+void resetDispenser() {
+  ready_state = "Ready";
   handleRoot();
 }
+
 
 // Function to handle the root URL and show the current states
 void handleRoot() {
@@ -80,19 +79,19 @@ void handleRoot() {
   html += "<body><h1>RO Dispenser</h1>";
 
   // Display GPIO 26 controls
-  html += "<p>Total [mLs] = " + flow_state + " </p>";
+  html += "<p>Relay State = " + relay_state + " </p>";
   if (relay_state == "off") {
-    html += "<p><a href=\"/Relay/on\"><button class=\"button\">ON</button></a></p>";
+    html += "<p><a href=\"/Relay/on\"><button class=\"button\">DISPENSE</button></a></p>";
   } else {
-    html += "<p><a href=\"/Relay/off\"><button class=\"button button2\">OFF</button></a></p>";
+    html += "<p><a href=\"/Relay/off\"><button class=\"button button2\">STOP</button></a></p>";
   }
 
   // Display GPIO 27 controls
-  html += "<p>LED" + led_state + "</p>";
-  if (led_state == "off") {
-    html += "<p><a href=\"/LED/on\"><button class=\"button\">ON</button></a></p>";
+  html += "<p>Ready State = " + ready_state + "</p>";
+  if (ready_state == "Ready") {
+    html += "<p><a href=\"/Ready\"><button class=\"button\">Ready</button></a></p>";
   } else {
-    html += "<p><a href=\"/LED/off\"><button class=\"button button2\">OFF</button></a></p>";
+    html += "<p><a href=\"/Not Ready\"><button class=\"button button2\">Reset</button></a></p>";
   }
 
   html += "</body></html>";
@@ -102,7 +101,7 @@ void handleRoot() {
 void setup() {
   Serial.begin(115200);
 
-  client.enableDebuggingMessages();
+  // client.enableDebuggingMessages();
   client.enableOTA();
   
   for (auto &cfg : FLOW_CFGS)
@@ -114,6 +113,7 @@ void setup() {
   // Initialize the output variables as outputs
   pinMode(RELAY_PIN_1, OUTPUT);
   pinMode(LED_PIN, OUTPUT);
+
   // Set outputs to LOW
   digitalWrite(RELAY_PIN_1, LOW);
   digitalWrite(LED_PIN, LOW);
@@ -135,9 +135,8 @@ void setup() {
   server.on("/", handleRoot);
   server.on("/Relay/on", activateRelay1);
   server.on("/Relay/off", deactivateRelay1);
-  server.on("/LED/on", activateLed);
-  server.on("/LED/off", deactivateLed);
-
+  server.on("/Ready", lockDispenser);
+  server.on("/Not Ready", resetDispenser);
   // Start the web server
   server.begin();
   Serial.println("HTTP server started");
@@ -156,12 +155,19 @@ void loop() {
   {
     flowmeter->run();
 
-    message["data"][flowmeter->id]["Flow_rate[LPM]"] = flowmeter->flow_rate;
+    message["data"][flowmeter->id]["Total_Pulses"] = flowmeter->total_pulse_count;
+    // message["data"][flowmeter->id]["Flow_rate[LPM]"] = flowmeter->flow_rate;
+    // message["data"][flowmeter->id]["Total[L]"] = flowmeter->total_liters;
     message["data"][flowmeter->id]["Total[mL]"] = flowmeter->total_milliliters;
-    message["data"][flowmeter->id]["Total[L]"] = flowmeter->total_liters;
+
+    if (flowmeter->total_pulse_count >= target_pulses) {
+      deactivateRelay1();
+      flowmeter->total_pulse_count = 0;
+    }
+
     flow_state = String(flowmeter->total_milliliters);
   }
-  message["data"]["memory"]["Output_memory_size"] = message.memoryUsage();
+  // message["data"]["memory"]["Output_memory_size"] = message.memoryUsage();
 
   // serializeJsonPretty(message["data"], Serial);
   serializeJson(message["data"], Serial);

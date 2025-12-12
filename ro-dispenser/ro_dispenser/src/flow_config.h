@@ -76,7 +76,8 @@ std::vector<flowmeter_cfg_t> FLOW_CFGS {
     {
         .id = "flow",
         .sensor_pin = 33,
-        .calibration_factor = _YFS402B,
+        // .calibration_factor = _YFS402B,
+        .calibration_factor = 30.35,
         .percent_correction_factor = 1.00,
     },
 };
