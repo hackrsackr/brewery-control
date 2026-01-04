@@ -87,12 +87,12 @@ void handleRoot() {
   }
 
   // Display GPIO 27 controls
-  // html += "<p>Ready State = " + ready_state + "</p>";
-  // if (ready_state == "Ready") {
-  //   html += "<p><a href=\"/Ready\"><button class=\"button\">Ready</button></a></p>";
-  // } else {
-  //   html += "<p><a href=\"/Not Ready\"><button class=\"button button2\">Reset</button></a></p>";
-  // }
+  html += "<p>Ready State = " + ready_state + "</p>";
+  if (ready_state == "Ready") {
+    html += "<p><a href=\"/Ready\"><button class=\"button\">Ready</button></a></p>";
+  } else {
+    html += "<p><a href=\"/Not Ready\"><button class=\"button button2\">Reset</button></a></p>";
+  }
 
   html += "</body></html>";
   server.send(200, "text/html", html);
