@@ -30,7 +30,7 @@ const int LED_PIN = 23;
 
 String relay_state = "off";
 String ready_state = "Ready";
-String flow_state;
+String flow_state = "0";
 
 auto target_pulses = 6900;
 
@@ -79,7 +79,7 @@ void handleRoot() {
   html += "<body><h1>RO Dispenser</h1>";
 
   // Display GPIO 26 controls
-  // html += "<p>Relay State = " + relay_state + " </p>";
+  html += "<p>Relay State = " + relay_state + " </p>";
   if (relay_state == "off") {
     html += "<p><a href=\"/Relay/on\"><button class=\"button\">DO IT LADY!</button></a></p>";
   } else {
@@ -87,12 +87,12 @@ void handleRoot() {
   }
 
   // Display GPIO 27 controls
-  html += "<p>Ready State = " + ready_state + "</p>";
-  if (ready_state == "Ready") {
-    html += "<p><a href=\"/Ready\"><button class=\"button\">Ready</button></a></p>";
-  } else {
-    html += "<p><a href=\"/Not Ready\"><button class=\"button button2\">Reset</button></a></p>";
-  }
+  // html += "<p>Ready State = " + ready_state + "</p>";
+  // if (ready_state == "Ready") {
+  //   html += "<p><a href=\"/Ready\"><button class=\"button\">Ready</button></a></p>";
+  // } else {
+  //   html += "<p><a href=\"/Not Ready\"><button class=\"button button2\">Reset</button></a></p>";
+  // }
 
   html += "</body></html>";
   server.send(200, "text/html", html);
