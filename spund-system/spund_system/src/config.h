@@ -107,6 +107,7 @@ std::vector<spund_system_cfg_t> spund_cfgs{
                 .input_high_val = 4.5,
                 .output_low_val = 0.0,
                 .output_high_val = 60.0,
+                .calibration_factor = 1.0,
             },
             .mqtt{
                 .temp_sensor_id = "TEMP_blueBeer",
@@ -129,6 +130,7 @@ std::vector<spund_system_cfg_t> spund_cfgs{
                 .input_high_val = 4.5,
                 .output_low_val = 0.0,
                 .output_high_val = 60.0,
+                .calibration_factor = 1.0,
             },
             .mqtt{
                 .temp_sensor_id = "TEMP_orangeBeer",
@@ -151,6 +153,7 @@ std::vector<spund_system_cfg_t> spund_cfgs{
                 .input_high_val = 4.5,
                 .output_low_val = 0.0,
                 .output_high_val = 30.0,
+                .calibration_factor = .925
             },
             .mqtt{
                 .temp_sensor_id = "MOCK_coneTemp",
@@ -173,6 +176,7 @@ std::vector<spund_system_cfg_t> spund_cfgs{
                 .input_high_val = 4.5,
                 .output_low_val = 0.0,
                 .output_high_val = 60.0,
+                .calibration_factor = 1.0,
             },
             .mqtt{
                 .temp_sensor_id = "TEMP_ambientRoom",
