@@ -32,7 +32,7 @@ String relay_state = "off";
 String ready_state = "Ready";
 String flow_state = "0";
 
-auto target_pulses = 6900;
+auto target_pulses = 8000;
 
 // Create a web server object
 WebServer server(80);
