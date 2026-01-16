@@ -91,10 +91,8 @@ auto Spund_System::testForVent() -> uint8_t
 
     if (_vols > desired_vols)
     {
-        _p_re->openRelay();
-        delay(500);
+        _p_re->pulseRelay(500);
         _time_of_last_vent = millis();
-        _p_re->closeRelay();
         vented = 1;
     }
     else
@@ -112,4 +110,9 @@ auto Spund_System::getLastVent() -> float
     auto minutes_since_vent = (millis() - _time_of_last_vent) / MILLISECONDS_PER_MINUTE;
 
     return minutes_since_vent;
+}
+
+auto Spund_System::getVentTimestamp() -> uint32_t 
+{
+    return _time_of_last_vent;
 }

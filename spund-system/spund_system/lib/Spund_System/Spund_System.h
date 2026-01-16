@@ -68,6 +68,7 @@ public:
     auto computeVols() -> float;
     auto testForVent() -> uint8_t;
     auto getLastVent() -> float;
+    auto getVentTimestamp() -> uint32_t;
 
 private:
     uint8_t _relay_pin;

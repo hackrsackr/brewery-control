@@ -126,7 +126,7 @@ void onConnectionEstablished()
         // DEBUG:
         // Serial.println(payload);
 
-        StaticJsonDocument<1000> message;
+        StaticJsonDocument<2000> message;
         message["key"] = _CLIENTID;
 
         for (auto &spunder : _SPUNDERS)
@@ -157,6 +157,7 @@ void onConnectionEstablished()
                 {
                     message["data"][spunder->spunder_id]["Relay_Toggled"] = spunder->testForVent();
             	    message["data"][spunder->spunder_id]["Minutes_since_vent"] = spunder->getLastVent(); 
+            	    message["data"][spunder->spunder_id]["Vent Timestamp"] = spunder->getVentTimestamp(); 
                 }
 	        }
 
