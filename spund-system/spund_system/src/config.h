@@ -95,7 +95,7 @@ std::vector<spund_system_cfg_t> spund_cfgs{
     {
             .spunder{
                 .spunder_id = "spunder-1", 
-                .desired_vols = 2.4,
+                .desired_vols = 2.5,
                 .relay_pin = RELAY_PIN1,
             },
             .ads1115{
@@ -107,7 +107,7 @@ std::vector<spund_system_cfg_t> spund_cfgs{
                 .input_high_val = 4.5,
                 .output_low_val = 0.0,
                 .output_high_val = 60.0,
-                .calibration_factor = 1.0,
+                .sensor_offset = 0.0,
             },
             .mqtt{
                 .temp_sensor_id = "TEMP_blueBeer",
@@ -118,7 +118,7 @@ std::vector<spund_system_cfg_t> spund_cfgs{
         {
             .spunder{
                 .spunder_id = "spunder-2",
-                .desired_vols = 2.4,
+                .desired_vols = 2.5,
                 .relay_pin = RELAY_PIN2,
             },
             .ads1115{
@@ -130,7 +130,7 @@ std::vector<spund_system_cfg_t> spund_cfgs{
                 .input_high_val = 4.5,
                 .output_low_val = 0.0,
                 .output_high_val = 60.0,
-                .calibration_factor = 1.0,
+                .sensor_offset = 0.0,
             },
             .mqtt{
                 .temp_sensor_id = "TEMP_orangeBeer",
@@ -141,7 +141,7 @@ std::vector<spund_system_cfg_t> spund_cfgs{
         {
             .spunder{
                 .spunder_id = "spunder-3",
-                .desired_vols = 3.4,
+                .desired_vols = 3.5,
                 .relay_pin = RELAY_PIN3,
             },
             .ads1115{
@@ -149,11 +149,11 @@ std::vector<spund_system_cfg_t> spund_cfgs{
                 .ads_channel = 2,
                 .ads_gain = GAIN_TWOTHIRDS,
                 .ads_sensor_unit = "PSI",
-                .input_low_val = 0.5,
+                .input_low_val = 0.50,
                 .input_high_val = 4.5,
                 .output_low_val = 0.0,
                 .output_high_val = 30.0,
-                .calibration_factor = .925
+                .sensor_offset = 1.75,
             },
             .mqtt{
                 .temp_sensor_id = "MOCK_coneTemp",
@@ -176,7 +176,7 @@ std::vector<spund_system_cfg_t> spund_cfgs{
                 .input_high_val = 4.5,
                 .output_low_val = 0.0,
                 .output_high_val = 60.0,
-                .calibration_factor = 1.0,
+                .sensor_offset = 0.0,
             },
             .mqtt{
                 .temp_sensor_id = "TEMP_ambientRoom",

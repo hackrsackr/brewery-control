@@ -31,7 +31,7 @@ typedef struct spund_system_cfg_t
         float input_high_val;
         float output_low_val;
         float output_high_val;
-        float calibration_factor;
+        float sensor_offset;
     } ads1115;
 
     struct mqtt_cfg
@@ -54,7 +54,7 @@ public:
     String server_sensor_input;
     float tempC;
     float tempF;
-    float calibration_factor;
+    float sensor_offset;
 
     Spund_System(spund_system_cfg_t);
     ~Spund_System();

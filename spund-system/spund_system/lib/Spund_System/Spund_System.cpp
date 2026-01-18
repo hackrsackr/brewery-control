@@ -18,7 +18,7 @@ Spund_System::Spund_System(spund_system_cfg_t cfg)
     _input_high_val = cfg.ads1115.input_high_val;
     _output_low_val = cfg.ads1115.output_low_val;
     _output_high_val = cfg.ads1115.output_high_val;
-    calibration_factor = cfg.ads1115.calibration_factor;
+    sensor_offset = cfg.ads1115.sensor_offset;
 
     // .mqtt
     temp_sensor_id = cfg.mqtt.temp_sensor_id;
@@ -59,7 +59,7 @@ auto Spund_System::readVolts() -> float
 
 auto Spund_System::readSensorUnits() -> float
 {
-    return (readVolts() - _input_low_val) / (_input_high_val - _input_low_val) * (_output_high_val - _output_low_val) * calibration_factor;
+    return ((readVolts() - _input_low_val) / (_input_high_val - _input_low_val) * (_output_high_val - _output_low_val)) - sensor_offset;
 }
 
 auto Spund_System::computePSISetpoint() -> float
