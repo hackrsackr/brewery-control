@@ -59,7 +59,14 @@ auto Spund_System::readVolts() -> float
 
 auto Spund_System::readSensorUnits() -> float
 {
-    return ((readVolts() - _input_low_val) / (_input_high_val - _input_low_val) * (_output_high_val - _output_low_val)) - sensor_offset;
+    return ((readVolts() - _input_low_val) / (_input_high_val - _input_low_val) * (_output_high_val - _output_low_val));
+}
+
+auto Spund_System::trimSensorUnits() -> float
+{
+    auto trimmed_sensor_data = readSensorUnits() - sensor_offset;
+
+    return (trimmed_sensor_data > _output_low_val) ? trimmed_sensor_data : _output_low_val;
 }
 
 auto Spund_System::computePSISetpoint() -> float

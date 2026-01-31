@@ -64,6 +64,7 @@ public:
     auto readADC() -> uint16_t;
     auto readVolts() -> float;
     auto readSensorUnits() -> float;
+    auto trimSensorUnits() -> float;
     auto computePSISetpoint() -> float;
     auto computeVols() -> float;
     auto testForVent() -> uint8_t;
