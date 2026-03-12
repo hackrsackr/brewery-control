@@ -18,6 +18,7 @@ Spund_System::Spund_System(spund_system_cfg_t cfg)
     _input_high_val = cfg.ads1115.input_high_val;
     _output_low_val = cfg.ads1115.output_low_val;
     _output_high_val = cfg.ads1115.output_high_val;
+    sensor_offset = cfg.ads1115.sensor_offset;
 
     // .mqtt
     temp_sensor_id = cfg.mqtt.temp_sensor_id;
@@ -58,7 +59,14 @@ auto Spund_System::readVolts() -> float
 
 auto Spund_System::readSensorUnits() -> float
 {
-    return (readVolts() - _input_low_val) / (_input_high_val - _input_low_val) * (_output_high_val - _output_low_val);
+    return ((readVolts() - _input_low_val) / (_input_high_val - _input_low_val) * (_output_high_val - _output_low_val));
+}
+
+auto Spund_System::trimSensorUnits() -> float
+{
+    auto trimmed_sensor_data = readSensorUnits() - sensor_offset;
+
+    return (trimmed_sensor_data > _output_low_val) ? trimmed_sensor_data : _output_low_val;
 }
 
 auto Spund_System::computePSISetpoint() -> float
@@ -90,10 +98,8 @@ auto Spund_System::testForVent() -> uint8_t
 
     if (_vols > desired_vols)
     {
-        _p_re->openRelay();
-        delay(500);
+        _p_re->pulseRelay(500);
         _time_of_last_vent = millis();
-        _p_re->closeRelay();
         vented = 1;
     }
     else
@@ -111,4 +117,9 @@ auto Spund_System::getLastVent() -> float
     auto minutes_since_vent = (millis() - _time_of_last_vent) / MILLISECONDS_PER_MINUTE;
 
     return minutes_since_vent;
+}
+
+auto Spund_System::getVentTimestamp() -> uint32_t 
+{
+    return _time_of_last_vent;
 }

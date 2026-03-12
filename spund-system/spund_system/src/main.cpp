@@ -3,6 +3,7 @@
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <Adafruit_ADS1X15.h>
+#include <Preferences.h>
 
 #include "Spund_System.h"
 #include "Relay.h"
@@ -11,6 +12,8 @@
 #include "config.h"
 
 #include <vector>
+
+Preferences preferences;
 
 std::vector<Spund_System *> _SPUNDERS;
 
@@ -41,6 +44,28 @@ void setup(void)
     Serial.print("IP Address: ");
     Serial.println(WiFi.localIP());
 
+    preferences.begin("stored_settings", false);
+
+    String vols_key;
+    String temp_key;
+
+    for (auto &spund_cfg : spund_cfgs) {
+        vols_key = spund_cfg.spunder.spunder_id + "_vols";
+        temp_key = spund_cfg.spunder.spunder_id + "_temp";
+        
+        double retrieved_vols_value = preferences.getDouble(vols_key.c_str(), spund_cfg.spunder.desired_vols);
+        String retrieved_temp_value = preferences.getString(temp_key.c_str(), spund_cfg.mqtt.temp_sensor_id);
+        
+        if (retrieved_vols_value != spund_cfg.spunder.desired_vols) {
+            spund_cfg.spunder.desired_vols = retrieved_vols_value;
+        }
+
+        if (retrieved_temp_value != spund_cfg.mqtt.temp_sensor_id) {
+            spund_cfg.mqtt.temp_sensor_id = retrieved_temp_value;
+        }
+    }
+    
+
     for (auto &spund_cfg : spund_cfgs)
     {
         Spund_System *s = new Spund_System(spund_cfg);
@@ -66,12 +91,16 @@ void setup(void)
             spunder->desired_vols = spunder->server_setpoint.toDouble();
             inputMessage = spunder->server_setpoint;
             inputParam = spunder->server_setpoint_input;
+            String key = spunder->spunder_id + "_vols";
+            preferences.putDouble(key.c_str(), spunder->desired_vols);
         }
         if (request->hasParam(spunder->server_sensor_input)) {
             spunder->temp_sensor_id = request->getParam(spunder->server_sensor_input)->value();
             spunder->server_sensor = spunder->temp_sensor_id;
             inputMessage = spunder->server_sensor;
             inputParam = spunder->server_sensor_input;
+            String key = spunder->spunder_id + "_temp";
+            preferences.putString(key.c_str(), spunder->temp_sensor_id);
         }
     }
 
@@ -97,7 +126,7 @@ void onConnectionEstablished()
         // DEBUG:
         // Serial.println(payload);
 
-        StaticJsonDocument<1000> message;
+        StaticJsonDocument<2000> message;
         message["key"] = _CLIENTID;
 
         for (auto &spunder : _SPUNDERS)
@@ -120,7 +149,7 @@ void onConnectionEstablished()
             	message["data"][spunder->spunder_id]["TempC"] = spunder->tempC;
             	message["data"][spunder->spunder_id]["Temp_Sensor"] = spunder->temp_sensor_id;
             	message["data"][spunder->spunder_id]["Volts"] = spunder->readVolts();
-            	message["data"][spunder->spunder_id][spunder->getSensorUnit()] = spunder->readSensorUnits();
+            	message["data"][spunder->spunder_id][spunder->getSensorUnit()] = spunder->trimSensorUnits();
             	message["data"][spunder->spunder_id]["PSI_setpoint"] = spunder->computePSISetpoint();
             	message["data"][spunder->spunder_id]["Desired_vols"] = spunder->desired_vols;
             	message["data"][spunder->spunder_id]["Vols"] = spunder->computeVols();
@@ -128,6 +157,7 @@ void onConnectionEstablished()
                 {
                     message["data"][spunder->spunder_id]["Relay_Toggled"] = spunder->testForVent();
             	    message["data"][spunder->spunder_id]["Minutes_since_vent"] = spunder->getLastVent(); 
+            	    message["data"][spunder->spunder_id]["Vent Timestamp"] = spunder->getVentTimestamp(); 
                 }
 	        }
 

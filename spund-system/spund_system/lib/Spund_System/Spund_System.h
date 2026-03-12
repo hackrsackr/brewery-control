@@ -5,6 +5,13 @@
 
 #include <memory>
 
+typedef struct stored_settings_t
+{
+    String stored_id;
+    double stored_vols;
+    String stored_temp;
+}stored_settings_t;
+    
 typedef struct spund_system_cfg_t
 {
     struct spund_cfg
@@ -24,6 +31,7 @@ typedef struct spund_system_cfg_t
         float input_high_val;
         float output_low_val;
         float output_high_val;
+        float sensor_offset;
     } ads1115;
 
     struct mqtt_cfg
@@ -46,6 +54,7 @@ public:
     String server_sensor_input;
     float tempC;
     float tempF;
+    float sensor_offset;
 
     Spund_System(spund_system_cfg_t);
     ~Spund_System();
@@ -55,10 +64,12 @@ public:
     auto readADC() -> uint16_t;
     auto readVolts() -> float;
     auto readSensorUnits() -> float;
+    auto trimSensorUnits() -> float;
     auto computePSISetpoint() -> float;
     auto computeVols() -> float;
     auto testForVent() -> uint8_t;
     auto getLastVent() -> float;
+    auto getVentTimestamp() -> uint32_t;
 
 private:
     uint8_t _relay_pin;
