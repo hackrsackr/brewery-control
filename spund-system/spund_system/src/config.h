@@ -49,19 +49,8 @@ std::vector<stored_settings_t> stored_settings {
 
 };
 
-// stored_settings_t stored_settings {
-//     .STORED_SP1_VOLS = 2.4,
-//     .STORED_SP2_VOLS = 2.4,
-//     .STORED_SP3_VOLS = 2.4,
-//     .STORED_SP4_VOLS = 2.4,
-//     .STORED_SP1_TEMP = "TEMP_blueBeer",
-//     .STORED_SP2_TEMP = "TEMP_orangeBeer",
-//     .STORED_SP3_TEMP = "MOCK_coneTemp",
-//     .STORED_SP4_TEMP = "TEMP_ambientRoom",
-// };
-
 // MQTT parameters
-constexpr auto _MQTTHOST = "10.0.0.115";
+constexpr auto _MQTTHOST = "10.0.0.101";
 constexpr auto _MQTTPORT = 1883;
 constexpr auto _CLIENTID = "spund-system";
 constexpr auto _SUBTOPIC = "brewcast/history/spark-two";
@@ -152,8 +141,8 @@ std::vector<spund_system_cfg_t> spund_cfgs{
                 .input_low_val = 0.50,
                 .input_high_val = 4.5,
                 .output_low_val = 0.0,
-                .output_high_val = 30.0,
-                .sensor_offset = 1.75,
+                .output_high_val = 60.0,
+                .sensor_offset = 0.00,
             },
             .mqtt{
                 .temp_sensor_id = "MOCK_coneTemp",
