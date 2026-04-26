@@ -62,6 +62,7 @@ public:
     auto begin() -> bool;
     auto getSensorUnit() -> std::string;
     auto readADC() -> uint16_t;
+    auto readADC_AVG(uint8_t) -> uint16_t;
     auto readVolts() -> float;
     auto readSensorUnits() -> float;
     auto trimSensorUnits() -> float;
@@ -89,6 +90,8 @@ private:
 
     // data
     uint32_t _time_of_last_vent;
+    uint16_t _adc;
+    float _psi;
     float _psi_setpoint;
     float _vols;
 };

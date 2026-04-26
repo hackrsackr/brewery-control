@@ -52,14 +52,29 @@ auto Spund_System::readADC() -> uint16_t
     return _p_ads->readADC_SingleEnded(_ads_channel);
 }
 
+auto Spund_System::readADC_AVG(uint8_t samples) -> uint16_t {
+    uint32_t sum = 0;
+    for (int i = 0; i < samples; i++) {
+        sum += readADC();
+        delayMicroseconds(10);
+    }
+    _adc = sum / samples;
+
+    return _adc;
+}
+
 auto Spund_System::readVolts() -> float
 {
-    return _p_ads->computeVolts(_p_ads->readADC_SingleEnded(_ads_channel));
+    return _p_ads->computeVolts(_adc);
+    // return _p_ads->computeVolts(_p_ads->readADC_SingleEnded(_ads_channel));
 }
 
 auto Spund_System::readSensorUnits() -> float
 {
-    return ((readVolts() - _input_low_val) / (_input_high_val - _input_low_val) * (_output_high_val - _output_low_val));
+    _psi = ((readVolts() - _input_low_val) / (_input_high_val - _input_low_val) * (_output_high_val - _output_low_val));
+    _psi -= sensor_offset;
+    return _psi;
+    // return ((readVolts() - _input_low_val) / (_input_high_val - _input_low_val) * (_output_high_val - _output_low_val));
 }
 
 auto Spund_System::trimSensorUnits() -> float
@@ -84,7 +99,7 @@ auto Spund_System::computeVols() -> float
 {
     double a = -.0684226;
     double b = ((.173354 * tempF) + 4.24267);
-    double c = (-readSensorUnits() + -16.669 + (-0.0101059 * tempF) + (0.00116512 * tempF * tempF));
+    double c = (-_psi + -16.669 + (-0.0101059 * tempF) + (0.00116512 * tempF * tempF));
     double d = ((b * b) - (4 * a * c));
 
     _vols = ((-b + (pow(d, .5))) / (2 * a));

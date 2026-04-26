@@ -148,8 +148,9 @@ void onConnectionEstablished()
 	        {
             	message["data"][spunder->spunder_id]["TempC"] = spunder->tempC;
             	message["data"][spunder->spunder_id]["Temp_Sensor"] = spunder->temp_sensor_id;
+            	message["data"][spunder->spunder_id]["ADC"] = spunder->readADC_AVG(16);
             	message["data"][spunder->spunder_id]["Volts"] = spunder->readVolts();
-            	message["data"][spunder->spunder_id][spunder->getSensorUnit()] = spunder->trimSensorUnits();
+            	message["data"][spunder->spunder_id][spunder->getSensorUnit()] = spunder->readSensorUnits();
             	message["data"][spunder->spunder_id]["PSI_setpoint"] = spunder->computePSISetpoint();
             	message["data"][spunder->spunder_id]["Desired_vols"] = spunder->desired_vols;
             	message["data"][spunder->spunder_id]["Vols"] = spunder->computeVols();
@@ -175,7 +176,7 @@ void onConnectionEstablished()
                     Serial.println("restarting due to failed MQTT publish");
                     ESP.restart();
                 }
-                serializeJsonPretty(message, Serial);
+                // serializeJsonPretty(message, Serial);
             });
         } 
 

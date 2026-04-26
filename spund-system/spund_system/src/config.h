@@ -141,8 +141,8 @@ std::vector<spund_system_cfg_t> spund_cfgs{
                 .input_low_val = 0.50,
                 .input_high_val = 4.5,
                 .output_low_val = 0.0,
-                .output_high_val = 30.0,
-                .sensor_offset = 1.75,
+                .output_high_val = 60.0,
+                .sensor_offset = 0.00,
             },
             .mqtt{
                 .temp_sensor_id = "MOCK_coneTemp",
