@@ -53,9 +53,9 @@ class Meter:
     def maToUnit(self) -> float:
         self.readMa()
         if self.mA > self.ilrv and self.mA < self.iurv:
-            self.measurement = (self.mA - self.ilrv) / (self.iurv - self.ilrv) * (self.ourv - self.olrv) + self.offset
+            self.measurement = self.ilrv + ((self.mA - self.ilrv) / (self.iurv - self.ilrv) * (self.ourv - self.olrv))
         else:
-            self.measurement = 0.0 + self.offset
+            self.measurement = 0.0
         return self.measurement
 
 

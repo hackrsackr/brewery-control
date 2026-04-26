@@ -182,7 +182,7 @@
                 "input_URV": 20,
                 "output_LRV": 1.000,
                 "output_URV": 1.160,
-                "offset": 1
+                "offset": 0
             },
             "input-3.1": {
                 "meter_id": "Flow",
@@ -194,6 +194,18 @@
                 "input_URV": 20,
                 "output_LRV": 0,
                 "output_URV": 36.2,
+                "offset": 0
+            },
+            "input-3.2": {
+                "meter_id": "Flow",
+                "name": "mash density",
+                "unit": "P",
+                "ads_address": "0x4b",
+                "ads_channel": 2,
+                "input_LRV": 4,
+                "input_URV": 20,
+                "output_LRV": 0,
+                "output_URV": 48.15,
                 "offset": 0
             },
             "input-4": {
