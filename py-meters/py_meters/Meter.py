@@ -55,7 +55,7 @@ class Meter:
         if self.mA > self.ilrv and self.mA < self.iurv:
             self.measurement = self.olrv + ((self.mA - self.ilrv) / (self.iurv - self.ilrv) * (self.ourv - self.olrv))
         else:
-            self.measurement = 0.0
+            self.measurement = self.olrv
         return self.measurement
 
 

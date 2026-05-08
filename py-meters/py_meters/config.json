@@ -23,15 +23,15 @@
             },
             "input-2": {
                 "meter_id": "pH",
-                "name": "boil_ORP",
-                "unit": "mV",
+                "name": "boil_pH_temp",
+                "unit": "°C",
                 "ads_address": "0x48",
                 "ads_channel": 1,
                 "input_LRV": 0,
                 "input_URV": 20,
-                "output_LRV": -100,
-                "output_URV": 300,
-                "offset": -100
+                "output_LRV": 0,
+                "output_URV": 100,
+                "offset": 0
             },
             "input-3": {
                 "meter_id": "pH",
