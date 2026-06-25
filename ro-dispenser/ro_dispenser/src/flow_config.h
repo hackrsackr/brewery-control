@@ -1,6 +1,7 @@
 #pragma once
 
 #include "FlowMeter.hpp"
+#include "TDSSensor.hpp"
 #include "secrets.h"
 
 #include <vector>
@@ -71,13 +72,40 @@ constexpr auto _SS_FLOW1 = 9.93;
 */
 constexpr auto _SS_FLOW2 = 17.95; // Q(L/m)
 
+/*
+    FLOW_CHARACTERISTICS_CODE: MH-01
+    1650 pulses = 1 liter
+
+    f(hz) = Q(L/s) * 1650
+    f(hz) = [Q(L/m) * 1650] / 60 -> f(hz) = Q(L/m) * 27.50
+    f(hz) = [Q(L/h) * 1650] / 60 / 60 -> f(hz) = Q(L/h) * 0.4583
+
+    Q(L/s) = f(hz) / 1650
+    Q(L/m) = [f(hz) / 1650] * 60 -> Q(L/m) = f(hz) / 27.50
+    Q(L/h) = [f(hz) / 1650] * 60 * 60 -> Q(L/h) = f(hz) / 0.4583
+*/
+constexpr auto _MH01 = 27.50; // Q(L/m)
+
 // Production: dev-kit
-std::vector<flowmeter_cfg_t> FLOW_CFGS {
+std::vector<flowmeter_cfg_t> FLOW_CFGS{
     {
         .id = "flow",
-        .sensor_pin = 33,
+        .sensor_pin = 13,
         // .calibration_factor = _YFS402B,
-        .calibration_factor = 29.5,
+        .calibration_factor = 27.50,
         .percent_correction_factor = 1.00,
+    },
+};
+
+std::vector<tds_sensor_cfg_t> TDS_CFGS{
+    {
+        .id = "RO_Water_TDS",
+        .sensor_pin = 34,
+        .tds_factor = .82,
+    },
+    {
+        .id = "City_Water_TDS",
+        .sensor_pin = 35,
+        .tds_factor = .54,
     },
 };

@@ -211,4 +211,5 @@
  /home/rob/.platformio/packages/framework-arduinoespressif32/libraries/ESPmDNS/src/ESPmDNS.h \
  /home/rob/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/mdns/include/mdns.h \
  .pio/libdeps/OTA/EspMQTTClient/src/ESP32HTTPUpdateServer.h \
- lib/FlowMeter/FlowMeter.hpp src/flow_config.h src/secrets.h
+ lib/FlowMeter/FlowMeter.hpp src/flow_config.h \
+ lib/TDSSensor/TDSSensor.hpp src/secrets.h

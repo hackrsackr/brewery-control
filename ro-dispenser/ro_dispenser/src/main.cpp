@@ -1,4 +1,4 @@
-/*  
+/*
   Rui Santos & Sara Santos - Random Nerd Tutorials
   https://RandomNerdTutorials.com/esp32-web-server-beginners-guide/
   Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files.
@@ -17,12 +17,12 @@
 #include <flow_config.h>
 #include <secrets.h>
 
-
 std::vector<FlowMeter *> _FLOWMETERS;
+std::vector<TDSSensor *> _TDSSENSORS;
 
 // Replace with your network credentials
-const char* ssid = SECRET_SSID;
-const char* password = SECRET_PASS;
+const char *ssid = SECRET_SSID;
+const char *password = SECRET_PASS;
 
 // Assign output variables to GPIO pins
 const int RELAY_PIN_1 = 16;
@@ -32,7 +32,7 @@ String relay_state = "off";
 String ready_state = "Ready";
 String flow_state = "0";
 
-auto target_pulses = 8000;
+auto target_pulses = 6250;
 
 // Create a web server object
 WebServer server(80);
@@ -42,14 +42,16 @@ void onConnectionEstablished();
 void handleRoot();
 
 // Function to handle turning GPIO 16 on
-void activateRelay1() {
+void activateRelay1()
+{
   relay_state = "on";
   digitalWrite(RELAY_PIN_1, HIGH);
   handleRoot();
 }
 
 // Function to handle turning GPIO 16 off
-void deactivateRelay1() {
+void deactivateRelay1()
+{
   relay_state = "off";
   digitalWrite(RELAY_PIN_1, LOW);
   ready_state = "Not Ready";
@@ -57,20 +59,22 @@ void deactivateRelay1() {
 }
 
 // Function to handle turning GPIO 27 on
-void lockDispenser() {
+void lockDispenser()
+{
   ready_state = "Not Ready";
   handleRoot();
 }
 
 // Function to handle turning GPIO 27 off
-void resetDispenser() {
+void resetDispenser()
+{
   ready_state = "Ready";
   handleRoot();
 }
 
-
 // Function to handle the root URL and show the current states
-void handleRoot() {
+void handleRoot()
+{
   String html = "<!DOCTYPE html><html><head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">";
   html += "<link rel=\"icon\" href=\"data:,\">";
   html += "<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}";
@@ -80,9 +84,12 @@ void handleRoot() {
 
   // Display GPIO 26 controls
   html += "<p>Relay State = " + relay_state + " </p>";
-  if (relay_state == "off") {
+  if (relay_state == "off")
+  {
     html += "<p><a href=\"/Relay/on\"><button class=\"button\">DO IT LADY!</button></a></p>";
-  } else {
+  }
+  else
+  {
     html += "<p><a href=\"/Relay/off\"><button class=\"button button2\">STOP</button></a></p>";
   }
 
@@ -98,16 +105,23 @@ void handleRoot() {
   server.send(200, "text/html", html);
 }
 
-void setup() {
+void setup()
+{
   Serial.begin(115200);
 
   // client.enableDebuggingMessages();
   client.enableOTA();
-  
+
   for (auto &cfg : FLOW_CFGS)
   {
     FlowMeter *f = new FlowMeter(cfg);
     _FLOWMETERS.push_back(f);
+  }
+
+  for (auto &cfg : TDS_CFGS)
+  {
+    TDSSensor *t = new TDSSensor(cfg);
+    _TDSSENSORS.push_back(t);
   }
 
   // Initialize the output variables as outputs
@@ -122,7 +136,8 @@ void setup() {
   Serial.print("Connecting to ");
   Serial.println(ssid);
   WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED)
+  {
     delay(500);
     Serial.print(".");
   }
@@ -140,10 +155,10 @@ void setup() {
   // Start the web server
   server.begin();
   Serial.println("HTTP server started");
-
 }
 
-void loop() {
+void loop()
+{
   // Handle incoming client requests
   server.handleClient();
   client.loop();
@@ -160,17 +175,28 @@ void loop() {
     // message["data"][flowmeter->id]["Total[L]"] = flowmeter->total_liters;
     message["data"][flowmeter->id]["Total[mL]"] = flowmeter->total_milliliters;
 
-    if (flowmeter->total_pulse_count >= target_pulses) {
+    if (flowmeter->total_pulse_count >= target_pulses)
+    {
       deactivateRelay1();
       flowmeter->total_pulse_count = 0;
     }
 
     flow_state = String(flowmeter->total_milliliters);
   }
+
+  for (auto &tdssensor : _TDSSENSORS)
+  {
+    tdssensor->readTDSSensor();
+    message["data"][tdssensor->id]["ADC"] = tdssensor->adc;
+    message["data"][tdssensor->id]["Voltage"] = tdssensor->voltage;
+    message["data"][tdssensor->id]["EC"] = tdssensor->EC;
+    message["data"][tdssensor->id]["TDS"] = tdssensor->TDS;
+  }
+
   // message["data"]["memory"]["Output_memory_size"] = message.memoryUsage();
 
-  // serializeJsonPretty(message["data"], Serial);
-  serializeJson(message["data"], Serial);
+  serializeJsonPretty(message["data"], Serial);
+  // serializeJson(message["data"], Serial);
   Serial.println("");
 
   delay(1000);
@@ -181,9 +207,8 @@ void loop() {
 void onConnectionEstablished()
 {
   // Subscribe to "mytopic/test" and display received message to Serial
-  client.subscribe("mytopic/test", [](const String & payload) {
-    Serial.println(payload);
-  });
+  client.subscribe("mytopic/test", [](const String &payload)
+                   { Serial.println(payload); });
 
   // Publish a message to "mytopic/test"
   client.publish("mytopic/test", "This is a message"); // You can activate the retain flag by setting the third parameter to true
