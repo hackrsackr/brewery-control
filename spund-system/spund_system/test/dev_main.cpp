@@ -32,8 +32,7 @@ void setup(void)
     // client.enableDebuggingMessages();
     client.setMaxPacketSize(4096);
     client.enableOTA();
-
-    Wire.begin(_I2C_SDA, _I2C_SCL);
+    // client.enableMQTTPersistence();
 
     WiFi.begin(_SSID, _PASS);
     if (WiFi.waitForConnectResult() != WL_CONNECTED)
@@ -46,6 +45,23 @@ void setup(void)
 
     preferences.begin("stored_settings", false);
 
+    Serial.println("--- Stored Settings ---");
+
+    // Loop through each struct in the vector
+    for (const auto &setting : stored_settings)
+    {
+        Serial.print("ID: ");
+        Serial.print(setting.stored_id);
+
+        Serial.print(" | Vols: ");
+        Serial.print(setting.stored_vols, 1); // ", 1" sets decimal places to 1
+
+        Serial.print(" | Temp: ");
+        Serial.println(setting.stored_temp);
+    }
+
+    Serial.println("-----------------------");
+
     String vols_key;
     String temp_key;
 
@@ -55,16 +71,23 @@ void setup(void)
         temp_key = spund_cfg.spunder.spunder_id + "_temp";
 
         double retrieved_vols_value = preferences.getDouble(vols_key.c_str(), spund_cfg.spunder.desired_vols);
+        Serial.println(retrieved_vols_value);
         String retrieved_temp_value = preferences.getString(temp_key.c_str(), spund_cfg.mqtt.temp_sensor_id);
+        Serial.println(retrieved_temp_value);
+
+        // spund_cfg.spunder.desired_vols = retrieved_vols_value;
+        // spund_cfg.mqtt.temp_sensor_id = retrieved_temp_value;
 
         if (retrieved_vols_value != spund_cfg.spunder.desired_vols)
         {
             spund_cfg.spunder.desired_vols = retrieved_vols_value;
+            Serial.println(spund_cfg.spunder.desired_vols);
         }
 
         if (retrieved_temp_value != spund_cfg.mqtt.temp_sensor_id)
         {
             spund_cfg.mqtt.temp_sensor_id = retrieved_temp_value;
+            Serial.println(spund_cfg.mqtt.temp_sensor_id);
         }
     }
 
@@ -75,7 +98,9 @@ void setup(void)
 
         if (!s->begin())
         {
-            Serial.printf("ads failed to initialize");
+            Serial.printf("ADS failed to initialize: %s at addr 0x%02X\n",
+                          spund_cfg.spunder.spunder_id.c_str(),
+                          spund_cfg.ads1115.i2c_addr);
         }
     }
 
@@ -122,13 +147,13 @@ void onConnectionEstablished()
 {
     client.subscribe(_SUBTOPIC, [](const String &payload)
                      {
-        DynamicJsonDocument input(4000);
+        StaticJsonDocument<4000> input;
         deserializeJson(input, payload);
         
         // DEBUG:
         // Serial.println(payload);
 
-        DynamicJsonDocument message(2000);
+        StaticJsonDocument<2000> message;
         message["key"] = _CLIENTID;
 
         for (auto &spunder : _SPUNDERS)
@@ -171,12 +196,11 @@ void onConnectionEstablished()
 
         if (_PUBLISHMQTT)
         {
-            client.executeDelayed(5000, [message]()
+            client.executeDelayed(5000, [&message]()
             {
                 if (!client.publish(_PUBTOPIC, message.as<String>()))
                 {   
                     Serial.println("restarting due to failed MQTT publish");
-                    ESP.restart();
                 }
                 serializeJsonPretty(message, Serial);
             });

@@ -25,7 +25,7 @@ constexpr bool _VENT_TO_AIR = true;
 constexpr auto _SSID = SECRET_SSID;
 constexpr auto _PASS = SECRET_PASS;
 
-std::vector<stored_settings_t> stored_settings {
+std::vector<stored_settings_t> stored_settings{
     {
         .stored_id = "spunder-1",
         .stored_vols = 2.4,
@@ -63,13 +63,13 @@ constexpr auto ADS1115_ADDRESS3 = 0x4a; // ADDR -> SDA
 constexpr auto ADS1115_ADDRESS4 = 0x4b; // ADDR -> SCL
 
 // GPIO Pins (espduino)
-constexpr uint8_t _I2C_SCL = 25;
-constexpr uint8_t _I2C_SDA = 26;
+// constexpr uint8_t _I2C_SCL = 25;
+// constexpr uint8_t _I2C_SDA = 26;
 
-constexpr auto RELAY_PIN1 = 14;
-constexpr auto RELAY_PIN2 = 27;
-constexpr auto RELAY_PIN3 = 16;
-constexpr auto RELAY_PIN4 = 17;
+// constexpr auto RELAY_PIN1 = 14;
+// constexpr auto RELAY_PIN2 = 27;
+// constexpr auto RELAY_PIN3 = 16;
+// constexpr auto RELAY_PIN4 = 17;
 
 // GPIO Pins (esp32-s3-devkit)
 // constexpr uint8_t _I2C_SCL = 17;
@@ -80,98 +80,107 @@ constexpr auto RELAY_PIN4 = 17;
 // constexpr auto RELAY_PIN3 = 20;
 // constexpr auto RELAY_PIN4 = 19;
 
+// GPIO Pins (esp32-wroom32 [relay board])
+constexpr uint8_t _I2C_SCL = 22;
+constexpr uint8_t _I2C_SDA = 21;
+
+constexpr auto RELAY_PIN1 = 32;
+constexpr auto RELAY_PIN2 = 33;
+constexpr auto RELAY_PIN3 = 25;
+constexpr auto RELAY_PIN4 = 26;
+
 std::vector<spund_system_cfg_t> spund_cfgs{
     {
-            .spunder{
-                .spunder_id = "spunder-1", 
-                .desired_vols = 2.5,
-                .relay_pin = RELAY_PIN1,
-            },
-            .ads1115{
-                .i2c_addr = ADS1115_ADDRESS1,
-                .ads_channel = 0,
-                .ads_gain = GAIN_TWOTHIRDS,
-                .ads_sensor_unit = "PSI",
-                .input_low_val = 0.5,
-                .input_high_val = 4.5,
-                .output_low_val = 0.0,
-                .output_high_val = 60.0,
-                .sensor_offset = 0.0,
-            },
-            .mqtt{
-                .temp_sensor_id = "TEMP_blueBeer",
-                .server_setpoint_input = "setpoint_input-1",
-                .server_sensor_input = "mqtt_input-1",
-            },
+        .spunder{
+            .spunder_id = "spunder-1",
+            .desired_vols = 2.5,
+            .relay_pin = RELAY_PIN1,
         },
-        {
-            .spunder{
-                .spunder_id = "spunder-2",
-                .desired_vols = 2.5,
-                .relay_pin = RELAY_PIN2,
-            },
-            .ads1115{
-                .i2c_addr = ADS1115_ADDRESS1,
-                .ads_channel = 1,
-                .ads_gain = GAIN_TWOTHIRDS,
-                .ads_sensor_unit = "PSI",
-                .input_low_val = 0.5,
-                .input_high_val = 4.5,
-                .output_low_val = 0.0,
-                .output_high_val = 60.0,
-                .sensor_offset = 0.0,
-            },
-            .mqtt{
-                .temp_sensor_id = "TEMP_orangeBeer",
-                .server_setpoint_input = "setpoint_input-2",
-                .server_sensor_input = "mqtt_input-2",
-            },
+        .ads1115{
+            .i2c_addr = ADS1115_ADDRESS1,
+            .ads_channel = 0,
+            .ads_gain = GAIN_TWOTHIRDS,
+            .ads_sensor_unit = "PSI",
+            .input_low_val = 0.5,
+            .input_high_val = 4.5,
+            .output_low_val = 0.0,
+            .output_high_val = 60.0,
+            .sensor_offset = 0.0,
         },
-        {
-            .spunder{
-                .spunder_id = "spunder-3",
-                .desired_vols = 3.5,
-                .relay_pin = RELAY_PIN3,
-            },
-            .ads1115{
-                .i2c_addr = ADS1115_ADDRESS1,
-                .ads_channel = 2,
-                .ads_gain = GAIN_TWOTHIRDS,
-                .ads_sensor_unit = "PSI",
-                .input_low_val = 0.50,
-                .input_high_val = 4.5,
-                .output_low_val = 0.0,
-                .output_high_val = 60.0,
-                .sensor_offset = 0.00,
-            },
-            .mqtt{
-                .temp_sensor_id = "MOCK_coneTemp",
-                .server_setpoint_input = "setpoint_input-3",
-                .server_sensor_input = "mqtt_input-3",
-            },
+        .mqtt{
+            .temp_sensor_id = "TEMP_blueBeer",
+            .server_setpoint_input = "setpoint_input-1",
+            .server_sensor_input = "mqtt_input-1",
         },
-        {
-            .spunder{
-                .spunder_id = "spunder-4",
-                .desired_vols = 4.4,
-                .relay_pin = RELAY_PIN4,
-            },
-            .ads1115{
-                .i2c_addr = ADS1115_ADDRESS1,
-                .ads_channel = 3,
-                .ads_gain = GAIN_TWOTHIRDS,
-                .ads_sensor_unit = "PSI",
-                .input_low_val = 0.5,
-                .input_high_val = 4.5,
-                .output_low_val = 0.0,
-                .output_high_val = 60.0,
-                .sensor_offset = 0.0,
-            },
-            .mqtt{
-                .temp_sensor_id = "TEMP_ambientRoom",
-                .server_setpoint_input = "setpoint_input-4",
-                .server_sensor_input = "mqtt_input-4",
-            },
+    },
+    {
+        .spunder{
+            .spunder_id = "spunder-2",
+            .desired_vols = 2.5,
+            .relay_pin = RELAY_PIN2,
+        },
+        .ads1115{
+            .i2c_addr = ADS1115_ADDRESS1,
+            .ads_channel = 1,
+            .ads_gain = GAIN_TWOTHIRDS,
+            .ads_sensor_unit = "PSI",
+            .input_low_val = 0.5,
+            .input_high_val = 4.5,
+            .output_low_val = 0.0,
+            .output_high_val = 60.0,
+            .sensor_offset = 0.0,
+        },
+        .mqtt{
+            .temp_sensor_id = "TEMP_orangeBeer",
+            .server_setpoint_input = "setpoint_input-2",
+            .server_sensor_input = "mqtt_input-2",
+        },
+    },
+    {
+        .spunder{
+            .spunder_id = "spunder-3",
+            .desired_vols = 3.5,
+            .relay_pin = RELAY_PIN3,
+        },
+        .ads1115{
+            .i2c_addr = ADS1115_ADDRESS1,
+            .ads_channel = 2,
+            .ads_gain = GAIN_TWOTHIRDS,
+            .ads_sensor_unit = "PSI",
+            .input_low_val = 0.50,
+            .input_high_val = 4.5,
+            .output_low_val = 0.0,
+            .output_high_val = 60.0,
+            .sensor_offset = 0.00,
+        },
+        .mqtt{
+            .temp_sensor_id = "MOCK_coneTemp",
+            .server_setpoint_input = "setpoint_input-3",
+            .server_sensor_input = "mqtt_input-3",
+        },
+    },
+    {
+        .spunder{
+            .spunder_id = "spunder-4",
+            .desired_vols = 4.4,
+            .relay_pin = RELAY_PIN4,
+        },
+        .ads1115{
+            .i2c_addr = ADS1115_ADDRESS1,
+            .ads_channel = 3,
+            .ads_gain = GAIN_TWOTHIRDS,
+            .ads_sensor_unit = "PSI",
+            .input_low_val = 0.5,
+            .input_high_val = 4.5,
+            .output_low_val = 0.0,
+            .output_high_val = 60.0,
+            .sensor_offset = 0.0,
+        },
+        .mqtt{
+            .temp_sensor_id = "TEMP_ambientRoom",
+            .server_setpoint_input = "setpoint_input-4",
+            .server_sensor_input = "mqtt_input-4",
+        },
     },
 };
 
