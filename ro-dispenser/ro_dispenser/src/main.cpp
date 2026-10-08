@@ -33,7 +33,7 @@ String ready_state = "Ready";
 String flow_state = "0";
 
 // auto target_pulses = 6900; // Do_It_Lady *both ladies*
-auto target_pulses = 6800; // Two_It_Lady
+auto target_pulses = 6600; // Two_It_Lady
 
 // Create a web server object
 WebServer server(80);
