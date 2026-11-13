@@ -123,7 +123,15 @@ void onConnectionEstablished()
     client.subscribe(_SUBTOPIC, [](const String &payload)
                      {
         DynamicJsonDocument input(4000);
-        deserializeJson(input, payload);
+        // deserializeJson(input, payload);
+        DeserializationError err = deserializeJson(input, payload);
+        
+        if (err)
+        {
+            Serial.print("history JSON parse failed: ");
+            Serial.println((err.c_str()));
+            return;
+        }
         
         // DEBUG:
         // Serial.println(payload);
@@ -133,37 +141,38 @@ void onConnectionEstablished()
 
         for (auto &spunder : _SPUNDERS)
         {   
-            spunder->tempC = input["data"][spunder->temp_sensor_id]["value[degC]"];
+            // spunder->tempC = input["data"][spunder->temp_sensor_id]["value[degC]"];
+            JsonVariant tempNode = input["data"][spunder->temp_sensor_id]["value[degC]"];
+            
+            // Missing/null means no data; 0.0 degC is a valid reading.
+            if (tempNode.isNull())
+            {
+                Serial.print(spunder->spunder_id);
+                Serial.println(": no temp reading!");
+                continue;
+            }
+
+            spunder->tempC = tempNode.as<float>();            
             spunder->tempF = spunder->tempC * 1.8 + 32;
             
             // DEBUG:
 	    	// Serial.println(spunder->temp_sensor_id);
 	    	// Serial.println(spunder->tempC);
 
-	        if (!spunder->tempC) 
-	        { 
-	    	    Serial.print(spunder->spunder_id);
-	    	    Serial.println(": no temp reading!");
-	    	    continue;
-	        } 
-	        else 
-	        {
-            	message["data"][spunder->spunder_id]["TempC"] = spunder->tempC;
-            	message["data"][spunder->spunder_id]["Temp_Sensor"] = spunder->temp_sensor_id;
-            	message["data"][spunder->spunder_id]["ADC"] = spunder->readADC_AVG(16);
-            	message["data"][spunder->spunder_id]["Volts"] = spunder->readVolts();
-            	message["data"][spunder->spunder_id][spunder->getSensorUnit()] = spunder->readSensorUnits();
-            	message["data"][spunder->spunder_id]["PSI_setpoint"] = spunder->computePSISetpoint();
-            	message["data"][spunder->spunder_id]["Desired_vols"] = spunder->desired_vols;
-            	message["data"][spunder->spunder_id]["Vols"] = spunder->computeVols();
-                if (_VENT_TO_AIR) 
-                {
-                    message["data"][spunder->spunder_id]["Relay_Toggled"] = spunder->testForVent();
-            	    message["data"][spunder->spunder_id]["Minutes_since_vent"] = spunder->getLastVent(); 
-            	    message["data"][spunder->spunder_id]["Vent Timestamp"] = spunder->getVentTimestamp(); 
-                }
-	        }
-
+            message["data"][spunder->spunder_id]["TempC"] = spunder->tempC;
+            message["data"][spunder->spunder_id]["Temp_Sensor"] = spunder->temp_sensor_id;
+            message["data"][spunder->spunder_id]["ADC"] = spunder->readADC_AVG(16);
+            message["data"][spunder->spunder_id]["Volts"] = spunder->readVolts();
+            message["data"][spunder->spunder_id][spunder->getSensorUnit()] = spunder->readSensorUnits();
+            message["data"][spunder->spunder_id]["PSI_setpoint"] = spunder->computePSISetpoint();
+            message["data"][spunder->spunder_id]["Desired_vols"] = spunder->desired_vols;
+            message["data"][spunder->spunder_id]["Vols"] = spunder->computeVols();
+            if (_VENT_TO_AIR) 
+            {
+                message["data"][spunder->spunder_id]["Relay_Toggled"] = spunder->testForVent();
+                message["data"][spunder->spunder_id]["Minutes_since_vent"] = spunder->getLastVent(); 
+                message["data"][spunder->spunder_id]["Vent Timestamp"] = spunder->getVentTimestamp(); 
+            }
         }
             message["data"]["general"]["Input_memory_size"] = input.memoryUsage();
             message["data"]["general"]["Output_memory_size"] = message.memoryUsage();

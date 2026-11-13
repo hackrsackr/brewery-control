@@ -52,9 +52,11 @@ auto Spund_System::readADC() -> uint16_t
     return _p_ads->readADC_SingleEnded(_ads_channel);
 }
 
-auto Spund_System::readADC_AVG(uint8_t samples) -> uint16_t {
+auto Spund_System::readADC_AVG(uint8_t samples) -> uint16_t
+{
     uint32_t sum = 0;
-    for (int i = 0; i < samples; i++) {
+    for (int i = 0; i < samples; i++)
+    {
         sum += readADC();
         delayMicroseconds(10);
     }
@@ -134,7 +136,7 @@ auto Spund_System::getLastVent() -> float
     return minutes_since_vent;
 }
 
-auto Spund_System::getVentTimestamp() -> uint32_t 
+auto Spund_System::getVentTimestamp() -> uint32_t
 {
     return _time_of_last_vent;
 }
