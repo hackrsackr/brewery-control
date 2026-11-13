@@ -45,21 +45,36 @@ void handleData();
 void handleConfig();
 void handleSetTarget();
 
-// Function to handle turning GPIO 16 on
-void activateRelay1()
+// Turn the fill relay on. No HTTP here, so it is safe to call from loop().
+void setRelayOn()
 {
   relay_state = "on";
   digitalWrite(RELAY_PIN_1, HIGH);
-  handleRoot();
 }
 
-// Function to handle turning GPIO 16 off
-void deactivateRelay1()
+// Turn the fill relay off. No HTTP here, so it is safe to call from loop().
+void setRelayOff()
 {
   relay_state = "off";
   digitalWrite(RELAY_PIN_1, LOW);
   ready_state = "Not Ready";
-  handleRoot();
+}
+
+// Route handlers: change state, then redirect to "/" so the address bar never
+// keeps /Relay/on or /Relay/off. A browser reload then re-fetches "/" and cannot
+// start another fill.
+void activateRelay1()
+{
+  setRelayOn();
+  server.sendHeader("Location", "/");
+  server.send(303, "text/plain", "");
+}
+
+void deactivateRelay1()
+{
+  setRelayOff();
+  server.sendHeader("Location", "/");
+  server.send(303, "text/plain", "");
 }
 
 // Function to handle turning GPIO 27 on
@@ -298,7 +313,7 @@ void loop()
 
     if (flowmeter->total_pulse_count >= target_pulses)
     {
-      deactivateRelay1();
+      setRelayOff();
       flowmeter->total_pulse_count = 0;
     }
 
