@@ -41,6 +41,7 @@ EspMQTTClient client(ssid, password, "10.0.0.115");
 
 void onConnectionEstablished();
 void handleRoot();
+void handleData();
 void handleSetTarget();
 
 // Function to handle turning GPIO 16 on
@@ -91,18 +92,24 @@ void handleSetTarget()
 // Function to handle the root URL and show the current states
 void handleRoot()
 {
-  String html = "<!DOCTYPE html><html><head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">";
-  html += "<link rel=\"icon\" href=\"data:,\">";
-  html += "<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}";
-  html += ".button { background-color: #4CAF50; border: none; color: white; padding: 16px 40px; text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}";
-  html += ".button2 { background-color: #555555; }";
-  html += ".field { font-size: 18px; margin: 12px; }";
-  html += ".input { font-size: 18px; padding: 8px; width: 140px; text-align: center; }";
-  html += ".submit { background-color: #2196F3; color: white; border: none; padding: 10px 18px; font-size: 18px; cursor: pointer; }";
-  html += "</style></head>";
-  html += "<body><h1>RO Dispenser</h1>";
+  String html = R"HTML(<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<style>
+html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}
+.button { background-color: #4CAF50; border: none; color: white; padding: 16px 40px; text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}
+.button2 { background-color: #555555; }
+.field { font-size: 18px; margin: 12px; }
+.input { font-size: 18px; padding: 8px; width: 140px; text-align: center; }
+.submit { background-color: #2196F3; color: white; border: none; padding: 10px 18px; font-size: 18px; cursor: pointer; }
+.cards { display: flex; flex-wrap: wrap; justify-content: center; }
+.card { background: #f2f2f2; border-radius: 8px; margin: 8px; padding: 12px 18px; min-width: 200px; }
+.value { font-size: 32px; font-weight: bold; }
+.label { font-size: 14px; color: #555; }
+</style></head>
+<body><h1>RO Dispenser</h1>
+)HTML";
 
-  // Display GPIO 26 controls
+  // Relay control
   html += "<p>Relay State = " + relay_state + " </p>";
   if (relay_state == "off")
   {
@@ -113,21 +120,83 @@ void handleRoot()
     html += "<p><a href=\"/Relay/off\"><button class=\"button button2\">STOP</button></a></p>";
   }
 
+  // Target setting
   html += "<form method=\"POST\" action=\"/settarget\">";
   html += "<p class=\"field\">Target Pulses: <input class=\"input\" type=\"number\" name=\"target_pulses\" value=\"" + String(target_pulses) + "\" min=\"1\" step=\"1\"></p>";
   html += "<p><input class=\"submit\" type=\"submit\" value=\"Update\"></p>";
   html += "</form>";
 
-  // Display GPIO 27 controls
-  // html += "<p>Ready State = " + ready_state + "</p>";
-  // if (ready_state == "Ready") {
-  //   html += "<p><a href=\"/Ready\"><button class=\"button\">Ready</button></a></p>";
-  // } else {
-  //   html += "<p><a href=\"/Not Ready\"><button class=\"button button2\">Reset</button></a></p>";
-  // }
+  // Live status, filled in by /data every second
+  html += R"HTML(
+<div class="cards">
+  <div class="card"><div class="label">Pulses this fill</div><div class="value" id="pulses">--</div><div class="label">target <span id="target">--</span></div></div>
+  <div class="card"><div class="label">Dispensed</div><div class="value"><span id="ml">--</span> mL</div></div>
+  <div class="card"><div class="label">Flow</div><div class="value"><span id="lpm">--</span></div><div class="label">L/min</div></div>
+</div>
+<h2>TDS</h2>
+<div class="cards" id="tds"><p class="label">waiting for sensors...</p></div>
+<p class="label" id="status"></p>
+<script>
+function poll() {
+  fetch('/data', { cache: 'no-store' })
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      document.getElementById('pulses').textContent = d.pulses;
+      document.getElementById('target').textContent = d.target;
+      document.getElementById('ml').textContent = d.ml;
+      document.getElementById('lpm').textContent = Number(d.lpm).toFixed(2);
 
-  html += "</body></html>";
+      var html = '';
+      d.tds.forEach(function (t) {
+        html += '<div class="card"><div class="label">' + t.id + '</div>'
+              + '<div class="value">' + Number(t.tds).toFixed(0) + ' ppm</div>'
+              + '<div class="label">EC ' + Number(t.ec).toFixed(0) + ' | ' + Number(t.voltage).toFixed(3) + ' V | ADC ' + t.adc + '</div></div>';
+      });
+      document.getElementById('tds').innerHTML = html;
+      document.getElementById('status').textContent = 'updated ' + new Date().toLocaleTimeString();
+    })
+    .catch(function () {
+      document.getElementById('status').textContent = 'lost connection to dispenser';
+    });
+}
+poll();
+setInterval(poll, 1000);
+</script>
+</body></html>)HTML";
+
   server.send(200, "text/html", html);
+}
+
+// JSON snapshot of the current readings, polled by the status page
+void handleData()
+{
+  DynamicJsonDocument doc(1024);
+  doc["relay"] = relay_state;
+  doc["target"] = target_pulses;
+
+  if (!_FLOWMETERS.empty())
+  {
+    FlowMeter *f = _FLOWMETERS[0];
+    doc["pulses"] = f->total_pulse_count;
+    doc["ml"] = f->total_milliliters;
+    doc["lpm"] = f->flow_rate;
+  }
+
+  JsonArray tds = doc.createNestedArray("tds");
+  for (auto *t : _TDSSENSORS)
+  {
+    JsonObject o = tds.createNestedObject();
+    o["id"] = t->id.c_str();
+    o["tds"] = t->TDS;
+    o["ec"] = t->EC;
+    o["voltage"] = t->voltage;
+    o["adc"] = t->adc;
+  }
+
+  String out;
+  serializeJson(doc, out);
+  server.sendHeader("Cache-Control", "no-cache");
+  server.send(200, "application/json", out);
 }
 
 void setup()
@@ -173,6 +242,7 @@ void setup()
 
   // Set up the web server to handle different routes
   server.on("/", handleRoot);
+  server.on("/data", handleData);
   server.on("/settarget", HTTP_POST, handleSetTarget);
   server.on("/Relay/on", activateRelay1);
   server.on("/Relay/off", deactivateRelay1);
