@@ -37,7 +37,7 @@ int target_pulses = 6600; // Two_It_Lady
 
 // Create a web server object
 WebServer server(80);
-EspMQTTClient client(ssid, password, "10.0.0.115");
+EspMQTTClient client(ssid, password, _MQTTHOST, "", "", _CLIENTID, _MQTTPORT);
 
 void onConnectionEstablished();
 void handleRoot();
@@ -299,7 +299,7 @@ void loop()
   server.handleClient();
   client.loop();
 
-  StaticJsonDocument<400> message;
+  DynamicJsonDocument message(1024);
   message["key"] = _CLIENTID;
 
   for (auto &flowmeter : _FLOWMETERS)
@@ -334,6 +334,15 @@ void loop()
   serializeJsonPretty(message["data"], Serial);
   // serializeJson(message["data"], Serial);
   Serial.println("");
+
+  static uint32_t lastPublish = 0;
+  if (millis() - lastPublish >= _PUBLISH_INTERVAL_MS)
+  {
+    lastPublish = millis();
+    String payload;
+    serializeJson(message, payload);
+    client.publish(_PUBTOPIC, payload); // returns false if MQTT is down; retried next interval
+  }
 
   delay(1000);
 }

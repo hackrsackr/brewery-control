@@ -12,8 +12,13 @@ constexpr auto _PASS = SECRET_PASS;
 constexpr bool _PUBLISHMQTT = true;
 constexpr auto _MQTTHOST = "10.0.0.115";
 constexpr auto _MQTTPORT = 1883;
-constexpr auto _CLIENTID = "flow-meters";
-constexpr auto _PUBTOPIC = "brewcast/history/flow-meters";
+// Unit identity: set per environment in platformio.ini (-DUNIT_ID="...")
+#ifndef UNIT_ID
+#define UNIT_ID "unit"
+#endif
+constexpr auto _CLIENTID = UNIT_ID;
+constexpr auto _PUBTOPIC = "brewcast/history/" UNIT_ID;
+constexpr uint32_t _PUBLISH_INTERVAL_MS = 5000; // matches spark-two's 5 s cadence
 
 // Calibration factors
 /*
