@@ -42,6 +42,7 @@ EspMQTTClient client(ssid, password, "10.0.0.115");
 void onConnectionEstablished();
 void handleRoot();
 void handleData();
+void handleConfig();
 void handleSetTarget();
 
 // Function to handle turning GPIO 16 on
@@ -86,7 +87,9 @@ void handleSetTarget()
     }
   }
 
-  handleRoot();
+  // Post/redirect/get: send the browser back to the config page
+  server.sendHeader("Location", "/config");
+  server.send(303, "text/plain", "");
 }
 
 // Function to handle the root URL and show the current states
@@ -120,11 +123,7 @@ html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-ali
     html += "<p><a href=\"/Relay/off\"><button class=\"button button2\">STOP</button></a></p>";
   }
 
-  // Target setting
-  html += "<form method=\"POST\" action=\"/settarget\">";
-  html += "<p class=\"field\">Target Pulses: <input class=\"input\" type=\"number\" name=\"target_pulses\" value=\"" + String(target_pulses) + "\" min=\"1\" step=\"1\"></p>";
-  html += "<p><input class=\"submit\" type=\"submit\" value=\"Update\"></p>";
-  html += "</form>";
+  html += "<p><a href=\"/config\"><button class=\"submit\">Config</button></a></p>";
 
   // Live status, filled in by /data every second
   html += R"HTML(
@@ -199,6 +198,31 @@ void handleData()
   server.send(200, "application/json", out);
 }
 
+// Config page: settings that used to live on the home page
+void handleConfig()
+{
+  String html = R"HTML(<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:,">
+<style>
+html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}
+.field { font-size: 18px; margin: 12px; }
+.input { font-size: 18px; padding: 8px; width: 140px; text-align: center; }
+.submit { background-color: #2196F3; color: white; border: none; padding: 10px 18px; font-size: 18px; cursor: pointer; }
+a { font-size: 18px; }
+</style></head>
+<body><h1>RO Dispenser Config</h1>
+)HTML";
+
+  html += "<form method=\"POST\" action=\"/settarget\">";
+  html += "<p class=\"field\">Target Pulses: <input class=\"input\" type=\"number\" name=\"target_pulses\" value=\"" + String(target_pulses) + "\" min=\"1\" step=\"1\"></p>";
+  html += "<p><input class=\"submit\" type=\"submit\" value=\"Update\"></p>";
+  html += "</form>";
+  html += "<p><a href=\"/\">Back to dashboard</a></p>";
+  html += "</body></html>";
+
+  server.send(200, "text/html", html);
+}
+
 void setup()
 {
   Serial.begin(115200);
@@ -243,6 +267,7 @@ void setup()
   // Set up the web server to handle different routes
   server.on("/", handleRoot);
   server.on("/data", handleData);
+  server.on("/config", handleConfig);
   server.on("/settarget", HTTP_POST, handleSetTarget);
   server.on("/Relay/on", activateRelay1);
   server.on("/Relay/off", deactivateRelay1);
